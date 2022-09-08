@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
-    "dotenv": "^16.0.2"
+    "dotenv": "^16.0.2",
+    "mqtt": "^4.3.7"
   }
 }
