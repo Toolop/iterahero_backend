@@ -21,5 +21,4 @@ const init = async () =>{
     console.log(`Server is running on ${server.info.uri}`);
 }
 
-
 init();
