@@ -1,13 +1,13 @@
 const Hapi = require('@hapi/hapi');
 const dotenv = require('dotenv');
-const routes = require('./route')
+const routes = require('./route');
 
 const init = async () =>{
     dotenv.config();
 
     const server = Hapi.server({
         port: process.env.PORT || 80,
-        host: 'localhost'
+        host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
     });
 
     server.route(routes);
