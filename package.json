@@ -12,7 +12,7 @@
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
     "dotenv": "^16.0.2",
-    "mqtt": "^4.3.7",
+    "hapi-auth-jwt2": "^10.2.0",
     "pg": "^8.8.0"
   }
 }
