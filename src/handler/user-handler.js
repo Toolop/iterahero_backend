@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 
-const hello = async (request, h) => {
+const register = async (request, h) => {
   
     try {
       var x = 1;
