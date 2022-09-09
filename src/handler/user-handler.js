@@ -1,5 +1,7 @@
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { generateJwt } = require('../utils/jwt-utils');
 
 const saltRounds = 10;
 
@@ -31,12 +33,12 @@ const register = async (request, h) => {
         else{
           const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-          console.log(hashedPassword);
           response = h.response({
             code: 201,
             status: 'Created',
             data: {
-              username: email,
+              email: email,
+              accessToken: generateJwt(jwt, email),
             },
           });
         }
