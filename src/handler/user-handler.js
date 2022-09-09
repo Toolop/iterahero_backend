@@ -81,7 +81,7 @@ const register = async (request, h) => {
       if (result.rows[0]){
         const hashedPassword = result.rows[0].password;
 
-        if(bcrypt.compare(password, hashedPassword )){
+        if(await bcrypt.compare(password, hashedPassword )){
           response = h.response({
             code:200,
             status:'Ok',
