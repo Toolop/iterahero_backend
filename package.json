@@ -12,9 +12,11 @@
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
     "bcrypt": "^5.0.1",
+    "cloudinary": "^1.31.0",
     "dotenv": "^16.0.2",
     "hapi-auth-jwt2": "^10.2.0",
-    "pg": "^8.8.0"
+    "pg": "^8.8.0",
+    "streamifier": "^0.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
