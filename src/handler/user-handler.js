@@ -8,7 +8,7 @@ const hello = async (request, h) => {
           response = h.response({
             code: 200,
             status: 'OK',
-            message:'hello world'
+            message:'hello Eko'
           });
     
           response.code(200);
