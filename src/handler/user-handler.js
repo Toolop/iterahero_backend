@@ -40,6 +40,7 @@ const register = async (request, h) => {
             code: 201,
             status: 'Created',
             data: {
+              user_id: result.rows[0].id_user,
               email: email,
               accessToken: generateJwt(jwt, email),
             },
@@ -62,6 +63,56 @@ const register = async (request, h) => {
     return response;
   };
 
+  const login = async (request,h) =>{
+    const{
+      email,
+      password,
+    } = request.payload;
+    
+    let response = " ";
+    let result = " ";
+    
+    try{
+      const result = await pool.query(
+        `SELECT * from public."user" WHERE email = $1;`,
+        [email],
+      );
+
+      if (result.rows[0]){
+        const hashedPassword = result.rows[0].password;
+
+        if(bcrypt.compare(password, hashedPassword )){
+          response = h.response({
+            code:200,
+            status:'Ok',
+            data:{
+              user_id: result.rows[0].id_user,
+              email: result.rows[0].email,
+              accessToken:generateJwt(jwt,email)
+            },
+          });
+        }else{
+          response = h.response({
+            code: 401,
+            status: 'Unauthorized',
+            message: 'Username or password is incorrect',
+          });
+        }
+      }
+      
+    }catch (err){
+      response = h.response({
+        code: 400,
+        status: 'Bad Request',
+        message: 'error',
+      });
+      response.code(400);
+  
+      console.log(err);
+    };
+    return response;
+  }
+
   module.exports = {
-    register
+    register, login
   }
