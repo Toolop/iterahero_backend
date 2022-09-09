@@ -1,27 +1,49 @@
 const pool = require('../config/db');
+const bcrypt = require('bcrypt');
+
+const saltRounds = 10;
 
 const register = async (request, h) => {
+  const{
+    username,
+    email,
+    password,
+    name,
+    created_at,
+  } = request.payload;
+
+  let result = '';
+  let response = '';
   
     try {
-      var x = 1;
-        if (x == 1) {
-          response = h.response({
-            code: 200,
-            status: 'OK',
-            message:'hello Eko'
-          });
+        result = await pool.query(
+          'SELECT * FROM public."user" WHERE email=$1',
+          [email],
+        );
     
-          response.code(200);
-        } else {
+        if (result.rows[0]){
           response = h.response({
-            code: 404,
-            status: 'Not Found',
-            message: 'User is not found',
+            code:400,
+            status: 'Conflict',
+            message: `${email} already exists.`
           });
-    
-          response.code(404);
         }
-    } catch (err) {
+        else{
+          const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+          console.log(hashedPassword);
+          response = h.response({
+            code: 201,
+            status: 'Created',
+            data: {
+              username: email,
+            },
+          });
+        }
+
+          response.code(201);
+        }
+    catch (err) {
       response = h.response({
         code: 400,
         status: 'Bad Request',
@@ -36,5 +58,5 @@ const register = async (request, h) => {
   };
 
   module.exports = {
-    hello
+    register
   }

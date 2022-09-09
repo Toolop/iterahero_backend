@@ -4,8 +4,8 @@ const prefix = '/api/v1';
 
 const routes = [
     {
-        method: 'get',
-        path: `${prefix}`,
+        method: 'POST',
+        path: `${prefix}/register`,
         config: { auth: false },
         handler: register
     },
