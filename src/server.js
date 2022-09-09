@@ -1,6 +1,7 @@
 const Hapi = require('@hapi/hapi');
 const dotenv = require('dotenv');
-const routes = require('./route')
+const routes = require('./route');
+const jwt = require('hapi-auth-jwt2');
 
 const init = async () =>{
     dotenv.config();
@@ -9,6 +10,15 @@ const init = async () =>{
         port: process.env.PORT || 80,
         host: 'localhost'
     });
+
+    await server.register(hapiAuthJWT);
+
+    server.auth.strategy('jwt', 'jwt',
+    { key: process.env.JWT_SECRET, // Never Share your secret key
+      expiresIn: '8d',
+    });
+
+    server.auth.default('jwt');
 
     server.route(routes);
     try{
