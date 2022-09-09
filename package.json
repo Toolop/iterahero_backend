@@ -14,5 +14,8 @@
     "dotenv": "^16.0.2",
     "mqtt": "^4.3.7",
     "pg": "^8.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }
