@@ -2,14 +2,14 @@ const Hapi = require('@hapi/hapi');
 const dotenv = require('dotenv');
 const routes = require('./route');
 const jwt = require('hapi-auth-jwt2');
-const {validate} = require('./utils/jwt-utils')
+const {validate} = require('./utils/jwt-utils');
 
 const init = async () =>{
     dotenv.config();
 
     const server = Hapi.server({
         port: process.env.PORT || 3000,
-        host: 'localhost'
+        host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
     });
 
     await server.register(jwt);
