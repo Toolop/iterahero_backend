@@ -4,9 +4,9 @@ const prefix = '/api/v1';
 
 const routes = [
     {
-        method: 'get',
+        method: 'POST',
         path: `${prefix}`,
-        config: { auth: false },
+        config: { auth: false,payload: {multipart: true} },
         handler: hello
     },
 ];
