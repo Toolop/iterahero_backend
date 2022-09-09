@@ -31,6 +31,7 @@ const init = async () =>{
         process.exit(1);
     }
     console.log(`Server is running on ${server.info.uri}`);
+    
 }
 
 init();

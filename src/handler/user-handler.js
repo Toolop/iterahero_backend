@@ -11,7 +11,6 @@ const register = async (request, h) => {
     email,
     password,
     name,
-    created_at,
   } = request.payload;
 
   let result = '';
@@ -32,7 +31,11 @@ const register = async (request, h) => {
         }
         else{
           const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+          const getDate = new Date().toISOString();
+          result = await pool.query(
+            `INSERT INTO public."user" (username, email, "name", "password", created_at,updated_at) VALUES($1,$2,$3,$4,$5,$6);`,
+            [username,email,name,hashedPassword,getDate,getDate],
+          );
           response = h.response({
             code: 201,
             status: 'Created',
