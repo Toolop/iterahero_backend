@@ -29,7 +29,6 @@ const register = async (request, h) => {
 				`INSERT INTO public."user" (username, email, "name", "password", created_at,updated_at) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;`,
 				[username, email, name, hashedPassword, getDate, getDate]
 			);
-			// console.log(result.rows[0].id_user);
 			response = h.response({
 				code: 201,
 				status: "Created",
