@@ -8,8 +8,8 @@ const getGreenHouses = async (request, h) => {
 	const { by_user_id } = request.query;
 	let result = "";
 	let response = "";
-	const { user_id } = request.auth.credentials;
-	console.log(user_id);
+	const { id_user } = request.auth.credentials;
+	console.log(id_user);
 	console.log("ini paramnya", by_user_id);
 
 	try {
@@ -27,7 +27,7 @@ const getGreenHouses = async (request, h) => {
 		if (by_user_id == 1) {
 			result = await pool.query(
 				`SELECT * FROM public."greenhouse" WHERE "id_user"=$1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
-				[user_id, offset, size]
+				[id_user, offset, size]
 			);
 		}
 
@@ -64,9 +64,7 @@ const getGreenHouses = async (request, h) => {
 	return response;
 };
 
-// const uploadGreenHouse = async (request, h) => {
-
-// };
+const uploadGreenHouse = async (request, h) => {};
 
 module.exports = {
 	getGreenHouses,
