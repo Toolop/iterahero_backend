@@ -2,6 +2,7 @@ const { register, login } = require("./handler/user-handler.js");
 const {
 	getGreenHouses,
 	getGreenHouseDetail,
+	uploadGreenHouse,
 } = require("./handler/greenhouse-handler.js");
 const prefix = "/api/v1";
 
@@ -29,6 +30,17 @@ const routes = [
 		path: `${prefix}/greenhouse/{id}`,
 		config: { auth: "jwt" },
 		handler: getGreenHouseDetail,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/greenhouse`,
+		config: {
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: uploadGreenHouse,
 	},
 ];
 
