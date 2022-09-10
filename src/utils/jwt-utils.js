@@ -20,12 +20,12 @@ const validate = async (decoded, request, h) => {
 	return { isValid: isValidated };
 };
 
-const generateJwt = (jwt, _email) =>
-	jwt.sign(
-		{
-			email: _email,
-		},
-		process.env.JWT_SECRET
-	);
+const generateJwt = (jwt, _email,_id_user) => jwt.sign(
+  {
+    email: _email,
+    id_user: _id_user,
+  },
+  process.env.JWT_SECRET,
+);
 
 module.exports = { validate, generateJwt };

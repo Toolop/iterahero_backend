@@ -26,16 +26,14 @@ const register = async (request, h) => {
 			const hashedPassword = await bcrypt.hash(password, saltRounds);
 			const getDate = new Date().toISOString();
 			result = await pool.query(
-				`INSERT INTO public."user" (username, email, "name", "password", created_at,updated_at) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;`,
+				`INSERT INTO public."user" (username, email, "name", "password", created_at,updated_at) VALUES($1,$2,$3,$4,$5,$6);`,
 				[username, email, name, hashedPassword, getDate, getDate]
 			);
 			response = h.response({
 				code: 201,
 				status: "Created",
 				data: {
-					user_id: result.rows[0].id_user,
 					email: email,
-					accessToken: generateJwt(jwt, email),
 				},
 			});
 		}
@@ -75,9 +73,8 @@ const login = async (request, h) => {
 					code: 200,
 					status: "Ok",
 					data: {
-						user_id: result.rows[0].id_user,
 						email: result.rows[0].email,
-						accessToken: generateJwt(jwt, email),
+						accessToken: generateJwt(jwt, email, result.rows[0].id_user),
 					},
 				});
 			} else {
