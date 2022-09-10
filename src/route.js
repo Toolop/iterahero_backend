@@ -1,5 +1,8 @@
 const { register, login } = require("./handler/user-handler.js");
-const { getGreenHouses } = require("./handler/greenhouse-handler.js");
+const {
+	getGreenHouses,
+	getGreenHouseDetail,
+} = require("./handler/greenhouse-handler.js");
 const prefix = "/api/v1";
 
 const routes = [
@@ -18,8 +21,14 @@ const routes = [
 	{
 		method: "GET",
 		path: `${prefix}/greenhouse`,
-        config: { auth: "jwt" },
+		config: { auth: "jwt" },
 		handler: getGreenHouses,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/greenhouse/{id}`,
+		config: { auth: "jwt" },
+		handler: getGreenHouseDetail,
 	},
 ];
 
