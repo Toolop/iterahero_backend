@@ -40,9 +40,7 @@ const register = async (request, h) => {
             code: 201,
             status: 'Created',
             data: {
-              user_id: result.rows[0].id_user,
               email: email,
-              accessToken: generateJwt(jwt, email),
             },
           });
         }
@@ -86,9 +84,8 @@ const register = async (request, h) => {
             code:200,
             status:'Ok',
             data:{
-              user_id: result.rows[0].id_user,
               email: result.rows[0].email,
-              accessToken:generateJwt(jwt,email)
+              accessToken:generateJwt(jwt,email,result.rows[0].id_user)
             },
           });
         }else{
