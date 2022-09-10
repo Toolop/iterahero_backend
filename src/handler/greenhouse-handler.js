@@ -5,34 +5,36 @@ const { getUser } = require("../utils/user-util");
 
 const getGreenHouses = async (request, h) => {
 	let { page, size } = request.query;
-	const { user_id } = request.query;
+	const { by_user_id } = request.query;
 	let result = "";
 	let response = "";
-	const { id_user } = request.auth.credentials;
+	const { user_id } = request.auth.credentials;
+	console.log(user_id);
+	console.log("ini paramnya", by_user_id);
 
 	try {
 		page = page || 1;
 		size = size || 10;
 		const offset = (page - 1) * size;
 
-		if (!user_id || user_id === "false") {
+		if (!by_user_id || by_user_id == 0) {
 			result = await pool.query(
 				`SELECT * FROM public."greenhouse" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
 		}
 
-		if (user_id === "true") {
+		if (by_user_id == 1) {
 			result = await pool.query(
 				`SELECT * FROM public."greenhouse" WHERE "id_user"=$1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
-				[id_user, offset, size]
+				[user_id, offset, size]
 			);
 		}
 
 		// console.log(result.rows);
 		response = h.response({
 			code: 200,
-			status: "OK berhasil",
+			status: "OK",
 			data: await Promise.all(
 				result.rows.map(async (greenHouse) => ({
 					id: greenHouse.id_greenhouse,
@@ -40,7 +42,6 @@ const getGreenHouses = async (request, h) => {
 					image: greenHouse.image,
 					location: greenHouse.location,
 					created_at: greenHouse.created_at,
-					updated_at: greenHouse.updated_at,
 					user_id: greenHouse.id_user,
 					user_name: (await getUser(greenHouse.id_user)).name,
 				}))
