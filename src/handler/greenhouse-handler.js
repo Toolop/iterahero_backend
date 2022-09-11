@@ -1,4 +1,3 @@
-const { image } = require("../config/cloudinary");
 const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const { getUser } = require("../utils/user-util");
@@ -109,7 +108,7 @@ const uploadGreenHouse = async (request, h) => {
 	const { name, location, id_user } = request.payload;
 
 	let { image } = request.payload;
-	
+
 	let response = "";
 
 	try {
