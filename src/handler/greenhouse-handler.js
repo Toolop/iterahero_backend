@@ -9,8 +9,8 @@ const getGreenHouses = async (request, h) => {
 	let result = "";
 	let response = "";
 	const { id_user } = request.auth.credentials;
-	console.log(id_user);
-	console.log("ini paramnya", by_user_id);
+	// console.log(id_user);
+	// console.log("ini paramnya", by_user_id);
 
 	try {
 		page = page || 1;
@@ -109,6 +109,7 @@ const uploadGreenHouse = async (request, h) => {
 	const { name, location, id_user } = request.payload;
 
 	let { image } = request.payload;
+	
 	let response = "";
 
 	try {

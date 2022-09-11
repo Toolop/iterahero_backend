@@ -4,6 +4,7 @@ const {
 	getGreenHouseDetail,
 	uploadGreenHouse,
 } = require("./handler/greenhouse-handler.js");
+const { uploadActuator } = require("./handler/actuator-handler.js");
 const prefix = "/api/v1";
 
 const routes = [
@@ -41,6 +42,17 @@ const routes = [
 			},
 		},
 		handler: uploadGreenHouse,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/actuator`,
+		config: {
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: uploadActuator,
 	},
 ];
 
