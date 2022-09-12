@@ -11,6 +11,7 @@ const {
 } = require("./handler/actuator-handler.js");
 const {
 	uploadActuatorLog,
+	getActuatorLogs,
 	getActuatorLogDetail,
 } = require("./handler/actuator-log-handler.js");
 const {
@@ -120,11 +121,16 @@ const routes = [
 	},
 	{
 		method: "GET",
+		path: `${prefix}/actuator-log`,
+		config: { auth: "jwt" },
+		handler: getActuatorLogs,
+	},
+	{
+		method: "GET",
 		path: `${prefix}/actuator-log/{id}`,
 		config: { auth: "jwt" },
 		handler: getActuatorLogDetail,
 	},
-	
 ];
 
 module.exports = routes;
