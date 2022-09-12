@@ -5,7 +5,8 @@ const {
 	uploadGreenHouse,
 } = require("./handler/greenhouse-handler.js");
 const {
-	uploadCategorySensor
+	uploadCategorySensor,
+	getCategorySensor
 } = require("./handler/category-handler.js");
 const prefix = "/api/v1";
 
@@ -52,6 +53,14 @@ const routes = [
 			auth: false,
 		},
 		handler: uploadCategorySensor,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/category/sensor`,
+		config: {
+			auth: false,
+		},
+		handler: getCategorySensor,
 	},
 ];
 
