@@ -18,14 +18,14 @@ const getGreenHouses = async (request, h) => {
 
 		if (!by_user_id || by_user_id == 0) {
 			result = await pool.query(
-				`SELECT * FROM public."greenhouse" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
+				`SELECT * FROM public."greenhouse" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
 		}
 
 		if (by_user_id == 1) {
 			result = await pool.query(
-				`SELECT * FROM public."greenhouse" WHERE "id_user"=$1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
+				`SELECT * FROM public."greenhouse" WHERE "id_user"=$1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
 				[id_user, offset, size]
 			);
 		}
@@ -115,7 +115,8 @@ const getGreenHouseDetail = async (request, h) => {
 };
 
 const uploadGreenHouse = async (request, h) => {
-	const { name, location, id_user } = request.payload;
+	const { name, location } = request.payload;
+	const { id_user } = request.auth.credentials;
 
 	let { image } = request.payload;
 
