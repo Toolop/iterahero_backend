@@ -50,20 +50,7 @@ const routes = [
 		handler: uploadGreenHouse,
 	},
 	{
-		method: "POST",
-		path: `${prefix}/category/sensor`,
-		config: {
-			auth: false,
-		},
-		handler: uploadCategorySensor,
-	},
-	{
-		method: "GET",
-		path: `${prefix}/category/sensor`,
-		config: {
-			auth: false,
-		},
-		handler: getCategorySensor,
+		method:"POST",
 		path: `${prefix}/actuator`,
 		config: {
 			auth: "jwt",
@@ -83,6 +70,22 @@ const routes = [
 			},
 		},
 		handler: uploadActuatorLog,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/category/sensor`,
+		config: {
+			auth: false,
+		},
+		handler: uploadCategorySensor,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/category/sensor`,
+		config: {
+			auth: false,
+		},
+		handler: getCategorySensor,
 	},
 ];
 
