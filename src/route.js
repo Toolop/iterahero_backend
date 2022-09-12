@@ -4,7 +4,10 @@ const {
 	getGreenHouseDetail,
 	uploadGreenHouse,
 } = require("./handler/greenhouse-handler.js");
-const { uploadActuator } = require("./handler/actuator-handler.js");
+const {
+	uploadActuator,
+	getActuators,
+} = require("./handler/actuator-handler.js");
 const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
 const {
 	uploadCategorySensor,
@@ -72,6 +75,12 @@ const routes = [
 		},
 		handler: uploadActuatorLog,
 	},
+  {
+    method: "GET",
+		path: `${prefix}/actuator`,
+		config: { auth: "jwt" },
+		handler: getActuators,
+  },
 	{
 		method: "POST",
 		path: `${prefix}/category/sensor`,
