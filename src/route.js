@@ -4,8 +4,13 @@ const {
 	getGreenHouseDetail,
 	uploadGreenHouse,
 } = require("./handler/greenhouse-handler.js");
+const {
+	uploadCategorySensor,
+	getCategorySensor
+} = require("./handler/category-handler.js");
 const { uploadActuator } = require("./handler/actuator-handler.js");
 const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
+
 const prefix = "/api/v1";
 
 const routes = [
@@ -46,6 +51,19 @@ const routes = [
 	},
 	{
 		method: "POST",
+		path: `${prefix}/category/sensor`,
+		config: {
+			auth: false,
+		},
+		handler: uploadCategorySensor,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/category/sensor`,
+		config: {
+			auth: false,
+		},
+		handler: getCategorySensor,
 		path: `${prefix}/actuator`,
 		config: {
 			auth: "jwt",
