@@ -15,7 +15,7 @@ const uploadSensor = async (request, h) => {
 		const created_at = new Date().toISOString().slice(0, 10);
 
 		const result = await pool.query(
-			`SELECT id_sensor, "name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor FROM public.sensor RETURNING *;`,
+			`INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *;`,
 			[name,unit_measurement, brand, created_at,created_at,icon,color, id_greenhouse,range_min,range_max,id_category_sensor]
 		);
 
