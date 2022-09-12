@@ -8,7 +8,9 @@ const uploadActuatorLog = async (request, h) => {
 
 	try {
 		// const created_at = new Date().toISOString();
-        const created_at = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
+		const created_at = new Date().toLocaleString("en-US", {
+			timeZone: "Asia/Jakarta",
+		});
 
 		const result = await pool.query(
 			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
@@ -49,6 +51,12 @@ const uploadActuatorLog = async (request, h) => {
 	}
 
 	return response;
+};
+
+const getActuatorLogDetail = async (request, h) => {
+	const { id } = request.params;
+	let result = "";
+	let response = "";
 };
 
 module.exports = {
