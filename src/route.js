@@ -4,12 +4,12 @@ const {
 	getGreenHouseDetail,
 	uploadGreenHouse,
 } = require("./handler/greenhouse-handler.js");
+const { uploadActuator } = require("./handler/actuator-handler.js");
+const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
 const {
 	uploadCategorySensor,
 	getCategorySensor
 } = require("./handler/category-handler.js");
-const { uploadActuator } = require("./handler/actuator-handler.js");
-const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
 
 const prefix = "/api/v1";
 
