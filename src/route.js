@@ -8,6 +8,9 @@ const {
 	uploadCategorySensor,
 	getCategorySensor
 } = require("./handler/category-handler.js");
+const { uploadActuator } = require("./handler/actuator-handler.js");
+const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
+
 const prefix = "/api/v1";
 
 const routes = [
@@ -61,6 +64,25 @@ const routes = [
 			auth: false,
 		},
 		handler: getCategorySensor,
+		path: `${prefix}/actuator`,
+		config: {
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: uploadActuator,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/actuator-log`,
+		config: {
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: uploadActuatorLog,
 	},
 ];
 
