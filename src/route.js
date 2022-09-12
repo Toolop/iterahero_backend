@@ -7,6 +7,7 @@ const {
 const {
 	uploadActuator,
 	getActuators,
+	getActuatorDetail,
 } = require("./handler/actuator-handler.js");
 const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
 const {
@@ -107,6 +108,12 @@ const routes = [
 			},
 		},
 		handler: uploadSensor,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/actuator/{id}`,
+		config: { auth: "jwt" },
+		handler: getActuatorDetail,
 	},
 ];
 
