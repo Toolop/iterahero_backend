@@ -19,7 +19,7 @@ const {
 	getCategorySensor,
 } = require("./handler/category-handler.js");
 const { uploadSensor } = require("./handler/sensor-handler.js");
-
+const { uploadNotification } = require("./handler/notification-handler.js");
 const prefix = "/api/v1";
 
 const routes = [
@@ -130,6 +130,14 @@ const routes = [
 		path: `${prefix}/actuator-log/{id}`,
 		config: { auth: "jwt" },
 		handler: getActuatorLogDetail,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/notification`,
+		config: {
+			auth: "jwt",
+		},
+		handler: uploadNotification,
 	},
 ];
 
