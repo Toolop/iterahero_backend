@@ -16,7 +16,8 @@ const {
 } = require("./handler/category-handler.js");
 const { 
 	uploadSensor,
-	getSensorByGreenHouse 
+	getSensorByGreenHouse,
+	getSensorById
 } = require("./handler/sensor-handler.js");
 
 const prefix = "/api/v1";
@@ -124,6 +125,12 @@ const routes = [
 		config: { auth: "jwt" },
 		handler: getSensorByGreenHouse,
 	},
+	{
+		method: "GET",
+		path: `${prefix}/sensor/{id}`,
+		config: {auth:"jwt"},
+		handler: getSensorById,
+	}
 	
 ];
 
