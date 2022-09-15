@@ -18,7 +18,16 @@ const {
 	uploadCategorySensor,
 	getCategorySensor,
 } = require("./handler/category-handler.js");
-const { uploadSensor } = require("./handler/sensor-handler.js");
+const { uploadNotification } = require("./handler/notification-handler.js");
+const {
+	uploadSensor,
+	getSensorByGreenHouse,
+	getSensorById,
+} = require("./handler/sensor-handler.js");
+const {
+	uploadSensorLog,
+	getSensorLogBySensor,
+} = require("./handler/sensor-log-handler.js");
 
 const prefix = "/api/v1";
 
