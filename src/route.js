@@ -17,7 +17,15 @@ const {
 	uploadCategorySensor,
 	getCategorySensor,
 } = require("./handler/category-handler.js");
-const { uploadSensor } = require("./handler/sensor-handler.js");
+const { 
+	uploadSensor,
+	getSensorByGreenHouse,
+	getSensorById
+} = require("./handler/sensor-handler.js");
+const { 
+	uploadSensorLog,
+	getSensorLogBySensor
+} = require("./handler/sensor-log-handler.js");
 
 const prefix = "/api/v1";
 
@@ -120,11 +128,34 @@ const routes = [
 	},
 	{
 		method: "GET",
-		path: `${prefix}/actuator-log/{id}`,
+		path: `${prefix}/sensor`,
+		config: { auth: "jwt" },
+		handler: getSensorByGreenHouse,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/sensor/{id}`,
+		config: {auth:"jwt"},
+		handler: getSensorById,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/sensor-log`,
+		config: {auth:"jwt"},
+		handler: uploadSensorLog,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/sensor-log`,
+		config: {auth:"jwt"},
+		handler: getSensorLogBySensor,
+	},
+  {
+    method: "GET",
+  	path: `${prefix}/actuator-log/{id}`,
 		config: { auth: "jwt" },
 		handler: getActuatorLogDetail,
 	},
-	
 ];
 
 module.exports = routes;
