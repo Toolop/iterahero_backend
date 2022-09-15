@@ -37,7 +37,6 @@ const uploadNotification = async (request, h) => {
 					type: result.rows[0].type,
 					status: result.rows[0].status,
 					id_actuator: result.rows[0].id_actuator,
-					id_receive: makeReceiver.rows[0].id_receive,
 					receive_status: "received",
 				},
 			});
