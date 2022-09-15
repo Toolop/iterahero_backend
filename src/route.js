@@ -9,10 +9,13 @@ const {
 	getActuators,
 	getActuatorDetail,
 } = require("./handler/actuator-handler.js");
-const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
+const {
+	uploadActuatorLog,
+	getActuatorLogDetail,
+} = require("./handler/actuator-log-handler.js");
 const {
 	uploadCategorySensor,
-	getCategorySensor
+	getCategorySensor,
 } = require("./handler/category-handler.js");
 const { 
 	uploadSensor,
@@ -84,12 +87,12 @@ const routes = [
 		},
 		handler: uploadActuatorLog,
 	},
-  {
-    method: "GET",
+	{
+		method: "GET",
 		path: `${prefix}/actuator`,
 		config: { auth: "jwt" },
 		handler: getActuators,
-  },
+	},
 	{
 		method: "POST",
 		path: `${prefix}/category/sensor`,
@@ -146,8 +149,13 @@ const routes = [
 		path: `${prefix}/sensor-log`,
 		config: {auth:"jwt"},
 		handler: getSensorLogBySensor,
-	}
-
+	},
+  {
+    method: "GET",
+  	path: `${prefix}/actuator-log/{id}`,
+		config: { auth: "jwt" },
+		handler: getActuatorLogDetail,
+	},
 ];
 
 module.exports = routes;
