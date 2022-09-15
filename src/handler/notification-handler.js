@@ -12,12 +12,20 @@ const uploadNotification = async (request, h) => {
 			timeZone: "Asia/Jakarta",
 		});
 
+		const actuator = await getActuator(id_actuator);
+		const id_user = (await getGreenHouse(actuator.id_greenhouse)).id_user;
+
 		const result = await pool.query(
 			`INSERT INTO public."notification" (detail, created_at, type, status, id_actuator) VALUES($1,$2,$3,$4,$5) RETURNING *`,
 			[detail, created_at, type, status, id_actuator]
 		);
 
-		if (result) {
+		const makeReceiver = await pool.query(
+			`INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
+			[id_user, result.rows[0].id_notification]
+		);
+
+		if (result && makeReceiver) {
 			response = h.response({
 				code: 201,
 				status: "Created",
@@ -29,17 +37,8 @@ const uploadNotification = async (request, h) => {
 					type: result.rows[0].type,
 					status: result.rows[0].status,
 					id_actuator: result.rows[0].id_actuator,
-					// buat di getnya
-					// actuator_name: await getActuator(result.rows[0].id_actuator).name,
-					// actuator_status_lifecycle: await getActuator(
-					// 	result.rows[0].id_actuator
-					// ).status_lifecycle,
-					// greenhouse_name: await getGreenHouse(
-					// 	await getActuator(result.rows[0].id_actuator).id_greenhouse
-					// ).name,
-					// greenhouse_location: await getGreenHouse(
-					// 	await getActuator(result.rows[0].id_actuator).id_greenhouse
-					// ).location,
+					id_receive: makeReceiver.rows[0].id_receive,
+					receive_status: "received",
 				},
 			});
 
@@ -66,6 +65,12 @@ const uploadNotification = async (request, h) => {
 	return response;
 };
 
+const getNotifications = async (request, h) => {
+	let { page, size } = request.query;
+
+	let result = "";
+	let response = "";
+};
 // const uploadReceive = async (request, h) => {
 
 // };

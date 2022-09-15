@@ -15,6 +15,7 @@ const getGreenHouse = async (id) => {
 				id: greenhouseData.id_greenhouse,
 				name: greenhouseData.name,
 				location: greenhouseData.location,
+				id_user: greenhouseData.id_user,
 			};
 		}
 	} catch (err) {
