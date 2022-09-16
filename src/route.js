@@ -9,17 +9,22 @@ const {
 	getActuators,
 	getActuatorDetail,
 } = require("./handler/actuator-handler.js");
-const { uploadActuatorLog } = require("./handler/actuator-log-handler.js");
+const {
+	uploadActuatorLog,
+	getActuatorLogs,
+	getActuatorLogDetail,
+} = require("./handler/actuator-log-handler.js");
 const {
 	uploadCategorySensor,
-	getCategorySensor
+	getCategorySensor,
 } = require("./handler/category-handler.js");
-const { 
+const { uploadNotification } = require("./handler/notification-handler.js");
+const {
 	uploadSensor,
 	getSensorByGreenHouse,
-	getSensorById
+	getSensorById,
 } = require("./handler/sensor-handler.js");
-const { 
+const {
 	uploadSensorLog,
 	getSensorLogBySensor,
 	getSensorLogDetail,
@@ -85,12 +90,12 @@ const routes = [
 		},
 		handler: uploadActuatorLog,
 	},
-  {
-    method: "GET",
+	{
+		method: "GET",
 		path: `${prefix}/actuator`,
 		config: { auth: "jwt" },
 		handler: getActuators,
-  },
+	},
 	{
 		method: "POST",
 		path: `${prefix}/category/sensor`,
@@ -133,19 +138,19 @@ const routes = [
 	{
 		method: "GET",
 		path: `${prefix}/sensor/{id}`,
-		config: {auth:"jwt"},
+		config: { auth: "jwt" },
 		handler: getSensorById,
 	},
 	{
 		method: "POST",
 		path: `${prefix}/sensor-log`,
-		config: {auth:"jwt"},
+		config: { auth: "jwt" },
 		handler: uploadSensorLog,
 	},
 	{
 		method: "GET",
 		path: `${prefix}/sensor-log`,
-		config: {auth:"jwt"},
+		config: { auth: "jwt" },
 		handler: getSensorLogBySensor,
 	},
 	{
@@ -154,7 +159,26 @@ const routes = [
 		config: {auth:"jwt"},
 		handler: getSensorLogDetail,
 	}
-
+	{
+		method: "GET",
+		path: `${prefix}/actuator-log`,
+		config: { auth: "jwt" },
+		handler: getActuatorLogs,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/actuator-log/{id}`,
+		config: { auth: "jwt" },
+		handler: getActuatorLogDetail,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/notification`,
+		config: {
+			auth: "jwt",
+		},
+		handler: uploadNotification,
+	},
 ];
 
 module.exports = routes;
