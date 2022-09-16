@@ -10,6 +10,7 @@ const {
 	uploadActuator,
 	getActuators,
 	getActuatorDetail,
+	updateActuator,
 } = require("./handler/actuator-handler.js");
 const {
 	uploadActuatorLog,
@@ -222,6 +223,18 @@ const routes = [
 		},
 		handler: deleteSensor,
 	},
+	{
+		method: "PUT",
+		path: `${prefix}/actuator/{id}`,
+		config: {
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: updateActuator,
+	},
+
 ];
 
 module.exports = routes;
