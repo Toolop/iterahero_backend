@@ -18,8 +18,15 @@ const uploadImage = (folderName, image) => new Promise((resolve, reject) => {
   streamifier.createReadStream(image).pipe(uploadStream);
 });
 
+const pathImage = async (old_image) => {
+  const pathNames = old_image.split('/');
+  const publicId = `${pathNames[pathNames.length - 2]}/${pathNames[pathNames.length - 1]}`.split('.')[0];
+
+  return (publicId);
+};
+
 const deleteImage = async (publicId) => {
   cloudinary.uploader.destroy(publicId);
 };
 
-module.exports = { uploadImage, deleteImage };
+module.exports = { uploadImage, deleteImage,pathImage };

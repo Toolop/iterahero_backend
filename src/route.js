@@ -3,6 +3,8 @@ const {
 	getGreenHouses,
 	getGreenHouseDetail,
 	uploadGreenHouse,
+	updateGreenhouse,
+	deleteGreenhouse
 } = require("./handler/greenhouse-handler.js");
 const {
 	uploadActuator,
@@ -23,12 +25,15 @@ const {
 	uploadSensor,
 	getSensorByGreenHouse,
 	getSensorById,
+	updateSensor,
+	deleteSensor,
 } = require("./handler/sensor-handler.js");
 const {
 	uploadSensorLog,
 	getSensorLogBySensor,
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
+const { handler } = require("@hapi/hapi/lib/cors.js");
 
 const prefix = "/api/v1";
 
@@ -178,6 +183,44 @@ const routes = [
 			auth: "jwt",
 		},
 		handler: uploadNotification,
+	},
+	{
+		method: "PUT",
+		path : `${prefix}/greenhouse/{id}`,
+		config:{
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: updateGreenhouse,
+	},
+	{
+		method: "DELETE",
+		path : `${prefix}/greenhouse/{id}`,
+		config:{
+			auth: "jwt",
+		},
+		handler: deleteGreenhouse,
+	},
+	{
+		method: "PUT",
+		path : `${prefix}/sensor/{id}`,
+		config:{
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: updateSensor,
+	},
+	{
+		method: "DELETE",
+		path : `${prefix}/sensor/{id}`,
+		config:{
+			auth: "jwt",
+		},
+		handler: deleteSensor,
 	},
 ];
 

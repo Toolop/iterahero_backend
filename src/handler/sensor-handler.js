@@ -1,18 +1,14 @@
 const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const {getSensorCategory} = require("../utils/category-utils");
+const {isSensorExist} = require("../utils/sensor-utils");
 
 const uploadSensor = async (request, h) => {
-	const { name,unit_measurement, brand,color, id_greenhouse,range_min,range_max,id_category_sensor} = request.payload;
-
-	let { icon } = request.payload;
+	const { name,unit_measurement, brand,color,icon, id_greenhouse,range_min,range_max,id_category_sensor} = request.payload;
 
 	let response = "";
 
 	try {
-		const uploadIconPayload = await uploadImage("icon_sensor", icon);
-		icon = uploadIconPayload.url;
-
 		const created_at = new Date().toISOString().slice(0, 10);
 
 		const result = await pool.query(
@@ -71,6 +67,11 @@ const getSensorByGreenHouse = async (request, h) => {
 	try {
 	  	page = page || 1;
 	  	size = size || 10;
+
+		const totalRows = await pool.query('SELECT * FROM public."sensor"');
+
+		totalPage = Math.ceil(totalRows.rowCount / size)
+
 		if(!by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" ORDER BY created_at ASC OFFSET $1 LIMIT $2',
@@ -99,6 +100,7 @@ const getSensorByGreenHouse = async (request, h) => {
 				created_at: sensor.created_at,
 				id_greenhouse: sensor.id_greenhouse,
 			}))),
+			totalpage : totalPage,
 	  	});
   
 	  response.code(200);
@@ -173,8 +175,124 @@ const getSensorById = async (request,h) =>{
 	return response;
 };
 
+const updateSensor = async (request, h) => {
+	const { id } = request.params;
+	const {
+		name,unit_measurement, brand,color,icon,range_min,range_max,id_category_sensor
+	} = request.payload;
+	let result = '';
+	let response = '';
+	
+	try {
+	  if (await isSensorExist(id)) {
+
+		const updated_at = new Date().toISOString().slice(0, 10);
+		  	result = await pool.query(
+			
+			'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9 WHERE id_sensor = $10',
+			[
+				name,unit_measurement, brand, updated_at, icon, color,range_min,range_max,id_category_sensor,id
+			],
+		);
+
+		if (result) {
+		  	response = h.response({
+				code: 200,
+				status: 'OK',
+				message: 'Sensor has been edited successfully',
+		  	});
+  
+		  	response.code(200);
+		
+			} else {
+		  	response = h.response({
+				code: 500,
+				status: 'Internal Server Error',
+				message: 'Sensor cannot be edited',
+		  	});
+  
+		  	response.code(500);
+			}
+	  	} else {
+			response = h.response({
+		  		code: 404,
+		  		status: 'Not Found',
+		  	message: 'Sensor is not found',
+			});
+  
+			response.code(404);
+	  	}
+
+	} catch (err) {
+	  	response = h.response({
+			code: 400,
+			status: 'Bad Request',
+			message: 'error',
+	  	});
+  
+	  	response.code(400);
+  
+		  console.log(err);
+	}
+  
+	return response;
+};
+
+const deleteSensor = async (request, h) => {
+	const { id } = request.params;
+	let result = '';
+	let response = '';
+  
+	try {
+	  	if (await isSensorExist(id)) {
+			result = await pool.query(
+				'DELETE FROM public."sensor" WHERE id_sensor=$1',
+				[id],
+			);
+  
+			if (result) {
+				response = h.response({
+					code: 200,
+					status: 'OK',
+					message: 'Sensor has been deleted',
+			});
+  
+		  	response.code(200);
+
+			} else {
+		  		response = h.response({
+					code: 500,
+					status: 'Internal Server Error',
+					message: 'Sensor cannot be deleted',
+		  	});
+  
+		  	response.code(500);
+			}
+
+	  	} else {
+			response = h.response({
+		  		code: 404,
+		  		status: 'Not Found',
+		  		message: 'Sensor is not found',
+			});
+			response.code(404);
+	  	}
+	} catch (err) {
+		response = h.response({
+			code: 400,
+			status: 'Bad Request',
+			message: 'error',
+	  	});
+  
+		response.code(400);
+		console.log(err);
+	}
+  
+	return response;
+  };
+
 
 
 module.exports = {
-	uploadSensor,getSensorByGreenHouse,getSensorById
+	uploadSensor,getSensorByGreenHouse,getSensorById,updateSensor,deleteSensor
 };

@@ -70,6 +70,10 @@ const getActuators = async (request, h) => {
 		size = size || 10;
 		const offset = (page - 1) * size;
 
+		const totalRows = await pool.query('SELECT * FROM public."sensor"');
+
+		let totalPage = Math.ceil(totalRows.rowCount / size)
+
 		if (!by_greenhouse_id) {
 			result = await pool.query(
 				`SELECT * FROM public."actuator" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
@@ -99,6 +103,7 @@ const getActuators = async (request, h) => {
 					id_greenhouse: actuator.id_greenhouse,
 				}))
 			),
+			totalPage : totalPage
 		});
 	} catch (err) {
 		response = h.response({
