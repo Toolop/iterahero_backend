@@ -22,5 +22,28 @@ const getNameSensorByID = async (id) => {
 
   return sensor;
 };
+const isSensorExist = async (id) =>{
+  let isExist = [];
 
-module.exports = { getNameSensorByID };
+  try{
+    const result = await pool.query(
+      'SELECT * FROM public."sensor" WHERE id_sensor = $1',
+      [id],
+    );
+
+    if (result.rows[0]){
+      isExist = true;
+    }
+    else{
+      isExist = false;
+    }
+
+  }
+  catch(err){
+    console.log(err);
+  }
+
+  return isExist;
+}
+
+module.exports = { getNameSensorByID,isSensorExist };

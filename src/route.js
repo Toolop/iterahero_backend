@@ -25,6 +25,7 @@ const {
 	uploadSensor,
 	getSensorByGreenHouse,
 	getSensorById,
+	updateSensor,
 } = require("./handler/sensor-handler.js");
 const {
 	uploadSensorLog,
@@ -200,6 +201,17 @@ const routes = [
 			auth: "jwt",
 		},
 		handler: deleteGreenhouse,
+	},
+	{
+		method: "PUT",
+		path : `${prefix}/sensor/{id}`,
+		config:{
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: updateSensor,
 	}
 ];
 
