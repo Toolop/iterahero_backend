@@ -25,4 +25,28 @@ const getActuator = async (id) => {
 	return actuator;
 };
 
-module.exports = { getActuator };
+const isActuatorExist = async (id) =>{
+	let isExist = [];
+  
+	try{
+	  const result = await pool.query(
+		'SELECT * FROM public."actuator" WHERE id_actuator = $1',
+		[id],
+	  );
+  
+	  if (result.rows[0]){
+		isExist = true;
+	  }
+	  else{
+		isExist = false;
+	  }
+  
+	}
+	catch(err){
+	  console.log(err);
+	}
+  
+	return isExist;
+}
+
+module.exports = { getActuator,isActuatorExist };

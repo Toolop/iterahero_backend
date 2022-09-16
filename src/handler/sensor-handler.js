@@ -289,7 +289,7 @@ const deleteSensor = async (request, h) => {
 	}
   
 	return response;
-  };
+};
 
 
 
