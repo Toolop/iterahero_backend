@@ -11,6 +11,7 @@ const {
 	getActuators,
 	getActuatorDetail,
 	updateActuator,
+	deleteActuator,
 } = require("./handler/actuator-handler.js");
 const {
 	uploadActuatorLog,
@@ -233,6 +234,12 @@ const routes = [
 			},
 		},
 		handler: updateActuator,
+	},
+	{
+		method: "DELETE",
+		path: `${prefix}/actuator/{id}`,
+		config: { auth: "jwt" },
+		handler: deleteActuator,
 	},
 
 ];
