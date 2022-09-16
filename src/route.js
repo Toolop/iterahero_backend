@@ -4,7 +4,7 @@ const {
 	getGreenHouseDetail,
 	uploadGreenHouse,
 	updateGreenhouse,
-	deleteGreenhouse
+	deleteGreenhouse,
 } = require("./handler/greenhouse-handler.js");
 const {
 	uploadActuator,
@@ -22,7 +22,10 @@ const {
 	uploadCategorySensor,
 	getCategorySensor,
 } = require("./handler/category-handler.js");
-const { uploadNotification } = require("./handler/notification-handler.js");
+const {
+	uploadNotification,
+	getNotifications,
+} = require("./handler/notification-handler.js");
 const {
 	uploadSensor,
 	getSensorByGreenHouse,
@@ -163,7 +166,7 @@ const routes = [
 	{
 		method: "GET",
 		path: `${prefix}/sensor-log/{id}`,
-		config: {auth:"jwt"},
+		config: { auth: "jwt" },
 		handler: getSensorLogDetail,
 	},
 	{
@@ -188,8 +191,8 @@ const routes = [
 	},
 	{
 		method: "PUT",
-		path : `${prefix}/greenhouse/{id}`,
-		config:{
+		path: `${prefix}/greenhouse/{id}`,
+		config: {
 			auth: "jwt",
 			payload: {
 				multipart: true,
@@ -199,16 +202,16 @@ const routes = [
 	},
 	{
 		method: "DELETE",
-		path : `${prefix}/greenhouse/{id}`,
-		config:{
+		path: `${prefix}/greenhouse/{id}`,
+		config: {
 			auth: "jwt",
 		},
 		handler: deleteGreenhouse,
 	},
 	{
 		method: "PUT",
-		path : `${prefix}/sensor/{id}`,
-		config:{
+		path: `${prefix}/sensor/{id}`,
+		config: {
 			auth: "jwt",
 			payload: {
 				multipart: true,
@@ -218,8 +221,8 @@ const routes = [
 	},
 	{
 		method: "DELETE",
-		path : `${prefix}/sensor/{id}`,
-		config:{
+		path: `${prefix}/sensor/{id}`,
+		config: {
 			auth: "jwt",
 		},
 		handler: deleteSensor,
@@ -241,7 +244,12 @@ const routes = [
 		config: { auth: "jwt" },
 		handler: deleteActuator,
 	},
-
+	{
+		method: "GET",
+		path: `${prefix}/notification`,
+		config: { auth: "jwt" },
+		handler: getNotifications,
+	},
 ];
 
 module.exports = routes;
