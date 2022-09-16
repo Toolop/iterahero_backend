@@ -2,16 +2,12 @@ const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 
 const uploadActuator = async (request, h) => {
-	const { name, color, id_greenhouse } = request.payload;
-
-	let { icon } = request.payload;
+	const { name, color, id_greenhouse,icon } = request.payload;
 
 	let response = "";
 
 	try {
 		const status_lifecycle = 0;
-		const uploadIconPayload = await uploadImage("icon_files", icon);
-		icon = uploadIconPayload.url;
 
 		const created_at = new Date().toISOString().slice(0, 10);
 
