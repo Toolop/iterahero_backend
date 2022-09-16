@@ -26,6 +26,7 @@ const {
 	getSensorByGreenHouse,
 	getSensorById,
 	updateSensor,
+	deleteSensor,
 } = require("./handler/sensor-handler.js");
 const {
 	uploadSensorLog,
@@ -195,7 +196,7 @@ const routes = [
 		handler: updateGreenhouse,
 	},
 	{
-		method: "Delete",
+		method: "DELETE",
 		path : `${prefix}/greenhouse/{id}`,
 		config:{
 			auth: "jwt",
@@ -212,7 +213,15 @@ const routes = [
 			},
 		},
 		handler: updateSensor,
-	}
+	},
+	{
+		method: "DELETE",
+		path : `${prefix}/sensor/{id}`,
+		config:{
+			auth: "jwt",
+		},
+		handler: deleteSensor,
+	},
 ];
 
 module.exports = routes;
