@@ -70,11 +70,7 @@ const getNotifications = async (request, h) => {
 	let result = "";
 	let response = "";
 };
-// const uploadReceive = async (request, h) => {
-
-// };
 
 module.exports = {
 	uploadNotification,
-	// uploadReceive,
 };
