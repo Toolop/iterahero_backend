@@ -27,6 +27,7 @@ const {
 const {
 	uploadSensorLog,
 	getSensorLogBySensor,
+	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
 
 const prefix = "/api/v1";
@@ -152,6 +153,12 @@ const routes = [
 		config: { auth: "jwt" },
 		handler: getSensorLogBySensor,
 	},
+	{
+		method: "GET",
+		path: `${prefix}/sensor-log/{id}`,
+		config: {auth:"jwt"},
+		handler: getSensorLogDetail,
+	}
 	{
 		method: "GET",
 		path: `${prefix}/actuator-log`,
