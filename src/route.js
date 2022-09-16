@@ -3,6 +3,7 @@ const {
 	getGreenHouses,
 	getGreenHouseDetail,
 	uploadGreenHouse,
+	updateGreenhouse,
 } = require("./handler/greenhouse-handler.js");
 const {
 	uploadActuator,
@@ -29,6 +30,7 @@ const {
 	getSensorLogBySensor,
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
+const { handler } = require("@hapi/hapi/lib/cors.js");
 
 const prefix = "/api/v1";
 
@@ -179,6 +181,17 @@ const routes = [
 		},
 		handler: uploadNotification,
 	},
+	{
+		method: "PUT",
+		path : `${prefix}/greenhouse/{id}`,
+		config:{
+			auth: "jwt",
+			payload: {
+				multipart: true,
+			},
+		},
+		handler: updateGreenhouse,
+	}
 ];
 
 module.exports = routes;
