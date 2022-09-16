@@ -4,6 +4,7 @@ const {
 	getGreenHouseDetail,
 	uploadGreenHouse,
 	updateGreenhouse,
+	deleteGreenhouse
 } = require("./handler/greenhouse-handler.js");
 const {
 	uploadActuator,
@@ -191,6 +192,14 @@ const routes = [
 			},
 		},
 		handler: updateGreenhouse,
+	},
+	{
+		method: "Delete",
+		path : `${prefix}/greenhouse/{id}`,
+		config:{
+			auth: "jwt",
+		},
+		handler: deleteGreenhouse,
 	}
 ];
 
