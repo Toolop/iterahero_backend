@@ -158,7 +158,7 @@ const routes = [
 		path: `${prefix}/sensor-log/{id}`,
 		config: {auth:"jwt"},
 		handler: getSensorLogDetail,
-	}
+	},
 	{
 		method: "GET",
 		path: `${prefix}/actuator-log`,
