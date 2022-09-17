@@ -38,6 +38,9 @@ const {
 	getSensorLogBySensor,
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
+const {
+	getCountDashboard
+} = require("./handler/dashboard-count-handler");
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
 const prefix = "/api/v1";
@@ -249,6 +252,12 @@ const routes = [
 		path: `${prefix}/notification`,
 		config: { auth: "jwt" },
 		handler: getNotifications,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/dashboard`,
+		config: { auth: "jwt" },
+		handler: getCountDashboard,
 	},
 ];
 
