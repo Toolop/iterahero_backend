@@ -83,6 +83,7 @@ const getSensorLogBySensor = async (request, h) => {
                 created_at : sensor.created_at,
                 status: sensor.status,
 			}))),
+
 	  	});
   
 	  response.code(200);
