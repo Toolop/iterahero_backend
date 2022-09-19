@@ -130,7 +130,9 @@ const uploadGreenHouse = async (request, h) => {
 		const uploadImagePayload = await uploadImage("greenhouse_images", image);
 		image = uploadImagePayload.url;
 
-		const created_at = new Date().toISOString().slice(0, 10);
+		const created_at = new Date().toLocaleString("en-US", {
+			timeZone: "Asia/Jakarta",
+		});
 
 		const result = await pool.query(
 			`INSERT INTO public."greenhouse" (name, image, location, created_at, id_user) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
@@ -185,7 +187,9 @@ const updateGreenhouse = async (request, h) => {
 
 	try {
 		if (await isGreenhouseExist(id)) {
-			const updated_at = new Date().toISOString().slice(0, 10);
+			const updated_at = new Date().toLocaleString("en-US", {
+				timeZone: "Asia/Jakarta",
+			});
 
 			if (image) {
 				deletimageGreenhouse(id);
