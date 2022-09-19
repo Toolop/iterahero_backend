@@ -1,16 +1,18 @@
 const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
-const {isActuatorExist} = require("../utils/actuator-util");
+const { isActuatorExist } = require("../utils/actuator-util");
 
 const uploadActuator = async (request, h) => {
-	const { name, color, id_greenhouse,icon } = request.payload;
+	const { name, color, id_greenhouse, icon } = request.payload;
 
 	let response = "";
 
 	try {
 		const status_lifecycle = 0;
 
-		const created_at = new Date().toISOString().slice(0, 10);
+		const created_at = new Date().toLocaleString("en-US", {
+			timeZone: "Asia/Jakarta",
+		});
 
 		const result = await pool.query(
 			`INSERT INTO public."actuator" (name, status_lifecycle, color, icon, created_at, id_greenhouse) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
@@ -69,7 +71,7 @@ const getActuators = async (request, h) => {
 
 		const totalRows = await pool.query('SELECT * FROM public."sensor"');
 
-		let totalPage = Math.ceil(totalRows.rowCount / size)
+		let totalPage = Math.ceil(totalRows.rowCount / size);
 
 		if (!by_greenhouse_id) {
 			result = await pool.query(
@@ -100,7 +102,7 @@ const getActuators = async (request, h) => {
 					id_greenhouse: actuator.id_greenhouse,
 				}))
 			),
-			totalPage : totalPage
+			totalPage: totalPage,
 		});
 	} catch (err) {
 		response = h.response({
@@ -171,117 +173,110 @@ const getActuatorDetail = async (request, h) => {
 
 const updateActuator = async (request, h) => {
 	const { id } = request.params;
-	const {
-		name, color,icon
-	} = request.payload;
-	let result = '';
-	let response = '';
-	
+	const { name, color, icon } = request.payload;
+	let result = "";
+	let response = "";
+
 	try {
-	  if (await isActuatorExist(id)) {
-
-		const updated_at = new Date().toISOString().slice(0, 10);
-		  	result = await pool.query(
-			
-			'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
-			[
-				name,updated_at,icon,color,id
-			],
-		);
-
-		if (result) {
-		  	response = h.response({
-				code: 200,
-				status: 'OK',
-				message: 'Actuator has been edited successfully',
-		  	});
-  
-		  	response.code(200);
-		
-			} else {
-		  	response = h.response({
-				code: 500,
-				status: 'Internal Server Error',
-				message: 'Actuator cannot be edited',
-		  	});
-  
-		  	response.code(500);
-			}
-	  	} else {
-			response = h.response({
-		  		code: 404,
-		  		status: 'Not Found',
-		  	message: 'Actuator is not found',
+		if (await isActuatorExist(id)) {
+			const updated_at = new Date().toLocaleString("en-US", {
+				timeZone: "Asia/Jakarta",
 			});
-  
-			response.code(404);
-	  	}
 
+			result = await pool.query(
+				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
+				[name, updated_at, icon, color, id]
+			);
+
+			if (result) {
+				response = h.response({
+					code: 200,
+					status: "OK",
+					message: "Actuator has been edited successfully",
+				});
+
+				response.code(200);
+			} else {
+				response = h.response({
+					code: 500,
+					status: "Internal Server Error",
+					message: "Actuator cannot be edited",
+				});
+
+				response.code(500);
+			}
+		} else {
+			response = h.response({
+				code: 404,
+				status: "Not Found",
+				message: "Actuator is not found",
+			});
+
+			response.code(404);
+		}
 	} catch (err) {
-	  	response = h.response({
+		response = h.response({
 			code: 400,
-			status: 'Bad Request',
-			message: 'error',
-	  	});
-  
-	  	response.code(400);
-  
-		  console.log(err);
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+
+		console.log(err);
 	}
-  
+
 	return response;
 };
 
 const deleteActuator = async (request, h) => {
 	const { id } = request.params;
-	let result = '';
-	let response = '';
-  
+	let result = "";
+	let response = "";
+
 	try {
-	  	if (await isActuatorExist(id)) {
+		if (await isActuatorExist(id)) {
 			result = await pool.query(
 				'DELETE FROM public."actuator" WHERE id_actuator=$1',
-				[id],
+				[id]
 			);
-  
+
 			if (result) {
 				response = h.response({
 					code: 200,
-					status: 'OK',
-					message: 'Actuator has been deleted',
-			});
-  
-		  	response.code(200);
+					status: "OK",
+					message: "Actuator has been deleted",
+				});
 
+				response.code(200);
 			} else {
-		  		response = h.response({
+				response = h.response({
 					code: 500,
-					status: 'Internal Server Error',
-					message: 'Actuator cannot be deleted',
-		  	});
-  
-		  	response.code(500);
-			}
+					status: "Internal Server Error",
+					message: "Actuator cannot be deleted",
+				});
 
-	  	} else {
+				response.code(500);
+			}
+		} else {
 			response = h.response({
-		  		code: 404,
-		  		status: 'Not Found',
-		  		message: 'Actuator is not found',
+				code: 404,
+				status: "Not Found",
+				message: "Actuator is not found",
 			});
 			response.code(404);
-	  	}
+		}
 	} catch (err) {
 		response = h.response({
 			code: 400,
-			status: 'Bad Request',
-			message: 'error',
-	  	});
-  
+			status: "Bad Request",
+			message: "error",
+		});
+
 		response.code(400);
 		console.log(err);
 	}
-  
+
 	return response;
 };
 
@@ -290,5 +285,5 @@ module.exports = {
 	getActuators,
 	getActuatorDetail,
 	updateActuator,
-	deleteActuator
+	deleteActuator,
 };
