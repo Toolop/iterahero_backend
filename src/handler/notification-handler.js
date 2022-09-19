@@ -1,6 +1,7 @@
 const pool = require("../config/db");
 const { getActuator } = require("../utils/actuator-util");
 const { getGreenHouse } = require("../utils/greenhouse-util");
+const { isNotificationExist } = require("../utils/notification-util");
 
 const uploadNotification = async (request, h) => {
 	const { detail, type, status, id_actuator } = request.payload;
@@ -123,7 +124,53 @@ const getNotifications = async (request, h) => {
 	return response;
 };
 
+const deleteNotification = async (request, h) => {
+	const { id } = request.params;
+	let result = "";
+	let response = "";
+
+	try {
+		if (await isNotificationExist) {
+			result = await pool.query(
+				`DELETE FROM public."receive" WHERE id_notification = $1`,
+				[id]
+			);
+
+			if (result) {
+				response = h.response({
+					code: 200,
+					status: "OK",
+					message: "Notification successfully deleted",
+				});
+
+				response.code(200);
+			} else {
+				response = h.response({
+					code: 500,
+					status: "Internal Server Error",
+					message: "Notification failed to delete",
+				});
+
+				response.code(500);
+			}
+		}
+	} catch (err) {
+		response = h.response({
+			code: 400,
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+
+		console.log(err);
+	}
+
+	return response;
+};
+
 module.exports = {
 	uploadNotification,
 	getNotifications,
+	deleteNotification
 };
