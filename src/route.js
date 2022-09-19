@@ -25,6 +25,7 @@ const {
 const {
 	uploadNotification,
 	getNotifications,
+	deleteNotification
 } = require("./handler/notification-handler.js");
 const {
 	uploadSensor,
@@ -259,6 +260,12 @@ const routes = [
 		config: { auth: "jwt" },
 		handler: getCountDashboard,
 	},
+	{
+		method: "DELETE",
+		path: `${prefix}/notification/{id}`,
+		config: { auth: "jwt" },
+		handler: deleteNotification,
+	}
 ];
 
 module.exports = routes;
