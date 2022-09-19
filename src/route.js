@@ -25,7 +25,8 @@ const {
 const {
 	uploadNotification,
 	getNotifications,
-	deleteNotification
+	deleteNotification,
+	getNotificationDetail,
 } = require("./handler/notification-handler.js");
 const {
 	uploadSensor,
@@ -39,9 +40,7 @@ const {
 	getSensorLogBySensor,
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
-const {
-	getCountDashboard
-} = require("./handler/dashboard-count-handler");
+const { getCountDashboard } = require("./handler/dashboard-count-handler");
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
 const prefix = "/api/v1";
@@ -265,7 +264,13 @@ const routes = [
 		path: `${prefix}/notification/{id}`,
 		config: { auth: "jwt" },
 		handler: deleteNotification,
-	}
+	},
+	{
+		method: "GET",
+		path: `${prefix}/notification/{id}`,
+		config: { auth: "jwt" },
+		handler: getNotificationDetail,
+	},
 ];
 
 module.exports = routes;
