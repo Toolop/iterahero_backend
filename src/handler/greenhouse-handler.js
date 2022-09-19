@@ -1,6 +1,9 @@
 const pool = require("../config/db");
 const { uploadImage } = require("../utils/cloudinary");
-const {isGreenhouseExist,deletimageGreenhouse} = require("../utils/greenhouse-util")
+const {
+	isGreenhouseExist,
+	deletimageGreenhouse,
+} = require("../utils/greenhouse-util");
 const { getUser } = require("../utils/user-util");
 
 const getGreenHouses = async (request, h) => {
@@ -175,138 +178,124 @@ const uploadGreenHouse = async (request, h) => {
 
 const updateGreenhouse = async (request, h) => {
 	const { id } = request.params;
-	const {
-		name, 
-		location,
-	} = request.payload;
+	const { name, location } = request.payload;
 	let { image } = request.payload;
-	let result = '';
-	let response = '';
-	
+	let result = "";
+	let response = "";
+
 	try {
-	  if (await isGreenhouseExist(id)) {
-		const updated_at = new Date().toISOString().slice(0, 10);
+		if (await isGreenhouseExist(id)) {
+			const updated_at = new Date().toISOString().slice(0, 10);
 
-		if (image) {
-			deletimageGreenhouse(id);
-		  	const uploadImageResult = await uploadImage('greenhouse_images', image);
-		  	image = uploadImageResult.url;
+			if (image) {
+				deletimageGreenhouse(id);
+				const uploadImageResult = await uploadImage("greenhouse_images", image);
+				image = uploadImageResult.url;
 
-
-		  	result = await pool.query(
-				'UPDATE public."greenhouse" SET name=$1, image=$2, "location"=$3, updated_at=$4 WHERE id_greenhouse=$5',
-				[
-					name,image,location,updated_at,id
-				],
-		  	);
-
-		} else {
-		  	result = await pool.query(
-				'UPDATE public."greenhouse" SET name=$1, "location"=$2, updated_at=$3 WHERE id_greenhouse =$4',
-				[
-					name,location,updated_at,id
-				],
-		  	);
-		}
-  
-		if (result) {
-		  	response = h.response({
-				code: 200,
-				status: 'OK',
-				message: 'Greenhouse has been edited successfully',
-		  	});
-  
-		  	response.code(200);
-		
+				result = await pool.query(
+					'UPDATE public."greenhouse" SET name=$1, image=$2, "location"=$3, updated_at=$4 WHERE id_greenhouse=$5',
+					[name, image, location, updated_at, id]
+				);
 			} else {
-		  	response = h.response({
-				code: 500,
-				status: 'Internal Server Error',
-				message: 'Greenhouse cannot be edited',
-		  	});
-  
-		  	response.code(500);
+				result = await pool.query(
+					'UPDATE public."greenhouse" SET name=$1, "location"=$2, updated_at=$3 WHERE id_greenhouse =$4',
+					[name, location, updated_at, id]
+				);
 			}
-	  	} else {
-			response = h.response({
-		  		code: 404,
-		  		status: 'Not Found',
-		  	message: 'Greenhouse is not found',
-			});
-  
-			response.code(404);
-	  	}
 
+			if (result) {
+				response = h.response({
+					code: 200,
+					status: "OK",
+					message: "Greenhouse has been edited successfully",
+				});
+
+				response.code(200);
+			} else {
+				response = h.response({
+					code: 500,
+					status: "Internal Server Error",
+					message: "Greenhouse cannot be edited",
+				});
+
+				response.code(500);
+			}
+		} else {
+			response = h.response({
+				code: 404,
+				status: "Not Found",
+				message: "Greenhouse is not found",
+			});
+
+			response.code(404);
+		}
 	} catch (err) {
-	  	response = h.response({
+		response = h.response({
 			code: 400,
-			status: 'Bad Request',
-			message: 'error',
-	  	});
-  
-	  	response.code(400);
-  
-		  console.log(err);
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+
+		console.log(err);
 	}
-  
+
 	return response;
 };
 
 const deleteGreenhouse = async (request, h) => {
 	const { id } = request.params;
-	let result = '';
-	let response = '';
-  
+	let result = "";
+	let response = "";
+
 	try {
-	  	if (await isGreenhouseExist(id)) {
-		
+		if (await isGreenhouseExist(id)) {
 			await deletimageGreenhouse(id);
 
 			result = await pool.query(
 				'DELETE FROM public."greenhouse" WHERE id_greenhouse=$1',
-				[id],
+				[id]
 			);
-  
+
 			if (result) {
 				response = h.response({
 					code: 200,
-					status: 'OK',
-					message: 'Greenhouse has been deleted',
-			});
-  
-		  	response.code(200);
+					status: "OK",
+					message: "Greenhouse has been deleted",
+				});
 
+				response.code(200);
 			} else {
-		  		response = h.response({
+				response = h.response({
 					code: 500,
-					status: 'Internal Server Error',
-					message: 'Greenhouse cannot be deleted',
-		  	});
-  
-		  	response.code(500);
-			}
+					status: "Internal Server Error",
+					message: "Greenhouse cannot be deleted",
+				});
 
-	  	} else {
+				response.code(500);
+			}
+		} else {
 			response = h.response({
-		  		code: 404,
-		  		status: 'Not Found',
-		  		message: 'Greenhouse is not found',
+				code: 404,
+				status: "Not Found",
+				message: "Greenhouse is not found",
 			});
 			response.code(404);
-	  	}
+		}
 	} catch (err) {
 		response = h.response({
 			code: 400,
-			status: 'Bad Request',
-			message: 'error',
-	  	});
-  
+			status: "Bad Request",
+			message: "error",
+		});
+
 		response.code(400);
 		console.log(err);
 	}
-  
+
 	return response;
-  };
+};
 
 module.exports = {
 	getGreenHouses,
