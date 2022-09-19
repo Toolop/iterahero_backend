@@ -94,7 +94,7 @@ const getSensorByGreenHouse = async (request, h) => {
 
 		const totalRows = await pool.query('SELECT * FROM public."sensor"');
 
-		totalPage = Math.ceil(totalRows.rowCount / size);
+		let totalPage = Math.ceil(totalRows.rowCount / size);
 
 		if (!by_id_greenhouse) {
 			result = await pool.query(

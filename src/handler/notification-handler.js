@@ -79,9 +79,13 @@ const getNotifications = async (request, h) => {
 		size = size || 10;
 		const offset = (page - 1) * size;
 
+		const totalRows = await pool.query('SELECT * FROM public."notification"');
+
+		let totalPage = Math.ceil(totalRows.rowCount / size);
+
 		if (!by_user_id || by_user_id == 0) {
 			result = await pool.query(
-				`SELECT * FROM public."notification" ORDERED BY created_at ASC OFFSET $1 LIMIT $2`,
+				`SELECT * FROM public."notification" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
 		}
@@ -106,6 +110,7 @@ const getNotifications = async (request, h) => {
 					id_actuator: row.id_actuator,
 				}))
 			),
+			totalpage: totalPage,
 		});
 
 		response.code(200);
