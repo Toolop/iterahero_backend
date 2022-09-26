@@ -21,7 +21,7 @@ const init = async () =>{
 
     server.auth.strategy('jwt', 'jwt',
     { key: process.env.JWT_SECRET, // Never Share your secret key
-      expiresIn: '8d',
+      expiresIn: '1h',
       validate:validate
     });
 
