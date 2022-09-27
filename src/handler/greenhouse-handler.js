@@ -127,6 +127,7 @@ const uploadGreenHouse = async (request, h) => {
 	let response = "";
 
 	try {
+		console.log(image);
 		if (image){
 			const uploadImagePayload = await uploadImage("greenhouse_images", image);
 			image = uploadImagePayload.url;
