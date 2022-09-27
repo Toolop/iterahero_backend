@@ -120,14 +120,13 @@ const getGreenHouseDetail = async (request, h) => {
 
 const uploadGreenHouse = async (request, h) => {
 	const { name, location } = request.payload;
-	let id_user = 3;
+	let id_user = request.auth.credentials;
 
 	let { image } = request.payload;
 
 	let response = "";
 
 	try {
-		console.log(image);
 		if (image){
 			const uploadImagePayload = await uploadImage("greenhouse_images", image);
 			image = uploadImagePayload.url;
