@@ -120,7 +120,7 @@ const getGreenHouseDetail = async (request, h) => {
 
 const uploadGreenHouse = async (request, h) => {
 	const { name, location } = request.payload;
-	const { id_user } = 3;
+	const id_user = 3;
 
 	let { image } = request.payload;
 
