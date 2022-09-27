@@ -7,7 +7,7 @@ const {validate} = require('./utils/jwt-utils');
 const init = async () =>{
     dotenv.config();
 
-    const server = Hapi.server({
+    const server = await Hapi.server({
         port: process.env.PORT || 3001,
         host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
         routes: {
@@ -21,7 +21,7 @@ const init = async () =>{
 
     server.auth.strategy('jwt', 'jwt',
     { key: process.env.JWT_SECRET, // Never Share your secret key
-      expiresIn: '1h',
+      expiresIn: '8h',
       validate:validate
     });
 
