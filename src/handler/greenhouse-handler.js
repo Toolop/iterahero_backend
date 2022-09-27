@@ -120,7 +120,7 @@ const getGreenHouseDetail = async (request, h) => {
 
 const uploadGreenHouse = async (request, h) => {
 	const { name, location } = request.payload;
-	const { id_user } = request.auth.credentials;
+	const { id_user } = 3;
 
 	let { image } = request.payload;
 
@@ -131,7 +131,7 @@ const uploadGreenHouse = async (request, h) => {
 			const uploadImagePayload = await uploadImage("greenhouse_images", image);
 			image = uploadImagePayload.url;
 		}
-		
+
 		const created_at = new Date().toLocaleString("en-US", {
 			timeZone: "Asia/Jakarta",
 		});
