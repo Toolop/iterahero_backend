@@ -74,7 +74,7 @@ const routes = [
 		method: "POST",
 		path: `${prefix}/greenhouse`,
 		config: {
-			auth: false,
+			auth: "jwt",
 			payload: {
 				multipart: true,
 			},
