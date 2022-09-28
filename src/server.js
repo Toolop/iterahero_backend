@@ -28,6 +28,7 @@ const init = async () =>{
     server.auth.default('jwt');
 
     server.route(routes);
+    
     try{
         await server.start();
     }
