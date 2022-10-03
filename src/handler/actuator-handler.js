@@ -31,7 +31,7 @@ const uploadActuator = async (request, h) => {
 					color: result.rows[0].color,
 					icon: result.rows[0].icon,
 					created_at: result.rows[0].created_at,
-					id_greenhouse: result.rows[0].id_greenhouse,
+					greenhouse: await getGreenHouse(sensor.id_greenhouse),
 				},
 			});
 
@@ -99,7 +99,7 @@ const getActuators = async (request, h) => {
 					icon: actuator.icon,
 					created_at: actuator.created_at,
 					updated_at: actuator.updated_at,
-					id_greenhouse: actuator.id_greenhouse,
+					greenhouse: await getGreenHouse(sensor.id_greenhouse),
 				}))
 			),
 			totalPage: totalPage,
