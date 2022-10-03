@@ -2,7 +2,7 @@ const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const { getSensorCategory } = require("../utils/category-utils");
 const { isSensorExist } = require("../utils/sensor-utils");
-const { getGreenHouse } = require("../utils/greenhouse-util");
+const { getGreenHouseName } = require("../utils/greenhouse-util");
 
 const uploadSensor = async (request, h) => {
 	const {
@@ -124,8 +124,9 @@ const getSensorByGreenHouse = async (request, h) => {
 					range_min: sensor.range_min,
 					range_max: sensor.range_max,
 					category: await getSensorCategory(sensor.id_category_sensor),
-					greenhouse: await getGreenHouse(sensor.id_greenhouse),
+					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 					created_at: sensor.created_at,
+					id_greenhouse: sensor.id_greenhouse,
 				}))
 			),
 			totalpage: totalPage,
@@ -174,7 +175,8 @@ const getSensorById = async (request, h) => {
 						range_max: sensor.range_max,
 						category: await getSensorCategory(sensor.id_category_sensor),
 						created_at: sensor.created_at,
-						greenhouse: await getGreenHouse(sensor.id_greenhouse),
+						id_greenhouse: sensor.id_greenhouse,
+						greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 					}))
 				),
 			});
