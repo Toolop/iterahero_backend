@@ -7,17 +7,18 @@ const uploadImageServer = async (request, h) => {
 	let response = "";
 
 	try {
-		const uploadImagePayload = await uploadImage("ml_images", image);
-		image = uploadImagePayload.url;
-
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
-
-		const result = await pool.query(
-			`INSERT INTO public."ml_image" (created_at, image) VALUES ($1, $2) RETURNING *`,
-			[created_at, image]
-		);
+		if(image){
+			const uploadImagePayload = await uploadImage("ml_images", image);
+			image = uploadImagePayload.url;
+	
+			const created_at = new Date().toLocaleString("en-US", {
+				timeZone: "Asia/Jakarta",
+			});
+	
+			const result = await pool.query(
+				`INSERT INTO public."ml_image" (created_at, image) VALUES ($1, $2) RETURNING *`,
+				[created_at, image]
+			);
 
 		if (result) {
 			response = h.response({
@@ -38,6 +39,7 @@ const uploadImageServer = async (request, h) => {
 				message: "Greenhouse failed to create",
 			});
 		}
+	}
 	} catch (err) {
 		response = h.response({
 			code: 400,
