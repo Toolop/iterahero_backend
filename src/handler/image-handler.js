@@ -19,6 +19,7 @@ const uploadImageServer = async (request, h) => {
 				`INSERT INTO public."ml_image" (created_at, image) VALUES ($1, $2) RETURNING *`,
 				[created_at, image]
 			);
+		}
 
 		if (result) {
 			response = h.response({
@@ -39,7 +40,7 @@ const uploadImageServer = async (request, h) => {
 				message: "Greenhouse failed to create",
 			});
 		}
-	}
+
 	} catch (err) {
 		response = h.response({
 			code: 400,
