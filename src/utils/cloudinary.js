@@ -2,7 +2,7 @@ const streamifier = require('streamifier');
 const cloudinary = require('../config/cloudinary');
 
 const uploadImage = (folderName, image) => new Promise((resolve, reject) => {
-  const uploadStream = cloudinary.uploader.upload_stream(
+  const uploadStream = cloudinary.uploader.upload_large(
     {
       folder: folderName,
     },
