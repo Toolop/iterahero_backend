@@ -29,7 +29,12 @@ const init = async () =>{
 
     server.route(routes);
     
-    await server.start();
+    try{
+      await server.start();
+    }
+    catch(err){
+        console.log(err);
+    }
 
     console.log(`Server is running on ${server.info.uri}`);
     
