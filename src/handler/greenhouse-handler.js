@@ -127,8 +127,10 @@ const uploadGreenHouse = async (request, h) => {
 	let response = "";
 
 	try {
-		const uploadImagePayload = await uploadImage("greenhouse_images", image);
-		image = uploadImagePayload.url;
+		if (image){
+			const uploadImagePayload = await uploadImage("greenhouse_images", image);
+			image = uploadImagePayload.url;
+		}
 
 		const created_at = new Date().toLocaleString("en-US", {
 			timeZone: "Asia/Jakarta",

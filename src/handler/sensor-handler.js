@@ -2,6 +2,7 @@ const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const { getSensorCategory } = require("../utils/category-utils");
 const { isSensorExist } = require("../utils/sensor-utils");
+const { getGreenHouseName } = require("../utils/greenhouse-util");
 
 const uploadSensor = async (request, h) => {
 	const {
@@ -50,6 +51,7 @@ const uploadSensor = async (request, h) => {
 					name: result.rows[0].name,
 					brand: result.rows[0].brand,
 					icon: result.rows[0].icon,
+					unit_measurement: result.rows[0].unit_measurement,
 					color: result.rows[0].color,
 					range_min: result.rows[0].range_min,
 					range_max: result.rows[0].range_max,
@@ -115,12 +117,14 @@ const getSensorByGreenHouse = async (request, h) => {
 				result.rows.map(async (sensor) => ({
 					id: sensor.id_sensor,
 					name: sensor.name,
+					unit_measurement: sensor.unit_measurement,
 					brand: sensor.brand,
 					icon: sensor.icon,
 					color: sensor.color,
 					range_min: sensor.range_min,
 					range_max: sensor.range_max,
 					category: await getSensorCategory(sensor.id_category_sensor),
+					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 					created_at: sensor.created_at,
 					id_greenhouse: sensor.id_greenhouse,
 				}))
@@ -163,6 +167,7 @@ const getSensorById = async (request, h) => {
 					result.rows.map(async (sensor) => ({
 						id: sensor.id_sensor,
 						name: sensor.name,
+						unit_measurement:sensor.unit_measurement,
 						brand: sensor.brand,
 						icon: sensor.icon,
 						color: sensor.color,
@@ -171,6 +176,7 @@ const getSensorById = async (request, h) => {
 						category: await getSensorCategory(sensor.id_category_sensor),
 						created_at: sensor.created_at,
 						id_greenhouse: sensor.id_greenhouse,
+						greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 					}))
 				),
 			});

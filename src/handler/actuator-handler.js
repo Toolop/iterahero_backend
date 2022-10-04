@@ -100,6 +100,7 @@ const getActuators = async (request, h) => {
 					created_at: actuator.created_at,
 					updated_at: actuator.updated_at,
 					id_greenhouse: actuator.id_greenhouse,
+					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 				}))
 			),
 			totalPage: totalPage,
@@ -143,6 +144,7 @@ const getActuatorDetail = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					updated_at: result.rows[0].updated_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
+					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 				},
 			});
 
