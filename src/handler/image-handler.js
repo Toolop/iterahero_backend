@@ -7,19 +7,19 @@ const uploadImageServer = async (request, h) => {
 	let response = "";
 
 	try {
-		if(image){
-			const uploadImagePayload = await uploadImage("ml_images", image);
-			image = uploadImagePayload.url;
+		const uploadImagePayload = await uploadImage("ml_images", image);
+		image = uploadImagePayload.url;
 	
-			const created_at = new Date().toLocaleString("en-US", {
-				timeZone: "Asia/Jakarta",
-			});
+		const created_at = new Date().toLocaleString("en-US", {
+		timeZone: "Asia/Jakarta",
+				
+		});
 	
-			const result = await pool.query(
-				`INSERT INTO public."ml_image" (created_at, image) VALUES ($1, $2) RETURNING *`,
-				[created_at, image]
-			);
-		}
+		const result = await pool.query(
+			`INSERT INTO public."ml_image" (created_at, image) VALUES ($1, $2) RETURNING *`,
+			[created_at, image]
+		);
+
 
 		if (result) {
 			response = h.response({
