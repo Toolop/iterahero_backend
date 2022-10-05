@@ -30,7 +30,8 @@ const uploadImageServer = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					image: result.rows[0].image,
 					email:result.rows[0].email,
-					camera:result.rows[0].camera
+					camera:result.rows[0].camera,
+					line:result.rows[0].line,
 				},
 			});
 
