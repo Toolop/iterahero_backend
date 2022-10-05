@@ -1,6 +1,7 @@
 const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const { isActuatorExist } = require("../utils/actuator-util");
+const { getGreenHouseName } = require("../utils/greenhouse-util");
 
 const uploadActuator = async (request, h) => {
 	const { name, color, id_greenhouse, icon } = request.payload;
