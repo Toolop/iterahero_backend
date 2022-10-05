@@ -2,7 +2,7 @@ const { uploadImage } = require("../utils/cloudinary");
 const pool = require("../config/db");
 
 const uploadImageServer = async (request, h) => {
-	let {email,camera,line} = request.payload;
+	let {email,camera} = request.payload;
 	let { image } = request.payload;
 
 	let response = "";
@@ -17,7 +17,7 @@ const uploadImageServer = async (request, h) => {
 	
 		const result = await pool.query(
 			`INSERT INTO public."ml_image" (created_at, image,email,camera) VALUES ($1,$2,$3,$4) RETURNING *`,
-			[created_at, image,email,camera,line]
+			[created_at, image,email,camera]
 		);
 
 
@@ -30,8 +30,7 @@ const uploadImageServer = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					image: result.rows[0].image,
 					email:result.rows[0].email,
-					camera:result.rows[0].camera,
-					line:result.rows[0].line,
+					camera:result.rows[0].camera
 				},
 			});
 
