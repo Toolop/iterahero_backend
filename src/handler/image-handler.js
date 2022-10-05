@@ -12,7 +12,6 @@ const uploadImageServer = async (request, h) => {
 	
 		const created_at = new Date().toLocaleString("en-US", {
 		timeZone: "Asia/Jakarta",
-				
 		});
 	
 		const result = await pool.query(
