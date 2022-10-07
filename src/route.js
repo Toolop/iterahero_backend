@@ -41,7 +41,7 @@ const {
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
 const { getCountDashboard } = require("./handler/dashboard-count-handler");
-const { uploadImageServer } = require("./handler/image-handler");
+const { uploadImageServer,getImageServer } = require("./handler/image-handler");
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
@@ -283,6 +283,14 @@ const routes = [
 			},
 		 },
 		handler: uploadImageServer,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/ml`,
+		config: { 
+			auth: false,
+		 },
+		handler: getImageServer,
 	},
 ];
 
