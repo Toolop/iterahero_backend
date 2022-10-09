@@ -181,6 +181,7 @@ const getSensorById = async (request, h) => {
 						created_at: sensor.created_at,
 						id_greenhouse: sensor.id_greenhouse,
 						greenhouse: await getGreenHouseName(sensor.id_greenhouse),
+						topic_broker:sensor.topic_broker,
 					}))
 				),
 			});
