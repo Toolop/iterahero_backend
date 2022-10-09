@@ -4,7 +4,7 @@ const { isActuatorExist } = require("../utils/actuator-util");
 const { getGreenHouseName } = require("../utils/greenhouse-util");
 
 const uploadActuator = async (request, h) => {
-	const { name, color, id_greenhouse, icon } = request.payload;
+	const { name, color, id_greenhouse, icon,topic_broker } = request.payload;
 
 	let response = "";
 
@@ -16,8 +16,8 @@ const uploadActuator = async (request, h) => {
 		});
 
 		const result = await pool.query(
-			`INSERT INTO public."actuator" (name, status_lifecycle, color, icon, created_at, id_greenhouse) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
-			[name, status_lifecycle, color, icon, created_at, id_greenhouse]
+			`INSERT INTO public."actuator" (name, status_lifecycle, color, icon, created_at, id_greenhouse,topic_broker) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+			[name, status_lifecycle, color, icon, created_at, id_greenhouse, topic_broker]
 		);
 
 		if (result) {
@@ -33,6 +33,7 @@ const uploadActuator = async (request, h) => {
 					icon: result.rows[0].icon,
 					created_at: result.rows[0].created_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
+					topic_broker: result.rows[0].topic_broker,
 				},
 			});
 
@@ -102,6 +103,7 @@ const getActuators = async (request, h) => {
 					updated_at: actuator.updated_at,
 					id_greenhouse: actuator.id_greenhouse,
 					greenhouse: await getGreenHouseName(actuator.id_greenhouse),
+					topic_broker: actuator.topic_broker,
 				}))
 			),
 			totalPage: totalPage,
@@ -146,6 +148,7 @@ const getActuatorDetail = async (request, h) => {
 					updated_at: result.rows[0].updated_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
 					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
+					topic_broker: result.rows[0].topic_broker,
 				},
 			});
 
@@ -176,7 +179,7 @@ const getActuatorDetail = async (request, h) => {
 
 const updateActuator = async (request, h) => {
 	const { id } = request.params;
-	const { name, color, icon } = request.payload;
+	const { name, color, icon,topic_broker } = request.payload;
 	let result = "";
 	let response = "";
 
@@ -187,8 +190,8 @@ const updateActuator = async (request, h) => {
 			});
 
 			result = await pool.query(
-				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
-				[name, updated_at, icon, color, id]
+				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4,topic_broker=$5 WHERE id_actuator = $6',
+				[name, updated_at, icon, color,topic_broker, id]
 			);
 
 			if (result) {
