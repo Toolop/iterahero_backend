@@ -8,7 +8,6 @@ const { getUser } = require("../utils/user-util");
 
 const getGreenHouses = async (request, h) => {
 	let { page, size } = request.query;
-	const { by_user_id } = request.query;
 	let result = "";
 	let response = "";
 	const { id_user } = request.auth.credentials;
@@ -20,19 +19,11 @@ const getGreenHouses = async (request, h) => {
 		size = size || 10;
 		const offset = (page - 1) * size;
 
-		if (!by_user_id || by_user_id == 0) {
-			result = await pool.query(
-				`SELECT * FROM public."greenhouse" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
-				[offset, size]
-			);
-		}
+		result = await pool.query(
+			`SELECT * FROM public."greenhouse" WHERE "id_user"=$1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
+			[id_user, offset, size]
+		);
 
-		if (by_user_id == 1) {
-			result = await pool.query(
-				`SELECT * FROM public."greenhouse" WHERE "id_user"=$1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
-				[id_user, offset, size]
-			);
-		}
 
 		// console.log(result.rows);
 		response = h.response({
@@ -127,8 +118,10 @@ const uploadGreenHouse = async (request, h) => {
 	let response = "";
 
 	try {
-		const uploadImagePayload = await uploadImage("greenhouse_images", image);
-		image = uploadImagePayload.url;
+		if (image){
+			const uploadImagePayload = await uploadImage("greenhouse_images", image);
+			image = uploadImagePayload.url;
+		}
 
 		const created_at = new Date().toLocaleString("en-US", {
 			timeZone: "Asia/Jakarta",

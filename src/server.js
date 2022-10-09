@@ -8,7 +8,7 @@ const init = async () =>{
     dotenv.config();
 
     const server = await Hapi.server({
-        port: process.env.PORT || 3001,
+        port: process.env.PORT || 80,
         host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
         routes: {
             cors: {
@@ -21,20 +21,21 @@ const init = async () =>{
 
     server.auth.strategy('jwt', 'jwt',
     { key: process.env.JWT_SECRET, // Never Share your secret key
-      expiresIn: '8h',
+      expiresIn: '365d',
       validate:validate
     });
 
     server.auth.default('jwt');
 
     server.route(routes);
+    
     try{
-        await server.start();
+      await server.start();
     }
     catch(err){
         console.log(err);
-        process.exit(1);
     }
+
     console.log(`Server is running on ${server.info.uri}`);
     
 }
