@@ -41,6 +41,8 @@ const {
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
 const { getCountDashboard } = require("./handler/dashboard-count-handler");
+const { uploadImageServer,getImageServer } = require("./handler/image-handler");
+
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
 const prefix = "/api/v1";
@@ -270,6 +272,25 @@ const routes = [
 		path: `${prefix}/notification/{id}`,
 		config: { auth: "jwt" },
 		handler: getNotificationDetail,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/upload/ml`,
+		config: { 
+			auth: false,
+			payload: {
+				multipart: true,
+			},
+		 },
+		handler: uploadImageServer,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/ml`,
+		config: { 
+			auth: false,
+		 },
+		handler: getImageServer,
 	},
 ];
 

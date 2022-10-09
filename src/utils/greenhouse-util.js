@@ -26,6 +26,26 @@ const getGreenHouse = async (id) => {
 	return greenhouse;
 };
 
+const getGreenHouseName = async (id) => {
+	let name;
+
+	try {
+		const result = await pool.query(
+			'SELECT * FROM public."greenhouse" WHERE id_greenhouse=$1',
+			[id]
+		);
+
+		if (result.rows[0]) {
+			const greenhouseData = result.rows[0];
+			name = greenhouseData.name;
+		}
+	} catch (err) {
+		console.log(err);
+	}
+
+	return name;
+};
+
 const isGreenhouseExist = async (id) => {
 	let isExist = false;
 
@@ -66,4 +86,4 @@ const deletimageGreenhouse = async (id) => {
 };
 
 
-module.exports = { getGreenHouse,isGreenhouseExist,deletimageGreenhouse };
+module.exports = { getGreenHouse,isGreenhouseExist,deletimageGreenhouse,getGreenHouseName };
