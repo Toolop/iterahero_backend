@@ -42,6 +42,7 @@ const {
 } = require("./handler/sensor-log-handler.js");
 const { getCountDashboard } = require("./handler/dashboard-count-handler");
 const { uploadImageServer,getImageServer } = require("./handler/image-handler");
+const {uploadSensorBroker} = require("./handler/sensor-broker-handler");
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
@@ -292,6 +293,14 @@ const routes = [
 		 },
 		handler: getImageServer,
 	},
+	{
+		method: "POST",
+		path: `${prefix}/sensor_broker`,
+		config: { 
+			auth: false,
+		 },
+		handler: uploadSensorBroker,
+	}
 ];
 
 module.exports = routes;
