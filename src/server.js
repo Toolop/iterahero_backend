@@ -22,10 +22,9 @@ const init = async () =>{
     await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.4e0t2al.mongodb.net/iterahero?retryWrites=true&w=majority`, {
         useNewUrlParser: true,
     });  
-  // pengecekan apakah database telah terhubung, jika iya maka akan menampilkan teks sebagai berikut
 
     server.auth.strategy('jwt', 'jwt',
-    { key: process.env.JWT_SECRET, // Never Share your secret key
+    { key: process.env.JWT_SECRET, 
       expiresIn: '365d',
       validate:validate
     });
