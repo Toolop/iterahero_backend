@@ -4,8 +4,6 @@ const routes = require('./route');
 const jwt = require('hapi-auth-jwt2');
 const {validate} = require('./utils/jwt-utils');
 const mongoose = require('mongoose');
-const halo = require('./mqtt/index.js')
-
 
 const init = async () =>{
     dotenv.config();
@@ -21,7 +19,7 @@ const init = async () =>{
     });
 
     await server.register(jwt);
-    await mongoose.connect(`mongodb+srv://iterahero:${process.env.MONGGOPASSWORD}@iteraherosensors.4e0t2al.mongodb.net/iterahero?retryWrites=true&w=majority`, {
+    await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.4e0t2al.mongodb.net/iterahero?retryWrites=true&w=majority`, {
         useNewUrlParser: true,
     });  
   // pengecekan apakah database telah terhubung, jika iya maka akan menampilkan teks sebagai berikut
