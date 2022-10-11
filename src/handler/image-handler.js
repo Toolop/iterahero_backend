@@ -81,6 +81,7 @@ const getImageServer= async (request, h) => {
 				result.rows.map(async (image) => ({
 					created_at: image.created_at,
 					email:image.email,
+					image:image.image,
 					camera:image.camera,
 					line:image.line,
 				}))
