@@ -52,7 +52,7 @@ const getSensorBroker = async (request, h) => {
 	let response = "";
 
 	try {
-		const result = await sensor.find().sort( { created_at:-1 } ).limit(1);
+		const result = await sensor.find().sort( { created_at:-g1 } ).limit(1);
 
 		if (result) {
 			response = h.response({
