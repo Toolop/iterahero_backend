@@ -15,7 +15,6 @@
         "cloudinary": "^1.31.0",
         "dotenv": "^16.0.2",
         "hapi-auth-jwt2": "^10.2.0",
-        "mongo": "^0.1.0",
         "mongoose": "^6.6.5",
         "pg": "^8.8.0",
         "streamifier": "^0.1.1"
