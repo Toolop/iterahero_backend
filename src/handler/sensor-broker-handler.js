@@ -56,7 +56,7 @@ const getSensorBroker = async (request, h) => {
 
 
 	try {
-		const result = await sensor.find(topic_broker).sort( { created_at:-1 } ).limit(1);
+		const result = await sensor.find({topic_broker:topic_broker}).sort( { created_at:-1 } ).limit(1);
 
 		if (result) {
 			response = h.response({
