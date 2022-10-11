@@ -1,3 +1,4 @@
+const { Query } = require('mongoose');
 const sensor = require('../models/model-sensor');
 
 
@@ -50,10 +51,12 @@ const uploadSensorBroker = async (request, h) => {
 };
 
 const getSensorBroker = async (request, h) => {
+	const {topic_broker} = request.query;
 	let response = "";
 
+
 	try {
-		const result = await sensor.find().sort( { created_at:-1 } ).limit(1);
+		const result = await sensor.find(topic_broker).sort( { created_at:-1 } ).limit(1);
 
 		if (result) {
 			response = h.response({
