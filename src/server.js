@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const routes = require('./route');
 const jwt = require('hapi-auth-jwt2');
 const {validate} = require('./utils/jwt-utils');
+const mongoose = require('mongoose');
 
 const init = async () =>{
     dotenv.config();
@@ -18,6 +19,10 @@ const init = async () =>{
     });
 
     await server.register(jwt);
+    await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.4e0t2al.mongodb.net/iterahero?retryWrites=true&w=majority`, {
+        useNewUrlParser: true,
+    });  
+  // pengecekan apakah database telah terhubung, jika iya maka akan menampilkan teks sebagai berikut
 
     server.auth.strategy('jwt', 'jwt',
     { key: process.env.JWT_SECRET, // Never Share your secret key
@@ -37,7 +42,6 @@ const init = async () =>{
     }
 
     console.log(`Server is running on ${server.info.uri}`);
-    
 }
 
 init();
