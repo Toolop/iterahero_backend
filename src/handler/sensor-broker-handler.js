@@ -3,7 +3,7 @@ const sensor = require('../models/model-sensor');
 
 
 const uploadSensorBroker = async (request, h) => {
-	let {name,value,SensorId} = request.payload;
+	let {name,value,sensorId} = request.payload;
 
 	let response = "";
 
@@ -16,7 +16,7 @@ const uploadSensorBroker = async (request, h) => {
             name:name,
             value:value,
             created_at:created_at,
-			id_sensor:SensorId,
+			id_sensor:sensorId,
         })
 
 		if (result) {
