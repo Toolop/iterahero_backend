@@ -8,7 +8,7 @@ const sensorSchema = new Schema({
     },
     value: Number,
     created_at: String,
-    topic_broker: String,
+    id_sensor: String,
 });
 
 //mengekspor model kontakSchema dengan nama kontak
