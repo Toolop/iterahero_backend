@@ -3,18 +3,14 @@ const sensor = require('../models/model-sensor');
 
 
 const uploadSensorBroker = async (request, h) => {
-	let {name,value,sensorId} = request.payload;
+	let {value,sensorId} = request.payload;
 
 	let response = "";
 
 	try {
-		const created_at = new Date().toLocaleString("en-US", {
-		timeZone: "Asia/Jakarta",
-		});
-	
+
 		let result = await sensor.create({
             value:value,
-            created_at:created_at,
 			id_sensor:sensorId,
         })
 
@@ -54,7 +50,7 @@ const getSensorBroker = async (request, h) => {
 	let response = "";
 
 	try {
-		const result = await sensor.find({id_sensor:id_sensor}).sort( { created_at:-1 } ).limit(1);
+		const result = await sensor.find({id_sensor:id_sensor}).sort( { createdAt:-1 } ).limit(1);
 
 		if (result) {
 			response = h.response({

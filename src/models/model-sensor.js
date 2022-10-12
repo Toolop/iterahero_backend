@@ -3,9 +3,7 @@ const Schema = mongoose.Schema;
 
 const sensorSchema = new Schema({
     value: Number,
-    created_at: String,
-    id_sensor: String,
-});
+    id_sensor: Number,
+},{ timestamps: true });
 
-//mengekspor model kontakSchema dengan nama kontak
 module.exports = mongoose.model('sensor', sensorSchema);
