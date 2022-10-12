@@ -51,12 +51,12 @@ const uploadSensorBroker = async (request, h) => {
 };
 
 const getSensorBroker = async (request, h) => {
-	const {topic_broker} = request.query;
+	const {id_sensor} = request.query;
 	let response = "";
 
 
 	try {
-		const result = await sensor.find({topic_broker:topic_broker}).sort( { created_at:-1 } ).limit(1);
+		const result = await sensor.find({id_sensor:id_sensor}).sort( { created_at:-1 } ).limit(1);
 
 		if (result) {
 			response = h.response({
