@@ -64,28 +64,29 @@ const getActuators = async (request, h) => {
 	const { by_greenhouse_id } = request.query;
 	let result = "";
 	let response = "";
+	let totalPage = 0;
 
 	try {
 		page = page || 1;
 		size = size || 10;
 		const offset = (page - 1) * size;
 
-		const totalRows = await pool.query('SELECT * FROM public."actuator"');
-
-		let totalPage = Math.ceil(totalRows.rowCount / size);
-
 		if (!by_greenhouse_id) {
 			result = await pool.query(
-				`SELECT * FROM public."actuator" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
+				`SELECT * FROM public."actuator" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."actuator"');
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		if (by_greenhouse_id) {
 			result = await pool.query(
-				`SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
+				`SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
 				[by_greenhouse_id, offset, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."actuator" WHERE id_greenhouse=$1',[by_greenhouse_id]);
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		response = h.response({
@@ -145,7 +146,7 @@ const getActuatorDetail = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					updated_at: result.rows[0].updated_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
-					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
+					greenhouse: await getGreenHouseName(result.rows[0].id_greenhouse),
 				},
 			});
 

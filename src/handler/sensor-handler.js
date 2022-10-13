@@ -89,25 +89,28 @@ const getSensorByGreenHouse = async (request, h) => {
 	let { page, size } = request.query;
 	let response = "";
 	let result = "";
+	let totalPage = 0;
 
 	try {
 		page = page || 1;
 		size = size || 10;
 
-		const totalRows = await pool.query('SELECT * FROM public."sensor"');
-
-		totalPage = Math.ceil(totalRows.rowCount / size);
 
 		if (!by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" ORDER BY created_at ASC OFFSET $1 LIMIT $2',
 				[(page - 1) * size, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."sensor"');
+			totalPage = Math.ceil(totalRows.rowCount / size);
+
 		} else if (by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3',
 				[by_id_greenhouse, (page - 1) * size, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."sensor" WHERE id_greenhouse=$1',[by_id_greenhouse]);
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		response = h.response({
@@ -129,7 +132,7 @@ const getSensorByGreenHouse = async (request, h) => {
 					id_greenhouse: sensor.id_greenhouse,
 				}))
 			),
-			totalpage: totalPage,
+			totalPage: totalPage,
 		});
 
 		response.code(200);
