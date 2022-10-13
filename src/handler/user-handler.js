@@ -57,7 +57,6 @@ const login = async (request, h) => {
 	const { email, password } = request.payload;
 
 	let response = " ";
-	let result = " ";
 
 	try {
 		const result = await pool.query(

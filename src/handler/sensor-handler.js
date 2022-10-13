@@ -15,7 +15,6 @@ const uploadSensor = async (request, h) => {
 		range_min,
 		range_max,
 		id_category_sensor,
-		topic_broker,
 	} = request.payload;
 
 	let response = "";
@@ -26,7 +25,7 @@ const uploadSensor = async (request, h) => {
 		});
 
 		const result = await pool.query(
-			`INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor,topic_broker) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *;`,
+			`INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *;`,
 			[
 				name,
 				unit_measurement,
@@ -39,7 +38,6 @@ const uploadSensor = async (request, h) => {
 				range_min,
 				range_max,
 				id_category_sensor,
-				topic_broker,
 			]
 		);
 
@@ -60,7 +58,6 @@ const uploadSensor = async (request, h) => {
 					id_category_sensor: result.rows[0].id_category_sensor,
 					created_at: result.rows[0].created_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
-					topic_broker:result.rows[0].topic_broker,
 				},
 			});
 
@@ -92,25 +89,28 @@ const getSensorByGreenHouse = async (request, h) => {
 	let { page, size } = request.query;
 	let response = "";
 	let result = "";
+	let totalPage = 0;
 
 	try {
 		page = page || 1;
 		size = size || 10;
 
-		const totalRows = await pool.query('SELECT * FROM public."sensor"');
-
-		totalPage = Math.ceil(totalRows.rowCount / size);
 
 		if (!by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" ORDER BY created_at ASC OFFSET $1 LIMIT $2',
 				[(page - 1) * size, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."sensor"');
+			totalPage = Math.ceil(totalRows.rowCount / size);
+
 		} else if (by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3',
 				[by_id_greenhouse, (page - 1) * size, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."sensor" WHERE id_greenhouse=$1',[by_id_greenhouse]);
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		response = h.response({
@@ -130,10 +130,9 @@ const getSensorByGreenHouse = async (request, h) => {
 					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 					created_at: sensor.created_at,
 					id_greenhouse: sensor.id_greenhouse,
-					topic_broker: sensor.topic_broker,
 				}))
 			),
-			totalpage: totalPage,
+			totalPage: totalPage,
 		});
 
 		response.code(200);
@@ -221,8 +220,6 @@ const updateSensor = async (request, h) => {
 		range_min,
 		range_max,
 		id_category_sensor,
-		topic_broker,
-
 	} = request.payload;
 	let result = "";
 	let response = "";
@@ -234,7 +231,7 @@ const updateSensor = async (request, h) => {
 			});
 
 			result = await pool.query(
-				'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9,topic_broker=$10 WHERE id_sensor = $11',
+				'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9, WHERE id_sensor = $10',
 				[
 					name,
 					unit_measurement,
@@ -245,7 +242,6 @@ const updateSensor = async (request, h) => {
 					range_min,
 					range_max,
 					id_category_sensor,
-					topic_broker,
 					id,
 					
 				]
