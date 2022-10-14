@@ -29,28 +29,29 @@ const uploadActuatorLog = async (request, h) => {
 		const pubTopic = `${topic}/${id_actuator}`;
 
 		await client.on('connect', () => {
-			console.log('Connected')
 				var message =  on_off_status;
 				client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
 					if (error) {
 					console.error(error)
 					}
 					else{
-						const created_at = new Date().toLocaleString("en-US", {
-							timeZone: "Asia/Jakarta",
-						});
-						result = await pool.query(
-							`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
-							[id_actuator, on_off_status, created_at]
-						);
-						await pool.query(
-							`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-							[on_off_status, id_actuator]
-						);
 						client.end();
 					}
 				});
 		});
+
+		const created_at = new Date().toLocaleString("en-US", {
+			timeZone: "Asia/Jakarta",
+		});
+		
+		result = await pool.query(
+			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
+			[id_actuator, on_off_status, created_at]
+		);
+		await pool.query(
+			`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
+			[on_off_status, id_actuator]
+		);
 
 		if (result) {
 			response = h.response({
