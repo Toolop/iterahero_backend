@@ -1,89 +1,122 @@
-const pool = require("../config/db");
+const sensor = require('../models/model-sensor');
 
 const getGrafik = async (request, h) => {
 	let {getDateQuery} = request.query;
 	let { id_sensor } = request.params;
-    const result = "";
-
+    let result = "";
+    const monthStrings = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	try {
         if(getDateQuery == "Week"){
-            await sensor.aggregate([
+            result = await sensor.aggregate([
+                { $match : { id_sensor : parseInt(id_sensor) } },
                 {
                   $group: {
                     _id: {
-                        id_sensor: '$id_sensor',
                         year : { $year : "$createdAt" }, 
                         month : { $month : "$createdAt" },        
-                        day : { $dayOfMonth : "$creteadAt" },       
+                        day : { $dayOfMonth : "$createdAt" },       
                     },
-                    average: {$avg : '$value'}
+                    data: {$avg : '$value'},
                   },
                 },
                 {
-                    $match: { 
-                        "id_sensor": id_sensor 
-                    } 
+                    $project: {
+                      label: '$_id.day',
+                      date: {$concat: [ {$toString:"$_id.day"}, "/",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                      data : "$data",
+                    }
+                },
+                {
+                    $sort: { "date": -1 }
+                },
+                {
+                    $limit: 7,
+                },
+                {
+                    $sort:{"date":1}
                 }
-            ]).exec((err, sensor) => {
-                if (err) throw err;
-                console.log(sensor);
-            });
+            ]);
         }
         else if(getDateQuery == "Month"){
-            await sensor.aggregate([
+            result = await sensor.aggregate([
+                { $match : { id_sensor : parseInt(id_sensor) } },
                 {
                   $group: {
                     _id: {
-                        id_sensor: '$id_sensor',
                         year : { $year : "$createdAt" },    
                         month : { $month : "$createdAt" },        
-                        day : { $dayOfMonth : "$creteadAt" },    
                     },
-                    average: {$avg : '$value'}
+                    data: {$avg : '$value'}
                   },
                 },
                 {
-                    $match: { 
-                        "id_sensor": id_sensor 
-                    } 
+                    $project: {
+                      label: {
+                        $concat: [
+                          {
+                            $arrayElemAt: [
+                              monthStrings,
+                              "$_id.month"
+                            ]
+                          },
+                        ]
+                      },
+                      date: {$concat: [{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                      data : "$data",
+                      count: 1,
+                    }
+                },
+                {
+                    $sort: { "date": -1 }
+                },
+                {
+                    $limit: 12,
+                },
+                {
+                    $sort:{"date":1}
                 }
-            ]).exec((err, sensor) => {
-                if (err) throw err;
-                console.log(sensor);
-            });
+            ])
         }else if(getDateQuery == "Year"){
-            await sensor.aggregate([
+            result = await sensor.aggregate([
+                { $match : { id_sensor : parseInt(id_sensor) } },
                 {
                   $group: {
                     _id: {
-                        id_sensor: '$id_sensor',
                         year : { $year : "$createdAt" },        
                     },
                     average: {$avg : '$value'}
                   },
                 },
                 {
-                    $match: { 
-                        "id_sensor": id_sensor 
-                    } 
-                }
-            ]).exec((err, sensor) => {
-                if (err) throw err;
-                console.log(sensor);
-            });
+                    $project: {
+                    date: {$concat: [{$toString:"$_id.year"} ] },
+                      label: '$_id.year',
+                      data : "$data",
+                      count: 1,
+                    }
+                },
+                {
+                    $sort: { "date": 1 }
+                },
+            ]);
         }
+        if (Object.keys(result).length > 0) {
+			response = h.response({
+				code: 200,
+				status: "OK",
+				data: result,
+			});
 
-		response = h.response({
-			code: 200,
-			status: "OK",
-			data: {
-				greenhouse: getGreenhouseCount.rows[0].count,
-				sensor: getSensorCount.rows[0].count,
-				actuator: getActuatorCount.rows[0].count,
-			},
-		});
+			response.code(200);
+		} else {
+			response = h.response({
+				code: 404,
+				status: "Not Found",
+				message: "Sensor not found",
+			});
 
-		response.code(200);
+			response.code(404);
+		}
 	} catch (err) {
 		response = h.response({
 			code: 400,
