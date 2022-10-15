@@ -81,7 +81,7 @@ const getNotifications = async (request, h) => {
 
 		if (!by_user_id || by_user_id == 0) {
 			result = await pool.query(
-				`SELECT * FROM public."notification" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
+				`SELECT * FROM public."notification" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
 		}
