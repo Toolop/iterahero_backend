@@ -9,7 +9,7 @@ const init = async () =>{
     dotenv.config();
 
     const server = await Hapi.server({
-        port: process.env.PORT || 80,
+        port: process.env.PORT || 3001,
         host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
         routes: {
             cors: {
