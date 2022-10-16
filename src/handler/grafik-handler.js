@@ -29,7 +29,7 @@ const getGrafik = async (request, h) => {
                   }
               },
               {
-                $sort:{"date":1}
+                $sort:{"date": -1}
               },
               {
                 $skip:  parseInt((page - 1) * size),
@@ -70,7 +70,7 @@ const getGrafik = async (request, h) => {
                   }
               },
               {
-                $sort:{"date":1}
+                $sort:{"date": -1}
               },
               {
                 $skip:  parseInt((page - 1) * size),
@@ -99,7 +99,7 @@ const getGrafik = async (request, h) => {
                   }
               },
               {
-                $sort:{"date":1}
+                $sort:{"date":-1}
               },
               {
                 $skip:  parseInt((page - 1) * size),
