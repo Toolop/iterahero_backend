@@ -87,7 +87,7 @@ const getGrafik = async (request, h) => {
                   _id: {
                       year : { $year : "$createdAt" },        
                   },
-                  average: {$avg : '$value'}
+                  data: {$avg : '$value'}
                 },
               },
               {
@@ -189,7 +189,7 @@ const getGrafik = async (request, h) => {
                     _id: {
                         year : { $year : "$createdAt" },        
                     },
-                    average: {$avg : '$value'}
+                    data: {$avg : '$value'}
                   },
                 },
                 {
