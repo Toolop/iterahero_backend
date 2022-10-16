@@ -4,7 +4,7 @@ const { isActuatorExist } = require("../utils/actuator-util");
 const { getGreenHouseName } = require("../utils/greenhouse-util");
 
 const uploadActuator = async (request, h) => {
-	const { name, color, id_greenhouse, icon,topic_broker } = request.payload;
+	const { name, color, id_greenhouse, icon } = request.payload;
 
 	let response = "";
 
@@ -16,8 +16,8 @@ const uploadActuator = async (request, h) => {
 		});
 
 		const result = await pool.query(
-			`INSERT INTO public."actuator" (name, status_lifecycle, color, icon, created_at, id_greenhouse,topic_broker) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-			[name, status_lifecycle, color, icon, created_at, id_greenhouse, topic_broker]
+			`INSERT INTO public."actuator" (name, status_lifecycle, color, icon, created_at, id_greenhouse) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
+			[name, status_lifecycle, color, icon, created_at, id_greenhouse]
 		);
 
 		if (result) {
@@ -33,7 +33,6 @@ const uploadActuator = async (request, h) => {
 					icon: result.rows[0].icon,
 					created_at: result.rows[0].created_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
-					topic_broker: result.rows[0].topic_broker,
 				},
 			});
 
@@ -65,28 +64,29 @@ const getActuators = async (request, h) => {
 	const { by_greenhouse_id } = request.query;
 	let result = "";
 	let response = "";
+	let totalPage = 0;
 
 	try {
 		page = page || 1;
 		size = size || 10;
 		const offset = (page - 1) * size;
 
-		const totalRows = await pool.query('SELECT * FROM public."actuator"');
-
-		let totalPage = Math.ceil(totalRows.rowCount / size);
-
 		if (!by_greenhouse_id) {
 			result = await pool.query(
-				`SELECT * FROM public."actuator" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
+				`SELECT * FROM public."actuator" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."actuator"');
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		if (by_greenhouse_id) {
 			result = await pool.query(
-				`SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
+				`SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
 				[by_greenhouse_id, offset, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."actuator" WHERE id_greenhouse=$1',[by_greenhouse_id]);
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		response = h.response({
@@ -103,7 +103,6 @@ const getActuators = async (request, h) => {
 					updated_at: actuator.updated_at,
 					id_greenhouse: actuator.id_greenhouse,
 					greenhouse: await getGreenHouseName(actuator.id_greenhouse),
-					topic_broker: actuator.topic_broker,
 				}))
 			),
 			totalPage: totalPage,
@@ -147,8 +146,7 @@ const getActuatorDetail = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					updated_at: result.rows[0].updated_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
-					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
-					topic_broker: result.rows[0].topic_broker,
+					greenhouse: await getGreenHouseName(result.rows[0].id_greenhouse),
 				},
 			});
 
@@ -190,8 +188,8 @@ const updateActuator = async (request, h) => {
 			});
 
 			result = await pool.query(
-				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4,topic_broker=$5 WHERE id_actuator = $6',
-				[name, updated_at, icon, color,topic_broker, id]
+				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4, WHERE id_actuator = $5',
+				[name, updated_at, icon, color, id]
 			);
 
 			if (result) {
