@@ -71,6 +71,7 @@ const getNotifications = async (request, h) => {
 	let result = "";
 	let response = "";
 	const { id_user } = request.auth.credentials;
+	let totalPage = 0;
 	// console.log("ini paramnya", by_user_id);
 	// console.log(id_user);
 
@@ -81,16 +82,20 @@ const getNotifications = async (request, h) => {
 
 		if (!by_user_id || by_user_id == 0) {
 			result = await pool.query(
-				`SELECT * FROM public."notification" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
+				`SELECT * FROM public."notification" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
 				[offset, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."notification"');
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		if (by_user_id && by_user_id == 1) {
 			result = await pool.query(
-				`SELECT * FROM public."notification" WHERE id_notification IN (SELECT id_notification FROM public."receive" WHERE id_user = $1) OFFSET $2 LIMIT $3`,
+				`SELECT * FROM public."notification" WHERE id_notification IN (SELECT id_notification FROM public."receive" WHERE id_user = $1) ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
 				[id_user, offset, size]
 			);
+			const totalRows = await pool.query('SELECT * FROM public."notification"');
+			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
 		response = h.response({
@@ -108,6 +113,7 @@ const getNotifications = async (request, h) => {
 					greenhouse_loc: (await getActuator(row.id_actuator)).greenhouse_loc,
 				}))
 			),
+			totalPage: totalPage,
 		});
 
 		response.code(200);
