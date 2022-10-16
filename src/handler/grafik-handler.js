@@ -7,7 +7,7 @@ const getGrafik = async (request, h) => {
   const monthStrings = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	try {
-      if (page || size){
+      if (page && size){
         if(getDateQuery == "Week"){
           result = await sensor.aggregate([
               { $match : { id_sensor : parseInt(id_sensor) } },
