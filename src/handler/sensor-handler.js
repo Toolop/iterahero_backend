@@ -95,7 +95,6 @@ const getSensorByGreenHouse = async (request, h) => {
 		page = page || 1;
 		size = size || 10;
 
-
 		if (!by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" ORDER BY created_at ASC OFFSET $1 LIMIT $2',
@@ -103,13 +102,15 @@ const getSensorByGreenHouse = async (request, h) => {
 			);
 			const totalRows = await pool.query('SELECT * FROM public."sensor"');
 			totalPage = Math.ceil(totalRows.rowCount / size);
-
 		} else if (by_id_greenhouse) {
 			result = await pool.query(
 				'SELECT * FROM public."sensor" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3',
 				[by_id_greenhouse, (page - 1) * size, size]
 			);
-			const totalRows = await pool.query('SELECT * FROM public."sensor" WHERE id_greenhouse=$1',[by_id_greenhouse]);
+			const totalRows = await pool.query(
+				'SELECT * FROM public."sensor" WHERE id_greenhouse=$1',
+				[by_id_greenhouse]
+			);
 			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
@@ -170,7 +171,7 @@ const getSensorById = async (request, h) => {
 					result.rows.map(async (sensor) => ({
 						id: sensor.id_sensor,
 						name: sensor.name,
-						unit_measurement:sensor.unit_measurement,
+						unit_measurement: sensor.unit_measurement,
 						brand: sensor.brand,
 						icon: sensor.icon,
 						color: sensor.color,
@@ -231,7 +232,7 @@ const updateSensor = async (request, h) => {
 			});
 
 			result = await pool.query(
-				'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9, WHERE id_sensor = $10',
+				'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9 WHERE id_sensor = $10',
 				[
 					name,
 					unit_measurement,
@@ -243,7 +244,6 @@ const updateSensor = async (request, h) => {
 					range_max,
 					id_category_sensor,
 					id,
-					
 				]
 			);
 
