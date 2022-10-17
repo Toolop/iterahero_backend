@@ -44,16 +44,18 @@ const getGrafik = async (request, h) => {
           {
             $group: {
               _id: { 
-                "year": {$year: "$createdAt"},
-                "month": {$month: "$createdAt"},
-                "weekOfMonth": {$floor: {$divide: [{$dayOfMonth: "$createdAt"}, 7]}}
+                year : {$year: "$createdAt"},
+                month: {$month: "$createdAt"},
+                week: {$floor: {$divide: [{$dayOfMonth: "$createdAt"}, 7]}}
               },
               data: {$avg : '$value'},
             },
           },
           {
               $project: {
-                label: '$id.week',
+                label: '$_id.week',
+                date: {$concat: ["Minggu : ", {$toString:"$_id.week"}, " ",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                data : "$data",
                 data : "$data",
               }
           },
