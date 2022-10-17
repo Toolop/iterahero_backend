@@ -153,8 +153,9 @@ const getHistorySensor = async (request, h) => {
           {
             $group: {
               _id: {
-                year : { $year : "$createdAt" },    
-                month : { $month : "$createdAt" },           
+                year : { $year : "$createdAt" }, 
+                month : { $month : "$createdAt" },        
+                day : { $dayOfMonth : "$createdAt" },       
               },
               data: {$avg : '$value'},
             },
