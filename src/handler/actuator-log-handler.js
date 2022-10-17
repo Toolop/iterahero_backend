@@ -29,7 +29,7 @@ const uploadActuatorLog = async (request, h) => {
 		const pubTopic = `${topic}/${id_actuator}`;
 
 		await client.on('connect', () => {
-				var message =  on_off_status;
+				var message =  parseInt(on_off_status);
 				client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
 					if (error) {
 					console.error(error)

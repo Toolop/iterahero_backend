@@ -7,7 +7,6 @@ const getGrafik = async (request, h) => {
   const monthStrings = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	try {
-      if (page && size){
         if(getDateQuery == "Week"){
           result = await sensor.aggregate([
               { $match : { id_sensor : parseInt(id_sensor) } },
@@ -29,184 +28,86 @@ const getGrafik = async (request, h) => {
                   }
               },
               {
-                $sort:{"date": -1}
+                  $sort: { "date": -1 }
               },
               {
-                $skip:  parseInt((page - 1) * size),
+                  $limit: 7,
               },
               {
-                $limit: parseInt(size),
-              },
-
+                  $sort:{"date":1}
+              }
           ]);
       }
       else if(getDateQuery == "Month"){
-          result = await sensor.aggregate([
-              { $match : { id_sensor : parseInt(id_sensor) } },
-              {
-                $group: {
-                  _id: {
-                      year : { $year : "$createdAt" },    
-                      month : { $month : "$createdAt" },        
-                  },
-                  data: {$avg : '$value'}
-                },
+        result = await sensor.aggregate([
+          { $match : { id_sensor : parseInt(id_sensor) } },
+          {
+            $group: {
+              _id: { 
+                "year": {$year: "$createdAt"},
+                "month": {$month: "$createdAt"},
+                "weekOfMonth": {$floor: {$divide: [{$dayOfMonth: "$createdAt"}, 7]}}
               },
-              {
-                  $project: {
-                    label: {
-                      $concat: [
-                        {
-                          $arrayElemAt: [
-                            monthStrings,
-                            "$_id.month"
-                          ]
-                        },
+              data: {$avg : '$value'},
+            },
+          },
+          {
+              $project: {
+                label: '$id.week',
+                data : "$data",
+              }
+          },
+          {
+              $sort: { "date": -1 }
+          },
+          {
+              $limit: 7,
+          },
+          {
+              $sort:{"date":1}
+          }
+      ]);
+      }else if(getDateQuery == "Year"){
+        result = await sensor.aggregate([
+          { $match : { id_sensor : parseInt(id_sensor) } },
+          {
+            $group: {
+              _id: {
+                  year : { $year : "$createdAt" },    
+                  month : { $month : "$createdAt" },        
+              },
+              data: {$avg : '$value'}
+            },
+          },
+          {
+              $project: {
+                label: {
+                  $concat: [
+                    {
+                      $arrayElemAt: [
+                        monthStrings,
+                        "$_id.month"
                       ]
                     },
-                    date: {$concat: [{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                    data : "$data",
-                    count: 1,
-                  }
-              },
-              {
-                $sort:{"date": -1}
-              },
-              {
-                $skip:  parseInt((page - 1) * size),
-              },
-              {
-                $limit: parseInt(size),
-              },
-          ])
-      }else if(getDateQuery == "Year"){
-          result = await sensor.aggregate([
-              { $match : { id_sensor : parseInt(id_sensor) } },
-              {
-                $group: {
-                  _id: {
-                      year : { $year : "$createdAt" },        
-                  },
-                  data: {$avg : '$value'}
+                  ]
                 },
-              },
-              {
-                  $project: {
-                  date: {$concat: [{$toString:"$_id.year"} ] },
-                    label: '$_id.year',
-                    data : "$data",
-                    count: 1,
-                  }
-              },
-              {
-                $sort:{"date":-1}
-              },
-              {
-                $skip:  parseInt((page - 1) * size),
-              },
-              {
-                $limit: parseInt(size),
-              },
-          ]);
+                date: {$concat: [{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                data : "$data",
+                count: 1,
+              }
+          },
+          {
+              $sort: { "date": -1 }
+          },
+          {
+              $limit: 12,
+          },
+          {
+              $sort:{"date":1}
+          }
+        ]);
       }
-      }
-      else{
-          if(getDateQuery == "Week"){
-            result = await sensor.aggregate([
-                { $match : { id_sensor : parseInt(id_sensor) } },
-                {
-                  $group: {
-                    _id: {
-                        year : { $year : "$createdAt" }, 
-                        month : { $month : "$createdAt" },        
-                        day : { $dayOfMonth : "$createdAt" },       
-                    },
-                    data: {$avg : '$value'},
-                  },
-                },
-                {
-                    $project: {
-                      label: '$_id.day',
-                      date: {$concat: [ {$toString:"$_id.day"}, "/",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                      data : "$data",
-                    }
-                },
-                {
-                    $sort: { "date": -1 }
-                },
-                {
-                    $limit: 7,
-                },
-                {
-                    $sort:{"date":1}
-                }
-            ]);
-        }
-        else if(getDateQuery == "Month"){
-            result = await sensor.aggregate([
-                { $match : { id_sensor : parseInt(id_sensor) } },
-                {
-                  $group: {
-                    _id: {
-                        year : { $year : "$createdAt" },    
-                        month : { $month : "$createdAt" },        
-                    },
-                    data: {$avg : '$value'}
-                  },
-                },
-                {
-                    $project: {
-                      label: {
-                        $concat: [
-                          {
-                            $arrayElemAt: [
-                              monthStrings,
-                              "$_id.month"
-                            ]
-                          },
-                        ]
-                      },
-                      date: {$concat: [{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                      data : "$data",
-                      count: 1,
-                    }
-                },
-                {
-                    $sort: { "date": -1 }
-                },
-                {
-                    $limit: 12,
-                },
-                {
-                    $sort:{"date":1}
-                }
-            ])
-        }else if(getDateQuery == "Year"){
-            result = await sensor.aggregate([
-                { $match : { id_sensor : parseInt(id_sensor) } },
-                {
-                  $group: {
-                    _id: {
-                        year : { $year : "$createdAt" },        
-                    },
-                    data: {$avg : '$value'}
-                  },
-                },
-                {
-                    $project: {
-                    date: {$concat: [{$toString:"$_id.year"} ] },
-                      label: '$_id.year',
-                      data : "$data",
-                      count: 1,
-                    }
-                },
-                {
-                    $sort: { "date": 1 }
-                },
-            ]);
-        }
-      }
-        
+      
       if (Object.keys(result).length > 0) {
 			response = h.response({
 				code: 200,
