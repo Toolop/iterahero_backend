@@ -100,7 +100,7 @@ const routes = [
 		method: "POST",
 		path: `${prefix}/actuator-log`,
 		config: {
-			auth: "jwt",
+			auth: false,
 			payload: {
 				multipart: true,
 			},
