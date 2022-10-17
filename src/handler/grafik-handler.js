@@ -142,4 +142,69 @@ const getGrafik = async (request, h) => {
 	return response;
 };
 
-module.exports = { getGrafik };
+const getHistorySensor = async (request, h) => {
+	let {Month,Year} = request.query;
+	let { id_sensor } = request.params;
+  let result = "";
+
+	try {
+      result = await sensor.aggregate([
+          { $match : { id_sensor : parseInt(id_sensor)} },
+          {
+            $group: {
+              _id: {
+                year : { $year : "$createdAt" },    
+                month : { $month : "$createdAt" },           
+              },
+              data: {$avg : '$value'},
+            },
+          },
+          {
+              $project: {
+                year : "$_id.year",    
+                month : "$_id.month",
+                label: {$concat: [ {$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                data : "$data",
+              }
+          },
+          { $match : { "month": parseInt(Month),"year": parseInt(Year)} },
+          {
+              $sort: { "date": -1 }
+          },
+      ]);
+  
+      if (Object.keys(result).length > 0) {
+			response = h.response({
+				code: 200,
+				status: "OK",
+				data: result,
+			});
+
+			response.code(200);
+		} else {
+			response = h.response({
+				code: 404,
+				status: "Not Found",
+				message: "Sensor not found",
+			});
+
+			response.code(404);
+		}
+	} catch (err) {
+		response = h.response({
+			code: 400,
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+
+		console.log(err);
+	}
+
+	return response;
+};
+
+
+
+module.exports = { getGrafik,getHistorySensor  };

@@ -43,7 +43,7 @@ const {
 const { getCountDashboard } = require("./handler/dashboard-count-handler");
 const { uploadImageServer,getImageServer } = require("./handler/image-handler");
 const {uploadSensorBroker,getSensorBroker} = require("./handler/sensor-broker-handler");
-const {getGrafik} = require('./handler/grafik-handler')
+const {getGrafik, getHistorySensor} = require('./handler/grafik-handler')
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
@@ -317,7 +317,16 @@ const routes = [
 			auth: false,
 		 },
 		handler: getGrafik,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/history/sensor/{id_sensor}`,
+		config: { 
+			auth: false,
+		 },
+		handler: getHistorySensor,
 	}
+
 ];
 
 module.exports = routes;
