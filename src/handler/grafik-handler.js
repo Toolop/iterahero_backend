@@ -24,7 +24,7 @@ const getGrafik = async (request, h) => {
                   $project: {
                     label: '$_id.day',
                     date: {$concat: [ {$toString:"$_id.day"}, "/",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                    data : "$data".toFixed(2),
+                    data : "$data",
                   }
               },
               {
@@ -55,7 +55,7 @@ const getGrafik = async (request, h) => {
               $project: {
                 label: '$_id.week',
                 date: {$concat: ["Minggu : ", {$toString:"$_id.week"}, " ",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                data : "$data".toFixed(2),
+                data : "$data",
               }
           },
           {
@@ -93,7 +93,7 @@ const getGrafik = async (request, h) => {
                   ]
                 },
                 date: {$concat: [{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                data : "$data".toFixed(2),
+                data : "$data",
                 count: 1,
               }
           },
@@ -164,7 +164,7 @@ const getHistorySensor = async (request, h) => {
                 year : "$_id.year",    
                 month : "$_id.month",
                 label: {$concat: [ {$toString:"$_id.day"}, "/",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
-                data : "$data".toFixed(2),
+                data : "$data",
               }
           },
           { $match : { "month": parseInt(Month),"year": parseInt(Year)} },
