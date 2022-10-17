@@ -328,7 +328,7 @@ const routes = [
 	},
 	{
 		method: "GET",
-		path: `${prefix}/grafik/year`,
+		path: `${prefix}/grafik/year/{id_sensor}`,
 		config: { 
 			auth: false,
 		 },

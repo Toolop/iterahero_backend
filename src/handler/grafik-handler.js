@@ -207,10 +207,12 @@ const getHistorySensor = async (request, h) => {
 };
 
 const getyear = async (request, h) => {
+  let {id_sensor} = request.params;
   let result = "";
 
 	try {
         result = await sensor.aggregate([
+          { $match : { id_sensor : parseInt(id_sensor) } },
           {
             $group: {
               _id: {
