@@ -85,7 +85,10 @@ const getActuators = async (request, h) => {
 				`SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
 				[by_greenhouse_id, offset, size]
 			);
-			const totalRows = await pool.query('SELECT * FROM public."actuator" WHERE id_greenhouse=$1',[by_greenhouse_id]);
+			const totalRows = await pool.query(
+				'SELECT * FROM public."actuator" WHERE id_greenhouse=$1',
+				[by_greenhouse_id]
+			);
 			totalPage = Math.ceil(totalRows.rowCount / size);
 		}
 
@@ -177,7 +180,7 @@ const getActuatorDetail = async (request, h) => {
 
 const updateActuator = async (request, h) => {
 	const { id } = request.params;
-	const { name, color, icon,topic_broker } = request.payload;
+	const { name, color, icon, topic_broker } = request.payload;
 	let result = "";
 	let response = "";
 
@@ -188,7 +191,7 @@ const updateActuator = async (request, h) => {
 			});
 
 			result = await pool.query(
-				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4, WHERE id_actuator = $5',
+				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
 				[name, updated_at, icon, color, id]
 			);
 
