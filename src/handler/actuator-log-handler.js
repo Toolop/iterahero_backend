@@ -10,7 +10,8 @@ const uploadActuatorLog = async (request, h) => {
 	const { id_actuator, on_off_status } = request.payload;
 
 	let response = "";
-	let result = ""
+	let result = "";
+	let test = "";
 
 	try {
 		
@@ -25,55 +26,64 @@ const uploadActuatorLog = async (request, h) => {
 			reconnectPeriod: 1000,
 		});
 
-		const topic = "iterahero/actuator";
-		const pubTopic = `${topic}/${id_actuator}`;
+		const topic = "iterahero";
+		const pubTopic = `${topic}/actuator/${id_actuator}`;
+		const subtopic = `${topic}/respon/actuator/${id_actuator}`;
 
-		await client.on('connect', () => {
+		client.on('connect', async() => {
 				var message =  parseInt(on_off_status);
-				client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
+				await client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
 					if (error) {
-					console.error(error)
+						console.error(error)
 					}
 					else{
+						await client.subscribe([subtopic], () => {
+							console.log(`Subscribe to topic '${subtopic}'`)
+						});
+				
+						await client.on('message', (topic, payload) => {
+							getDataBroker = payload.toString();
+							client.end();
+							const created_at = new Date().toLocaleString("en-US", {
+								timeZone: "Asia/Jakarta",
+							});
+							
+							result = pool.query(
+								`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
+								[id_actuator, on_off_status, created_at]
+							);
+							pool.query(
+								`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
+								[on_off_status, id_actuator]
+							);
+					
+							if (result) {
+								response = h.response({
+									code: 201,
+									status: "Created",
+									message: "Actuator log successfully created",
+									data: {
+										id: result.rows[0].id_actuator_log,
+										id_actuator: result.rows[0].id_actuator,
+										on_off_status: result.rows[0].on_off_status,
+										created_at: result.rows[0].created_at,
+									},
+								});
+					
+								response.code(201);
+							} else {
+								response = h.response({
+									code: 500,
+									status: "Internal Server Error",
+									message: "Actuator log failed to create",
+								});
+							}
+							
+						});
 						client.end();
 					}
 				});
 		});
-
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
-		
-		result = await pool.query(
-			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
-			[id_actuator, on_off_status, created_at]
-		);
-		await pool.query(
-			`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-			[on_off_status, id_actuator]
-		);
-
-		if (result) {
-			response = h.response({
-				code: 201,
-				status: "Created",
-				message: "Actuator log successfully created",
-				data: {
-					id: result.rows[0].id_actuator_log,
-					id_actuator: result.rows[0].id_actuator,
-					on_off_status: result.rows[0].on_off_status,
-					created_at: result.rows[0].created_at,
-				},
-			});
-
-			response.code(201);
-		} else {
-			response = h.response({
-				code: 500,
-				status: "Internal Server Error",
-				message: "Actuator log failed to create",
-			});
-		}
 	} catch (err) {
 		response = h.response({
 			code: 400,
