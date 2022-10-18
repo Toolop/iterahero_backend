@@ -74,7 +74,9 @@ const getImageServer= async (request, h) => {
 				[email]
 			);
 		}else if (date){
-			`SELECT * FROM public."ml_image" WHERE created_at ILIKE '%${date}%' ORDER BY created_at ASC`
+			result = await pool.query(
+				`SELECT * FROM public."ml_image" WHERE created_at ILIKE '%${date}%' ORDER BY created_at ASC`
+			);
 		}
 
 		response = h.response({
