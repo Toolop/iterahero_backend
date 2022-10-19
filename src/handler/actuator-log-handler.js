@@ -53,11 +53,11 @@ const uploadActuatorLog = async (request, h) => {
 			timeZone: "Asia/Jakarta",
 		});
 		
-		result = pool.query(
+		result = await pool.query(
 			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
 			[id_actuator, on_off_status, created_at]
 		);
-		pool.query(
+		await pool.query(
 			`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
 			[on_off_status, id_actuator]
 		);
