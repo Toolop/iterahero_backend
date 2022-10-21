@@ -1,4 +1,4 @@
-const { register, login } = require("./handler/user-handler.js");
+const { register, login, getName } = require("./handler/user-handler.js");
 const {
 	getGreenHouses,
 	getGreenHouseDetail,
@@ -352,6 +352,14 @@ const routes = [
 			auth: "jwt",
 		 },
 		handler: updateNotifications,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/user`,
+		config: { 
+			auth: "jwt",
+		 },
+		handler: getName,
 	}
 
 ];
