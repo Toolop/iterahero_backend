@@ -27,6 +27,7 @@ const {
 	getNotifications,
 	deleteNotification,
 	getNotificationDetail,
+	getCountNotifications,
 } = require("./handler/notification-handler.js");
 const {
 	uploadSensor,
@@ -44,6 +45,7 @@ const { getCountDashboard } = require("./handler/dashboard-count-handler");
 const { uploadImageServer,getImageServer } = require("./handler/image-handler");
 const {uploadSensorBroker,getSensorBroker} = require("./handler/sensor-broker-handler");
 const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler')
+
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
 
@@ -333,6 +335,14 @@ const routes = [
 			auth: false,
 		 },
 		handler: getyear,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/notification-count`,
+		config: { 
+			auth: "jwt",
+		 },
+		handler: getCountNotifications,
 	}
 
 ];
