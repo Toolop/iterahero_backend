@@ -28,6 +28,7 @@ const {
 	deleteNotification,
 	getNotificationDetail,
 	getCountNotifications,
+	updateNotifications,
 } = require("./handler/notification-handler.js");
 const {
 	uploadSensor,
@@ -343,6 +344,14 @@ const routes = [
 			auth: "jwt",
 		 },
 		handler: getCountNotifications,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/notification-update`,
+		config: { 
+			auth: "jwt",
+		 },
+		handler: updateNotifications,
 	}
 
 ];
