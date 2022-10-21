@@ -97,46 +97,7 @@ const login = async (request, h) => {
 	return response;
 };
 
-const getName = async (request, h) => {
-	const { id_user } = request.auth.credentials;
-
-	try {
-		result = await pool.query(
-			`SELECT * from public."user" WHERE "id_user"=$1 LIMIT 1`,
-			[id_user]
-		);
-
-
-		// console.log(result.rows);
-		response = h.response({
-			code: 200,
-			status: "OK",
-			data: await Promise.all(
-				result.rows.map(async (user) => ({
-					email: user.email,
-					name: user.name,
-				})),
-			)
-		});
-
-		response.code(200);
-	} catch (err) {
-		response = h.response({
-			code: 400,
-			status: "Bad Request",
-			message: "error",
-		});
-
-		response.code(400);
-
-		console.log(err);
-	}
-
-	return response;
-};
-
 module.exports = {
 	register,
 	login,
-	getName,
 };

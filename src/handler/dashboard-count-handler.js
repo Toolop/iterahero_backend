@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { getUser } = require("../utils/user-util");
 
 const getCountDashboard = async (request, h) => {
 	let response = "";
@@ -28,6 +29,7 @@ const getCountDashboard = async (request, h) => {
 				greenhouse: getGreenhouseCount.rows[0].count,
 				sensor: getSensorCount.rows[0].count,
 				actuator: getActuatorCount.rows[0].count,
+				name: (await getUser(id_user)).name,
 			},
 		});
 

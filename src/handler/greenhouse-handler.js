@@ -37,7 +37,6 @@ const getGreenHouses = async (request, h) => {
 					location: greenHouse.location,
 					created_at: greenHouse.created_at,
 					user_id: greenHouse.id_user,
-					user_name: (await getUser(greenHouse.id_user)).name,
 				}))
 			),
 		});

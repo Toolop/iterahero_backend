@@ -353,14 +353,6 @@ const routes = [
 		 },
 		handler: updateNotifications,
 	},
-	{
-		method: "GET",
-		path: `${prefix}/user`,
-		config: { 
-			auth: "jwt",
-		 },
-		handler: getName,
-	}
 
 ];
 
