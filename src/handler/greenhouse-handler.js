@@ -119,7 +119,10 @@ const uploadGreenHouse = async (request, h) => {
 	try {
 		if (image){
 			const uploadImagePayload = await uploadImage("greenhouse_images", image);
-			image = uploadImagePayload.url;
+			let getCount = uploadImagePayload.url.length;
+			let getUrl = uploadImagePayload.url.slice(4, getCount);
+			let addText = "https";
+			image = addText + getUrl;
 		}
 
 		const created_at = new Date().toLocaleString("en-US", {
@@ -186,7 +189,10 @@ const updateGreenhouse = async (request, h) => {
 			if (image) {
 				deletimageGreenhouse(id);
 				const uploadImageResult = await uploadImage("greenhouse_images", image);
-				image = uploadImageResult.url;
+				let getCount = uploadImageResult.url.length;
+				let getUrl = uploadImageResult.url.slice(4, getCount);
+				let addText = "https";
+				image = addText + getUrl;
 
 				result = await pool.query(
 					'UPDATE public."greenhouse" SET name=$1, image=$2, "location"=$3, updated_at=$4 WHERE id_greenhouse=$5',
