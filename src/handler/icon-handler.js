@@ -1,14 +1,14 @@
 const pool = require("../config/db");
 
 const uploadIcon = async (request, h) => {
-	let {name,icon} = request.payload;
+	let {name,icon,type,color} = request.payload;
 
 	let response = "";
 
 	try {
 		const result = await pool.query(
-			`INSERT INTO public."icon" (name,icon,type) VALUES ($1,$2) RETURNING *`,
-			[name,icon]
+			`INSERT INTO public."icon" (name,icon,type,color) VALUES ($1,$2,$3,$4) RETURNING *`,
+			[name,icon,type,color]
 		);
 
 
