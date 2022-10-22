@@ -363,7 +363,7 @@ const routes = [
 			},
 			auth: false,
 		 },
-		handler: getIcon,
+		handler: uploadIcon,
 	},
 	{
 		method: "GET",
@@ -371,7 +371,7 @@ const routes = [
 		config: { 
 			auth: false,
 		 },
-		handler: uploadIcon,
+		handler: getIcon,
 	},
 
 ];
