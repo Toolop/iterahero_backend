@@ -74,6 +74,8 @@ const getIcon= async (request, h) => {
 				result.rows.map(async (icon) => ({
 					name: icon.name,
 					icon: icon.icon,
+                    type:icon.type,
+                    color: icon.color,
 				}))
 			),
 		});
