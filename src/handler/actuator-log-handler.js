@@ -44,23 +44,27 @@ const uploadActuatorLog = async (request, h) => {
 						await client.on('message', (topic, payload) => {
 							getDataBroker = payload.toString();
 							client.end();
+
+							const created_at = new Date().toLocaleString("en-US", {
+								timeZone: "Asia/Jakarta",
+							});
+							var n = topic.lastIndexOf('/');
+							var id = topic.substring(n + 1);
+
+							pool.query(
+								`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
+								[id,getDataBroker]
+							);
+							pool.query(
+								`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
+								[getDataBroker,id]
+							);
 						});
 						client.end();
 					}
 				});
 		});
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
 		
-		result = await pool.query(
-			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
-			[id_actuator, on_off_status, created_at]
-		);
-		await pool.query(
-			`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-			[on_off_status, id_actuator]
-		);
 
 		if (result) {
 			response = h.response({

@@ -7,7 +7,7 @@ const uploadIcon = async (request, h) => {
 
 	try {
 		const result = await pool.query(
-			`INSERT INTO public."icon" (name,icon) VALUES ($1,$2) RETURNING *`,
+			`INSERT INTO public."icon" (name,icon,type) VALUES ($1,$2) RETURNING *`,
 			[name,icon]
 		);
 
@@ -20,6 +20,7 @@ const uploadIcon = async (request, h) => {
 				data: {
 					name: result.rows[0].name,
 					icon: result.rows[0].icon,
+                    type:result.rows[0].type
 				}
 			});
 
@@ -49,15 +50,22 @@ const uploadIcon = async (request, h) => {
 
 
 const getIcon= async (request, h) => {
+    let {type} = request.query;
 	let response = "";
 	let result = "";
 
 	try {
-		
-        result = await pool.query(
-			'SELECT * FROM public."icon" ORDER BY id_icon ASC',
-			[email]
-		);
+        if (type){
+            result = await pool.query(
+                'SELECT * FROM public."icon" WHERE type = $1 ORDER BY id_icon ASC',
+                [type]
+            );
+        }else if(!type){
+            result = await pool.query(
+                'SELECT * FROM public."icon" ORDER BY id_icon ASC'
+            );
+        }
+        
 		response = h.response({
 			code: 200,
 			status: "OK",
