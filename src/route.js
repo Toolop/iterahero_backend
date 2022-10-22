@@ -358,6 +358,9 @@ const routes = [
 		method: "POST",
 		path: `${prefix}/icon`,
 		config: { 
+			payload: {
+				multipart: true,
+			},
 			auth: false,
 		 },
 		handler: getIcon,

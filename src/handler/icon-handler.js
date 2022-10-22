@@ -20,7 +20,8 @@ const uploadIcon = async (request, h) => {
 				data: {
 					name: result.rows[0].name,
 					icon: result.rows[0].icon,
-                    type:result.rows[0].type
+                    type:result.rows[0].type,
+                    color:result.rows[0].color,
 				}
 			});
 
