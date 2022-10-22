@@ -6,13 +6,9 @@ const uploadIcon = async (request, h) => {
 	let response = "";
 
 	try {
-		const created_at = new Date().toLocaleString("en-US", {
-		timeZone: "Asia/Jakarta",
-		});
-	
 		const result = await pool.query(
-			`INSERT INTO public."icon" (created_at, image,email,camera,line,id_actuator) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-			[created_at, image,email,camera,line,id_actuator]
+			`INSERT INTO public."icon" (name,icon) VALUES ($1,$2) RETURNING *`,
+			[name,icon]
 		);
 
 
@@ -20,14 +16,10 @@ const uploadIcon = async (request, h) => {
 			response = h.response({
 				code: 201,
 				status: "Created",
-				message: "Greenhouse successfully created",
+				message: "icon successfully created",
 				data: {
-					created_at: result.rows[0].created_at,
-					image: result.rows[0].image,
-					email:result.rows[0].email,
-					camera:result.rows[0].camera,
-					line:result.rows[0].line,
-					id_actuator:result.rows[0].id_actuator,
+					name: result.rows[0].name,
+					icon: result.rows[0].icon,
 				}
 			});
 
@@ -36,7 +28,7 @@ const uploadIcon = async (request, h) => {
 			response = h.response({
 				code: 500,
 				status: "Internal Server Error",
-				message: "Greenhouse failed to create",
+				message: "Icon failed to create",
 			});
 		}
 
@@ -57,34 +49,22 @@ const uploadIcon = async (request, h) => {
 
 
 const getIcon= async (request, h) => {
-	const { email, date} = request.query;
 	let response = "";
 	let result = "";
 
 	try {
-
-		if (email) {
-			result = await pool.query(
-				'SELECT * FROM public."ml_image" WHERE email = $1 ORDER BY created_at ASC',
-				[email]
-			);
-		}else if (date){
-			result = await pool.query(
-				`SELECT * FROM public."ml_image" WHERE created_at::date = '%${date}%' ORDER BY created_at ASC`
-			);
-		}
-
+		
+        result = await pool.query(
+			'SELECT * FROM public."icon" ORDER BY id_icon ASC',
+			[email]
+		);
 		response = h.response({
 			code: 200,
 			status: "OK",
 			data: await Promise.all(
-				result.rows.map(async (image) => ({
-					created_at: image.created_at,
-					email:image.email,
-					image:image.image,
-					camera:image.camera,
-					line:image.line,
-					id_actuator:image.id_actuator,
+				result.rows.map(async (icon) => ({
+					name: icon.name,
+					icon: icon.icon,
 				}))
 			),
 		});
@@ -105,4 +85,4 @@ const getIcon= async (request, h) => {
 	return response;
 };
 
-module.exports = {uploadImageServer,getImageServer};s
+module.exports = {uploadIcon,getIcon};

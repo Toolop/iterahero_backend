@@ -49,6 +49,7 @@ const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler
 
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
+const { getIcon, uploadIcon } = require("./handler/icon-handler.js");
 
 const prefix = "/api/v1";
 
@@ -352,6 +353,22 @@ const routes = [
 			auth: "jwt",
 		 },
 		handler: updateNotifications,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/icon`,
+		config: { 
+			auth: false,
+		 },
+		handler: getIcon,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/icon`,
+		config: { 
+			auth: false,
+		 },
+		handler: uploadIcon,
 	},
 
 ];
