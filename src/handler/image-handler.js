@@ -10,6 +10,10 @@ const uploadImageServer = async (request, h) => {
 	try {
 		const uploadImagePayload = await uploadImage("ml_images", image);
 		image = uploadImagePayload.url;
+		let getCount = uploadImageResult.url.length;
+		let getUrl = uploadImageResult.url.slice(4, getCount);
+		let addText = "https";
+		image = addText + getUrl;
 	
 		const created_at = new Date().toLocaleString("en-US", {
 		timeZone: "Asia/Jakarta",
