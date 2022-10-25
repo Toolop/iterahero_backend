@@ -14,7 +14,6 @@
         "bcrypt": "^5.0.1",
         "cloudinary": "^1.31.0",
         "dotenv": "^16.0.2",
-        "fcm-node": "^1.6.1",
         "hapi-auth-jwt2": "^10.2.0",
         "mongoose": "^6.6.5",
         "mqtt": "^4.3.7",

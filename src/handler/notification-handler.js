@@ -2,9 +2,6 @@ const pool = require("../config/db");
 const { getActuator } = require("../utils/actuator-util");
 const { getGreenHouse } = require("../utils/greenhouse-util");
 const { isNotificationExist } = require("../utils/notification-util");
-var FCM = require('fcm-node');
-var serverKey = 'BLOLsW1Y--DhzuHeXj4zr0H0r4uhHOctewMfFv9rMq7MShlWp_rMcIf8zrSxaiA2A9cqA488jTHuAMrFFhm072I'; 
-var fcm = new FCM(serverKey); 
 
 const uploadNotification = async (request, h) => {
 	const { detail, type, status, id_actuator } = request.payload;
@@ -29,29 +26,6 @@ const uploadNotification = async (request, h) => {
 			[id_user, result.rows[0].id_notification]
 		);
 		
-		let message = { 
-			to: 'registation_token', 
-			collapse_key: 'your_collapse_key',
-			
-			notification: {
-				title: 'Title of your push notification', 
-				body: 'Body of your push notification' 
-			},
-			
-			data: {  
-				my_key: 'my value',
-				my_another_key: 'my another value'
-			}
-		};
-
-		fcm.send(message, function(err, response){
-			if (err) {
-				console.log("Something has gone wrong!");
-			} else {
-				console.log("Successfully sent with response: ", response);
-			}
-		});
-
 		if (result && makeReceiver) {
 			response = h.response({
 				code: 201,
