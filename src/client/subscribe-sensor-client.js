@@ -31,11 +31,42 @@ const subscribeSensor = () =>{
                 })
             })
 
-            client.on('message', (topic, payload) => {
+            client.on('message', async(topic, payload) => {
                 try{
-                    let getData = JSON.parse((payload.toString()));
-                    console.log(getData);
-                    let save = sensor.insertMany(getData);
+                    let getData = await JSON.parse((payload.toString()));
+                    let save = await sensor.insertMany(getData);
+                    const sensor = await  getSensor(sensorId);
+                    const id_user = await ( getGreenHouse(sensor.id_greenhouse)).id_user;
+
+                    let detail = `Sensor ${sensor.name} pada greenhouse ${sensor.greenhouse} terjadi masalah`;
+                    const created_at = new Date().toLocaleString("en-US", {
+                        timeZone: "Asia/Jakarta",
+                    });
+                    
+                    if(value < sensor.range_min  && value > sensor.range_max){
+                        if(sensor.notify == 0){
+                            const getNotif = await pool.query(
+                                `INSERT INTO public."notification" (detail, created_at, type, status, id_actuator) VALUES($1,$2,$3,$4,$5) RETURNING *`,
+                                [detail, created_at, type, status, id_actuator]
+                            );
+                    
+                            await pool.query(
+                                `INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
+                                [id_user, getNotif.rows[0].id_notification]
+                            );
+                            await pool.query(
+                                'UPDATE public."sensor" SET "notify"=1, WHERE id_sensor = $1',
+                                [sensorId]
+                            );
+                        }
+                    }else{
+                        if(sensor.notify == 1){
+                            await pool.query(
+                                'UPDATE public."sensor" SET "notify"=0, WHERE id_sensor = $1',
+                                [sensorId]
+                            );
+                        }
+                    }
     
                     if(save){
                         console.log('berhasil');
