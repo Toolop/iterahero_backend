@@ -1,5 +1,6 @@
 const pool = require('../config/db');
-
+const {getSensorCategory} = require('./category-utils');
+const {getGreenHouseName} = require('./greenhouse-util');
 
 const getSensor = async (id) => {
 	let sensor = {};
