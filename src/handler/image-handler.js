@@ -1,26 +1,49 @@
 const { uploadImage } = require("../utils/cloudinary");
 const pool = require("../config/db");
+const axios = require("axios");
 
 const uploadImageServer = async (request, h) => {
 	let {email,camera,line,id_actuator} = request.payload;
 	let { image } = request.payload;
-
+	let result = "";
 	let response = "";
 
 	try {
-		const uploadImagePayload = await uploadImage("ml_images", image);
-		image = uploadImagePayload.url;
+		var test = new Buffer(image).toString('base64');
+
+		axios({
+			method: "POST",
+			url: "https://detect.roboflow.com/cnn-melon/3",
+			params: {
+				api_key: "scvUwcOaTuhifPhPoqVI"
+			},
+			data: test,
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+		})
+		.then(function(response) {
+			console.log(response.data['predictio']);
+			
+		})
+		.catch(function(error) {
+			console.log(error.message);
+		});
+		/*const uploadImagePayload = await uploadImage("ml_images", image);
+		let getCount = uploadImagePayload.url.length;
+		let getUrl = uploadImagePayload.url.slice(4, getCount);
+		let addText = "https";
+		image = addText + getUrl;
 	
 		const created_at = new Date().toLocaleString("en-US", {
 		timeZone: "Asia/Jakarta",
-		});
-	
-		const result = await pool.query(
+		});*/
+
+		/* const result = await pool.query(
 			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_actuator) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
 			[created_at, image,email,camera,line,id_actuator]
-		);
-
-
+		);*/
+			/*
 		if (result) {
 			response = h.response({
 				code: 201,
@@ -44,7 +67,7 @@ const uploadImageServer = async (request, h) => {
 				message: "Greenhouse failed to create",
 			});
 		}
-
+		*/
 	} catch (err) {
 		response = h.response({
 			code: 400,
