@@ -3,14 +3,15 @@ const pool = require("../config/db");
 const axios = require("axios");
 
 const uploadImageServer = async (request, h) => {
-	let {email,camera,line,id_actuator} = request.payload;
+	let {email,camera,line,id_sensor} = request.payload;
 	let { image } = request.payload;
 	let result = "";
 	let response = "";
+	let volume = 0;
 
 	try {
 		let imageBase64 = await new Buffer(image).toString('base64');
-		const getCount = await  pool.query(`SELECT * FROM public."ml_image" WHERE camera = $1`,
+		const total = await  pool.query(`SELECT * FROM public."ml_image" WHERE camera = $1`,
 		[camera]);
 		
 		await axios({
@@ -27,7 +28,6 @@ const uploadImageServer = async (request, h) => {
 		.then(function(response) {
 			let condition = "";
 			let num_con = 0;
-			console.log('response')
 			let get = response.data['predictions'];
 			for (i in get){
 				if(i == 0){
@@ -56,49 +56,55 @@ const uploadImageServer = async (request, h) => {
 				}
 			}
 		
-		let count = getCount.rowCount;
-		if (count >= 14 && count <= 50){
-			if(condition ==  "daun kuning"){
-				console.log("daun kuning");
+			let count = total.rowCount;
+			if (count >= 14 && count <= 50){
+				if(condition ==  "daun kuning"){
+					volume = "800";
+				}
+				else if(condition == "bercak"){
+					volume = "700";
+				}
+				else if(condition == "daun sehat"){
+					volume = "600";
+				}
 			}
-			else if(condition == "bercak"){
-				console.log("bercak");
+			else if(count >50){
+				if(condition ==  "daun kuning"){
+					volume = "1900";
+				}
+				else if(condition == "bercak"){
+					volume = "1700";
+				}
+				else if(condition == "daun sehat"){
+					volume = "1500";
+				}
 			}
-			else if(condition == "daun sehat"){
-				console.log("daun sehat");
-			}
-		}
-		else if(count >50){
-			if(condition ==  "daun kuning"){
-				console.log("daun kuning generatif");
-			}
-			else if(condition == "bercak"){
-				console.log("bercak generatif");
-			}
-			else if(condition == "daun sehat"){
-				console.log("daun sehat generatif");
-			}
-		}
-		
-	})
-	.catch(function(error) {
-		console.log(error.message);
-	});
-		/*const uploadImagePayload = await uploadImage("ml_images", image);
-		let getCount = uploadImagePayload.url.length;
-		let getUrl = uploadImagePayload.url.slice(4, getCount);
+			
+		})
+		.catch(function(error) {
+			console.log(error.message);
+		});
+
+		const uploadImagePayload = await uploadImage("ml_images", image);
+		let getCountURL = uploadImagePayload.url.length;
+		let getUrl = uploadImagePayload.url.slice(4,getCountURL);
 		let addText = "https";
 		image = addText + getUrl;
 	
 		const created_at = new Date().toLocaleString("en-US", {
 		timeZone: "Asia/Jakarta",
-		});*/
+		});
 
-		/* const result = await pool.query(
+		const result = await pool.query(
 			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_actuator) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
 			[created_at, image,email,camera,line,id_actuator]
-		);*/
-			/*
+		);
+		await pool.query(
+			'UPDATE public."sensor" SET range_max = $1 WHERE id_sensor = $2',
+				[volume,
+				id_sensor]
+		);
+
 		if (result) {
 			response = h.response({
 				code: 201,
@@ -122,7 +128,7 @@ const uploadImageServer = async (request, h) => {
 				message: "Greenhouse failed to create",
 			});
 		}
-		*/
+
 	} catch (err) {
 		response = h.response({
 			code: 400,
