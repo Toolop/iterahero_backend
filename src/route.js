@@ -50,6 +50,7 @@ const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
 const { getIcon, uploadIcon } = require("./handler/icon-handler.js");
+const { getActuatorBroker } = require("./handler/actuator-broker.js");
 
 const prefix = "/api/v1";
 
@@ -372,6 +373,14 @@ const routes = [
 			auth: false,
 		 },
 		handler: getIcon,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/actuator-broker`,
+		config: { 
+			auth: false,
+		 },
+		handler: getActuatorBroker,
 	},
 
 ];
