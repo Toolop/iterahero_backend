@@ -25,7 +25,7 @@ const uploadNotification = async (request, h) => {
 			`INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
 			[id_user, result.rows[0].id_notification]
 		);
-
+		
 		if (result && makeReceiver) {
 			response = h.response({
 				code: 201,
@@ -50,6 +50,36 @@ const uploadNotification = async (request, h) => {
 				message: "Notification failed to create",
 			});
 		}
+	} catch (err) {
+		response = h.response({
+			code: 400,
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+
+		console.log(err);
+	}
+
+	return response;
+};
+
+const getCountNotifications = async (request, h) => {
+	const { id_user } = request.auth.credentials;
+	let countNotif = "";
+
+	try {
+		const totalRows = await pool.query(`SELECT * FROM public."notification" WHERE status = '0' and id_notification IN (SELECT id_notification FROM public."receive" WHERE id_user = $1)`,[id_user]);
+		countNotif = totalRows.rowCount;
+		
+		response = h.response({
+			code: 200,
+			status: "OK",
+			count: countNotif,
+		});
+
+		response.code(200);
 	} catch (err) {
 		response = h.response({
 			code: 400,
@@ -227,9 +257,38 @@ const getNotificationDetail = async (request, h) => {
 	return response;
 };
 
+
+const updateNotifications = async (request, h) => {
+	const { id_user } = request.auth.credentials;
+	try {
+		await pool.query(`UPDATE public."notification" SET status = '1' WHERE id_notification IN (SELECT id_notification FROM public."receive" WHERE id_user = $1)`,[id_user]);
+		
+		response = h.response({
+			code: 200,
+			status: "Update Successfully",
+		});
+
+		response.code(200);
+	} catch (err) {
+		response = h.response({
+			code: 400,
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+
+		console.log(err);
+	}
+
+	return response;
+};
+
 module.exports = {
 	uploadNotification,
 	getNotifications,
 	deleteNotification,
 	getNotificationDetail,
+	getCountNotifications,
+	updateNotifications,
 };

@@ -49,7 +49,7 @@ const getCategorySensor = async (request, h) => {
 	let response = "";
 
 	try {
-		result = await pool.query(`SELECT * FROM public."category_sensor"`);
+		result = await pool.query(`SELECT * FROM public."category_sensor" ORDER BY id_category_sensor ASC`);
 
 		response = h.response({
 			code: 200,

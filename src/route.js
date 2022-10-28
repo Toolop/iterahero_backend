@@ -1,4 +1,4 @@
-const { register, login } = require("./handler/user-handler.js");
+const { register, login, getName } = require("./handler/user-handler.js");
 const {
 	getGreenHouses,
 	getGreenHouseDetail,
@@ -27,6 +27,8 @@ const {
 	getNotifications,
 	deleteNotification,
 	getNotificationDetail,
+	getCountNotifications,
+	updateNotifications,
 } = require("./handler/notification-handler.js");
 const {
 	uploadSensor,
@@ -43,8 +45,12 @@ const {
 const { getCountDashboard } = require("./handler/dashboard-count-handler");
 const { uploadImageServer,getImageServer } = require("./handler/image-handler");
 const {uploadSensorBroker,getSensorBroker} = require("./handler/sensor-broker-handler");
+const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler')
+
 
 const { handler } = require("@hapi/hapi/lib/cors.js");
+const { getIcon, uploadIcon } = require("./handler/icon-handler.js");
+const { getActuatorBroker } = require("./handler/actuator-broker.js");
 
 const prefix = "/api/v1";
 
@@ -99,7 +105,7 @@ const routes = [
 		method: "POST",
 		path: `${prefix}/actuator-log`,
 		config: {
-			auth: "jwt",
+			auth: false,
 			payload: {
 				multipart: true,
 			},
@@ -308,7 +314,75 @@ const routes = [
 			auth: false,
 		 },
 		handler: getSensorBroker,
-	}
+	},
+	{
+		method: "GET",
+		path: `${prefix}/grafik/{id_sensor}`,
+		config: { 
+			auth: false,
+		 },
+		handler: getGrafik,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/history/sensor/{id_sensor}`,
+		config: { 
+			auth: false,
+		 },
+		handler: getHistorySensor,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/grafik/year/{id_sensor}`,
+		config: { 
+			auth: false,
+		 },
+		handler: getyear,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/notification-count`,
+		config: { 
+			auth: "jwt",
+		 },
+		handler: getCountNotifications,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/notification-update`,
+		config: { 
+			auth: "jwt",
+		 },
+		handler: updateNotifications,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/icon`,
+		config: { 
+			payload: {
+				multipart: true,
+			},
+			auth: false,
+		 },
+		handler: uploadIcon,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/icon`,
+		config: { 
+			auth: false,
+		 },
+		handler: getIcon,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/actuator-broker`,
+		config: { 
+			auth: false,
+		 },
+		handler: getActuatorBroker,
+	},
+
 ];
 
 module.exports = routes;
