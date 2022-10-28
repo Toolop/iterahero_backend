@@ -9,26 +9,81 @@ const uploadImageServer = async (request, h) => {
 	let response = "";
 
 	try {
-		var test = new Buffer(image).toString('base64');
-
-		axios({
+		let imageBase64 = await new Buffer(image).toString('base64');
+		const getCount = await  pool.query(`SELECT * FROM public."ml_image" WHERE camera = $1`,
+		[camera]);
+		
+		await axios({
 			method: "POST",
 			url: "https://detect.roboflow.com/cnn-melon/3",
 			params: {
 				api_key: "scvUwcOaTuhifPhPoqVI"
 			},
-			data: test,
+			data: imageBase64,
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded"
 			}
 		})
 		.then(function(response) {
-			console.log(response.data['predictio']);
-			
-		})
-		.catch(function(error) {
-			console.log(error.message);
-		});
+			let condition = "";
+			let num_con = 0;
+			console.log('response')
+			let get = response.data['predictions'];
+			for (i in get){
+				if(i == 0){
+					if(get[i]['class'] ==  "daun kuning"){
+						num_con = 3;
+					}
+					else if(get[i]['class'] == "bercak"){
+						num_con = 2;
+					}
+					else if(get[i]['class'] == "daun sehat"){
+						num_con = 1;
+					}
+				}else{
+					if(get[i]['class'] == "daun kuning" && num_con <= 3){
+						condition = "daun kuning"
+						break;
+					}
+					else if(get[i]['class'] == "bercak" && num_con <= 2){
+						num_con = 3;
+						condition = "bercak"
+					}
+					else if(get[i]['class'] == "daun sehat" && num_con <= 1){
+						num_con = 2;
+						condition = "daun sehat"
+					}
+				}
+			}
+		
+		let count = getCount.rowCount;
+		if (count >= 14 && count <= 50){
+			if(condition ==  "daun kuning"){
+				console.log("daun kuning");
+			}
+			else if(condition == "bercak"){
+				console.log("bercak");
+			}
+			else if(condition == "daun sehat"){
+				console.log("daun sehat");
+			}
+		}
+		else if(count >50){
+			if(condition ==  "daun kuning"){
+				console.log("daun kuning generatif");
+			}
+			else if(condition == "bercak"){
+				console.log("bercak generatif");
+			}
+			else if(condition == "daun sehat"){
+				console.log("daun sehat generatif");
+			}
+		}
+		
+	})
+	.catch(function(error) {
+		console.log(error.message);
+	});
 		/*const uploadImagePayload = await uploadImage("ml_images", image);
 		let getCount = uploadImagePayload.url.length;
 		let getUrl = uploadImagePayload.url.slice(4, getCount);
