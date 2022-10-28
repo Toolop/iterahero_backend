@@ -30,6 +30,7 @@ const subscribeActuator = () =>{
             client.on('message', async(topic, payload) => {
                 try{
                     let getData = JSON.parse((payload.toString()));
+                    console.log(getData);
                     if(getData[0].status == "offline"){
                         await pool.query(
                             `UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,

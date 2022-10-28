@@ -28,7 +28,7 @@ const uploadActuatorLog = async (request, h) => {
 
 		const topic = "iterahero";
 		const pubTopic = `${topic}/actuator/${id_actuator}`;
-		const subtopic = `${topic}/respon/actuator/${id_actuator}`;
+		const subtopic = `${topic}/respon/actuator/#`;
 
 		client.on('connect', async() => {
 				var message =  parseInt(on_off_status);
@@ -42,7 +42,9 @@ const uploadActuatorLog = async (request, h) => {
 						});
 				
 						await client.on('message', async(topic, payload) => {
+							console.log(payload);
 							getDataBroker = payload.toString();
+							console.log(getDataBroker);
 							var n = topic.lastIndexOf('/');
 							var id_actuator = topic.substring(n + 1);
 							const created_at = new Date().toLocaleString("en-US", {
@@ -58,7 +60,6 @@ const uploadActuatorLog = async (request, h) => {
 							);
 							client.end();
 						});
-						client.end();
 					}
 				});
 		});
