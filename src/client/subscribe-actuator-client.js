@@ -29,6 +29,12 @@ const subscribeActuator = () =>{
             client.on('message', async(topic, payload) => {
                 try{
                     let getData = JSON.parse((payload.toString()));
+                    if(getData[0].status == "offline"){
+                        await pool.query(
+                            `UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
+                            [0, getData[0].id_actuator]
+                        );
+                    }
                     let save = await actuator.insertMany(getData);
 
                 }catch(err){
