@@ -4,6 +4,8 @@ const routes = require('./route');
 const jwt = require('hapi-auth-jwt2');
 const {validate} = require('./utils/jwt-utils');
 const mongoose = require('mongoose');
+const {subscribeSensor} = require('./client/subscribe-sensor-client')
+const {subscribeActuator} = require('./client/subscribe-actuator-client')
 
 const init = async () =>{
     dotenv.config();
@@ -36,6 +38,8 @@ const init = async () =>{
     
     try{
       await server.start();
+      await subscribeSensor();
+      await subscribeActuator();
     }
     catch(err){
         console.log(err);

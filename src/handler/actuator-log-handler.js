@@ -1,33 +1,78 @@
 const pool = require("../config/db");
-// const { uploadImage, deleteImage } = require("../utils/cloudinary");
+const mqtt = require('mqtt')
+const host = 'broker.hivemq.com'
+const port = '1883'
+const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
+const connectUrl = `mqtt://${host}:${port}`
+
 
 const uploadActuatorLog = async (request, h) => {
 	const { id_actuator, on_off_status } = request.payload;
 
 	let response = "";
+	let result = "";
+	let test = "";
 
 	try {
-		// const created_at = new Date().toISOString();
+		
+		const client = mqtt.connect(connectUrl, {
+			clientId,
+			keepalive: 30,
+			protocolId: 'MQTT',
+			protocolVersion: 4,
+			clean: true,
+			connectTimeout: 30 * 1000,
+			rejectUnauthorized: false,
+			reconnectPeriod: 1000,
+		});
+
+		const topic = "iterahero";
+		const pubTopic = `${topic}/actuator/${id_actuator}`;
+		const subtopic = `${topic}/respon/actuator/#`;
+
+		client.on('connect', async() => {
+				var message =  parseInt(on_off_status);
+				await client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
+					if (error) {
+						console.error(error)
+					}
+					else{
+						await client.subscribe([subtopic], () => {
+							console.log(`Subscribe to topic '${subtopic}'`)
+						});
+				
+						await client.on('message', async(topic, payload) => {
+							console.log(payload);
+							getDataBroker = payload.toString();
+							console.log(getDataBroker);
+							var n = topic.lastIndexOf('/');
+							var id_actuator = topic.substring(n + 1);
+							const created_at = new Date().toLocaleString("en-US", {
+								timeZone: "Asia/Jakarta",
+							});
+							await pool.query(
+								`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
+								[id_actuator,getDataBroker, created_at]
+							);
+							await pool.query(
+								`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
+								[getDataBroker, id_actuator]
+							);
+							client.end();
+						});
+					}
+				});
+		});
 		const created_at = new Date().toLocaleString("en-US", {
 			timeZone: "Asia/Jakarta",
 		});
-
-		const result = await pool.query(
-			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
-			[id_actuator, on_off_status, created_at]
-		);
-
+		
+		result = 1;
 		if (result) {
 			response = h.response({
 				code: 201,
 				status: "Created",
 				message: "Actuator log successfully created",
-				data: {
-					id: result.rows[0].id_actuator_log,
-					id_actuator: result.rows[0].id_actuator,
-					on_off_status: result.rows[0].on_off_status,
-					created_at: result.rows[0].created_at,
-				},
 			});
 
 			response.code(201);

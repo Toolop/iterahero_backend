@@ -2,10 +2,10 @@ const { Query } = require('mongoose');
 const sensor = require('../models/model-sensor');
 
 
+
 const uploadSensorBroker = async (request, h) => {
 	let {value,sensorId} = request.payload;
-
-	let response = "";
+	let response = "";	
 
 	try {
 
@@ -13,7 +13,7 @@ const uploadSensorBroker = async (request, h) => {
             value:value,
 			id_sensor:sensorId,
         })
-
+		
 		if (result) {
 			response = h.response({
 				code: 201,
