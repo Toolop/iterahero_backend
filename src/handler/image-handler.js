@@ -3,7 +3,7 @@ const pool = require("../config/db");
 const axios = require("axios");
 
 const uploadImageServer = async (request, h) => {
-	let {email,camera,line,id_sensor} = request.payload;
+	let {email,camera,line,id_sensor,id_greenhouse} = request.payload;
 	let { image } = request.payload;
 	let result = "";
 	let response = "";
@@ -90,21 +90,26 @@ const uploadImageServer = async (request, h) => {
 		let getUrl = uploadImagePayload.url.slice(4,getCountURL);
 		let addText = "https";
 		image = addText + getUrl;
+		const sensor = await getSensor(getData[i].id_sensor);
+		const id_user = await getGreenHouse(id_greenhouse);
+		let type = condition;
+		let status = 0;
+		let detail = `line ${line} pada greenhouse ${sensor.greenhouse} kondisi ${condition}`;
 	
 		const created_at = new Date().toLocaleString("en-US", {
 		timeZone: "Asia/Jakarta",
 		});
 
 		const result = await pool.query(
-			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_actuator) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-			[created_at, image,email,camera,line,id_actuator]
+			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_actuator,id_greenhouse) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+			[created_at, image,email,camera,line,id_actuator,id_greenhouse]
 		);
 		await pool.query(
 			'UPDATE public."sensor" SET range_max = $1 WHERE id_sensor = $2',
 				[volume,
 				id_sensor]
 		);
-		await pool.query(
+		const getNotif = await pool.query(
 			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
 			[detail, created_at, type, status, getData[i].id_sensor]
 		);
@@ -126,6 +131,8 @@ const uploadImageServer = async (request, h) => {
 					camera:result.rows[0].camera,
 					line:result.rows[0].line,
 					id_actuator:result.rows[0].id_actuator,
+					id_greenhouse:result.rows[0].id_greenhouse,
+					condition:condition,
 				}
 			});
 
