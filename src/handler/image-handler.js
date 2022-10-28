@@ -104,6 +104,15 @@ const uploadImageServer = async (request, h) => {
 				[volume,
 				id_sensor]
 		);
+		await pool.query(
+			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
+			[detail, created_at, type, status, getData[i].id_sensor]
+		);
+		await pool.query(
+			`INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
+			[id_user.id_user, getNotif.rows[0].id_notification]
+		);
+		
 
 		if (result) {
 			response = h.response({
