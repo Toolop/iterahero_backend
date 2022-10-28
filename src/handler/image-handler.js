@@ -1,4 +1,6 @@
 const { uploadImage } = require("../utils/cloudinary");
+const { getGreenHouse } = require("../utils/greenhouse-util");
+const { getSensor } = require("../utils/sensor-utils");
 const pool = require("../config/db");
 const axios = require("axios");
 
@@ -8,6 +10,7 @@ const uploadImageServer = async (request, h) => {
 	let result = "";
 	let response = "";
 	let volume = 0;
+	let condition = "";
 
 	try {
 		let imageBase64 = await new Buffer(image).toString('base64');
@@ -26,7 +29,6 @@ const uploadImageServer = async (request, h) => {
 			}
 		})
 		.then(function(response) {
-			let condition = "";
 			let num_con = 0;
 			let get = response.data['predictions'];
 			for (i in get){
@@ -90,7 +92,7 @@ const uploadImageServer = async (request, h) => {
 		let getUrl = uploadImagePayload.url.slice(4,getCountURL);
 		let addText = "https";
 		image = addText + getUrl;
-		const sensor = await getSensor(getData[i].id_sensor);
+		const sensor = await getSensor(id_sensor);
 		const id_user = await getGreenHouse(id_greenhouse);
 		let type = condition;
 		let status = 0;
@@ -101,8 +103,8 @@ const uploadImageServer = async (request, h) => {
 		});
 
 		const result = await pool.query(
-			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_actuator,id_greenhouse) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-			[created_at, image,email,camera,line,id_actuator,id_greenhouse]
+			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_sensor,id_greenhouse) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+			[created_at, image,email,camera,line,id_sensor,id_greenhouse]
 		);
 		await pool.query(
 			'UPDATE public."sensor" SET range_max = $1 WHERE id_sensor = $2',
@@ -111,7 +113,7 @@ const uploadImageServer = async (request, h) => {
 		);
 		const getNotif = await pool.query(
 			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
-			[detail, created_at, type, status, getData[i].id_sensor]
+			[detail, created_at, type, status,id_sensor]
 		);
 		await pool.query(
 			`INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
@@ -130,7 +132,7 @@ const uploadImageServer = async (request, h) => {
 					email:result.rows[0].email,
 					camera:result.rows[0].camera,
 					line:result.rows[0].line,
-					id_actuator:result.rows[0].id_actuator,
+					id_sensor:result.rows[0].id_sensor,
 					id_greenhouse:result.rows[0].id_greenhouse,
 					condition:condition,
 				}
@@ -189,7 +191,7 @@ const getImageServer= async (request, h) => {
 					image:image.image,
 					camera:image.camera,
 					line:image.line,
-					id_actuator:image.id_actuator,
+					id_sensor:image.id_sensor,
 				}))
 			),
 		});
