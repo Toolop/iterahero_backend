@@ -1,5 +1,6 @@
 const mqtt = require('mqtt')
 const actuator = require('../models/model-actuator');
+const pool = require("../config/db");
 
 const host = 'broker.hivemq.com'
 const port = '1883'

@@ -54,7 +54,7 @@ const uploadActuatorLog = async (request, h) => {
 							);
 							await pool.query(
 								`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-								[on_off_status, id_actuator]
+								[getDataBroker, id_actuator]
 							);
 							client.end();
 						});
