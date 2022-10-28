@@ -1,5 +1,8 @@
 const mqtt = require('mqtt')
+const pool = require("../config/db");
 const sensor = require('../models/model-sensor');
+const { getSensor } = require('../utils/sensor-utils');
+const { getGreenHouse } = require("../utils/greenhouse-util");
 
 const host = 'broker.hivemq.com'
 const port = '1883'
@@ -31,11 +34,46 @@ const subscribeSensor = () =>{
                 })
             })
 
-            client.on('message', (topic, payload) => {
+            client.on('message', async(topic, payload) => {
                 try{
-                    let getData = JSON.parse((payload.toString()));
-                    console.log(getData);
-                    let save = sensor.insertMany(getData);
+                    let getData = await JSON.parse((payload.toString()));
+                    let save = await sensor.insertMany(getData);
+                    for (i in getData){
+                        const sensor = await  getSensor(getData[i].id_sensor);
+                        const id_user = await (getGreenHouse(sensor.id_greenhouse));
+                        let type = "sensor";
+                        let status = 0;
+                        let detail = `Sensor ${sensor.name} pada greenhouse ${sensor.greenhouse} terjadi masalah`;
+                        const created_at = new Date().toLocaleString("en-US", {
+                            timeZone: "Asia/Jakarta",
+                        });
+                        
+                        if(parseFloat(getData[i].value) < sensor.range_min  || parseFloat(getData[i].value) > sensor.range_max){
+                            if(sensor.notify == "0"){
+                                const getNotif = await pool.query(
+                                    `INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
+                                    [detail, created_at, type, status, getData[i].id_sensor]
+                                );
+                                await pool.query(
+                                    `INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
+                                    [id_user.id_user, getNotif.rows[0].id_notification]
+                                );
+                                await pool.query(
+                                    `UPDATE public."sensor" SET "notify"=1 WHERE id_sensor = $1`,
+                                    [getData[i].id_sensor]
+                                );
+                            }
+                        }else{
+                            if(sensor.notify == "1"){
+                                await pool.query(
+                                    'UPDATE public."sensor" SET "notify"=0 WHERE id_sensor = $1',
+                                    [getData[i].id_sensor]
+                                );
+                            }
+                        }
+                    }
+                    
+                    /**/
     
                     if(save){
                         console.log('berhasil');
