@@ -60,6 +60,7 @@ const uploadActuatorLog = async (request, h) => {
 							);
 							client.end();
 						});
+						client.end();
 					}
 				});
 		});
