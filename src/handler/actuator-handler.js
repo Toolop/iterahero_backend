@@ -180,7 +180,7 @@ const getActuatorDetail = async (request, h) => {
 
 const updateActuator = async (request, h) => {
 	const { id } = request.params;
-	const { name, color, icon, topic_broker } = request.payload;
+	const { name, color, icon,automation } = request.payload;
 	let result = "";
 	let response = "";
 
@@ -189,11 +189,18 @@ const updateActuator = async (request, h) => {
 			const updated_at = new Date().toLocaleString("en-US", {
 				timeZone: "Asia/Jakarta",
 			});
-
-			result = await pool.query(
-				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
-				[name, updated_at, icon, color, id]
-			);
+			if (automation){
+				result = await pool.query(
+					'UPDATE public."actuator" SET automation=$1, updated_at=$2 WHERE id_actuator = $3',
+					[automation, updated_at,id]
+				);
+			}
+			else{
+				result = await pool.query(
+					'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
+					[name, updated_at, icon, color, id]
+				);
+			}
 
 			if (result) {
 				response = h.response({
