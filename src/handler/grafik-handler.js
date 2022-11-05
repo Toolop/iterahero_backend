@@ -47,15 +47,15 @@ const getGrafik = async (request, h) => {
               _id: { 
                 year : {$year: "$createdAt"},
                 month: {$month: "$createdAt"},
-                week: {$floor: {$divide: [{$dayOfMonth: "$createdAt"}, 7]}}
+                week: {$cond : { if: { $gte: [{$floor: {$divide: [{$dayOfMonth: "$createdAt"}, 7]}},1] }, then: {$floor: {$divide: [{$dayOfMonth: "$createdAt"}, 7]}}, else:1  }} 
               },
               data: {$avg : '$value'},
             },
           },
           {
               $project: {
-                label: '$_id.week',
-                date: {$concat: ["Minggu : ", {$toString:"$_id.week"}, " ",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                label: "$_id.week",
+                date: {$concat: ["Minggu : ", {$toString:"$_id.year"}, "/",{$toString: "$_id.month"},"/",{$toString: "$_id.week"}] },
                 data : { $round: [ "$data", 2 ] },
               }
           },
