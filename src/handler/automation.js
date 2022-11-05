@@ -16,7 +16,7 @@ const uploadAutomation = async (request, h) => {
 		});
 
 		const result = await pool.query(
-			`INSERT INTO public.sensor (id_actuator,id_sensor,between,status_lifecycle) VALUES($1,$2,$3,$4) RETURNING *;`,
+			`INSERT INTO public.automation (id_actuator,id_sensor,between,status_lifecycle,created_at) VALUES($1,$2,$3,$4,$5) RETURNING *;`,
 			[
 				id_actuator,id_sensor,between,status_lifecycle,created_at
 			]

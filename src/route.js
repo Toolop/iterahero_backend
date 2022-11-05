@@ -51,6 +51,7 @@ const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler
 const { handler } = require("@hapi/hapi/lib/cors.js");
 const { getIcon, uploadIcon } = require("./handler/icon-handler.js");
 const { getActuatorBroker } = require("./handler/actuator-broker.js");
+const { uploadAutomation } = require("./handler/automation.js");
 
 const prefix = "/api/v1";
 
@@ -381,6 +382,14 @@ const routes = [
 			auth: false,
 		 },
 		handler: getActuatorBroker,
+	},
+	{
+		method: "POST",
+		path: `${prefix}/automation`,
+		config: { 
+			auth: false,
+		 },
+		handler: uploadAutomation,
 	},
 
 ];
