@@ -3,6 +3,7 @@ const pool = require("../config/db");
 const sensor = require('../models/model-sensor');
 const { getSensor } = require('../utils/sensor-utils');
 const { getGreenHouse } = require("../utils/greenhouse-util");
+const { getAutomation} = require('../utils/automation-utils');
 
 const host = 'broker.hivemq.com'
 const port = '1883'
@@ -41,6 +42,7 @@ const subscribeSensor = () =>{
                     for (i in getData){
                         const sensor = await  getSensor(getData[i].id_sensor);
                         const id_user = await (getGreenHouse(sensor.id_greenhouse));
+                        const list_automation = await (getAutomation(getData[i].id_sensor));
                         let type = "sensor";
                         let status = 0;
                         let detail = `Sensor ${sensor.name} pada greenhouse ${sensor.greenhouse} terjadi masalah`;
@@ -48,6 +50,30 @@ const subscribeSensor = () =>{
                             timeZone: "Asia/Jakarta",
                         });
                         
+                        for (i in list_automation){
+                            if(list_automation[i].automationStatus == "1"){
+                                if(list_automation[i].between == "<" && parseFloat(getData[i].value) < sensor.range_min){
+                                    message = list_automation[i].status_lifecycle;
+                                }else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max){
+                                    message = list_automation[i].status_lifecycle;
+                                }else if(list_automation[i].between == "<" && parseFloat(getData[i].value) < sensor.range_min+2){
+                                    if(list_automation[i].status_lifecycle == "1"){
+                                        message = "0";
+                                    }else if (list_automation[i].status_lifecycle == "0"){
+                                        message = "1";
+                                    }
+                                }
+                                else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max-2){
+                                    if(list_automation[i].status_lifecycle == "1"){
+                                        message = "0";
+                                    }else if (list_automation[i].status_lifecycle == "0"){
+                                        message = "1";
+                                    }
+                                }
+                            }
+                        }
+                        
+
                         if(parseFloat(getData[i].value) < sensor.range_min  || parseFloat(getData[i].value) > sensor.range_max){
                             if(sensor.notify == "0"){
                                 const getNotif = await pool.query(
