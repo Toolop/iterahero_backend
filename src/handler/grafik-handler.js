@@ -23,7 +23,7 @@ const getGrafik = async (request, h) => {
               {
                   $project: {
                     label: '$_id.day',
-                    date: {$concat: [ {$toString:"$_id.day"}, "/",{$toString: "$_id.month"},"/",{$toString:"$_id.year"} ] },
+                    date: {$concat: [ {$toString:"$_id.year"}, "/",{$toString: "$_id.month"},"/",{$toString:"$_id.day"} ] },
                     data : { $round: [ "$data", 2 ] },
                   }
               },
@@ -31,11 +31,12 @@ const getGrafik = async (request, h) => {
                   $sort: { "date": -1 }
               },
               {
-                  $limit: 7,
+                $limit: 7,
               },
               {
-                  $sort:{"date":1}
-              }
+                $sort: { "date": -1 }
+              },
+
           ]);
       }
       else if(getDateQuery == "Month"){
