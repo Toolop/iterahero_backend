@@ -34,7 +34,7 @@ const getGrafik = async (request, h) => {
                 $limit: 7,
               },
               {
-                $sort: { "date": -1 }
+                $sort: { "date": 1 }
               },
 
           ]);
