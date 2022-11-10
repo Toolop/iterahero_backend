@@ -6,6 +6,7 @@ const {validate} = require('./utils/jwt-utils');
 const mongoose = require('mongoose');
 const {subscribeSensor} = require('./client/subscribe-sensor-client')
 const {subscribeActuator} = require('./client/subscribe-actuator-client')
+const {subscribeMac} = require('./client/subscribe-mac-client')
 
 const init = async () =>{
     dotenv.config();
@@ -40,6 +41,7 @@ const init = async () =>{
       await server.start();
       await subscribeSensor();
       await subscribeActuator();
+      await subscribeMac();
     }
     catch(err){
         console.log(err);
