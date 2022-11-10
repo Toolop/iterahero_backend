@@ -56,18 +56,13 @@ const subscribeSensor = () =>{
                                     message = list_automation[i].status_lifecycle;
                                 }else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max){
                                     message = list_automation[i].status_lifecycle;
-                                }else if(list_automation[i].between == "<" && parseFloat(getData[i].value) < sensor.range_min+2){
+                                }else if(list_automation[i].between == "<" && parseFloat(getData[i].value) < sensor.range_min+list_automation[i].constanta){
                                     if(list_automation[i].status_lifecycle == "1"){
                                         message = "0";
-                                    }else if (list_automation[i].status_lifecycle == "0"){
-                                        message = "1";
-                                    }
                                 }
-                                else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max-2){
+                                }else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max-list_automation[i].constanta){
                                     if(list_automation[i].status_lifecycle == "1"){
                                         message = "0";
-                                    }else if (list_automation[i].status_lifecycle == "0"){
-                                        message = "1";
                                     }
                                 }
                             }
@@ -75,7 +70,7 @@ const subscribeSensor = () =>{
                         
 
                         if(parseFloat(getData[i].value) < sensor.range_min  || parseFloat(getData[i].value) > sensor.range_max){
-                            if(sensor.notify == "0"){
+                            if(sensor.notify === "0"){
                                 const getNotif = await pool.query(
                                     `INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
                                     [detail, created_at, type, status, getData[i].id_sensor]
@@ -89,8 +84,8 @@ const subscribeSensor = () =>{
                                     [getData[i].id_sensor]
                                 );
                             }
-                        }else{
-                            if(sensor.notify == "1"){
+                        }else if(parseFloat(getData[i].value) > sensor.range_min + 4  || parseFloat(getData[i].value) < sensor.range_max - 4){
+                            if(sensor.notify === "1"){
                                 await pool.query(
                                     'UPDATE public."sensor" SET "notify"=0 WHERE id_sensor = $1',
                                     [getData[i].id_sensor]

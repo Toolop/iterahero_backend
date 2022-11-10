@@ -27,8 +27,8 @@ const uploadActuatorLog = async (request, h) => {
 		});
 
 		const topic = "iterahero";
-		const pubTopic = `${topic}/actuator/${id_actuator}`;
-		const subtopic = `${topic}/respon/actuator/#`;
+		const pubTopic = `${topic}/${id_actuator}`;
+		const subtopic = `${topic}/respon/#`;
 
 		client.on('connect', async() => {
 				var message =  parseInt(on_off_status);
@@ -42,18 +42,12 @@ const uploadActuatorLog = async (request, h) => {
 						});
 				
 						await client.on('message', async(topic, payload) => {
-							console.log(payload);
 							getDataBroker = payload.toString();
-							console.log(getDataBroker);
 							var n = topic.lastIndexOf('/');
 							var id_actuator = topic.substring(n + 1);
 							const created_at = new Date().toLocaleString("en-US", {
 								timeZone: "Asia/Jakarta",
 							});
-							await pool.query(
-								`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
-								[id_actuator,getDataBroker, created_at]
-							);
 							await pool.query(
 								`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
 								[getDataBroker, id_actuator]
