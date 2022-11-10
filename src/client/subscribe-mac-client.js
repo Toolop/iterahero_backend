@@ -3,6 +3,7 @@ const actuator = require('../models/model-actuator');
 const pool = require("../config/db");
 const { isActuatorExist } = require("../utils/actuator-util");
 const { isSensorExist } = require("../utils/sensor-utils");
+const { isMacExist } = require("../utils/mac-utils");
 
 const host = 'broker.hivemq.com'
 const port = '1883'
@@ -34,23 +35,21 @@ const subscribeMac = () =>{
                     getData = payload.toString();
                     var n = topic.lastIndexOf('/');
                     var last = topic.substring(n + 1);
-                    console.log(getData);
-                    if(topic.includes("sensor")){
-                        if(await isSensorExist(last)){
-                            console.log("halo");
-                        }else{
-                            await pool.query(
-                                `INSERT INTO public.mac_address (id_sensor, mac_address)VALUES($1, $2);`,
-                                [last,getData]
-                            );
-                        }
-                    }else if(topic.includes("actuator")){
-                        console.log("halo kontol");
-                        if(await isActuatorExist(last)){
-                            await pool.query(
-                                `INSERT INTO public.mac_address (id_actuator, mac_address)VALUES($1, $2);`,
-                                [last,getData]
-                            );
+                    if(await !isMacExist(last)){
+                        if(topic.includes("sensor")){
+                            if(await isSensorExist(last)){
+                                await pool.query(
+                                    `INSERT INTO public.mac_address (id_sensor, mac_address)VALUES($1, $2);`,
+                                    [last,getData]
+                                );
+                            }
+                        }else if(topic.includes("actuator")){
+                            if(await isActuatorExist(last)){
+                                await pool.query(
+                                    `INSERT INTO public.mac_address (id_actuator, mac_address)VALUES($1, $2);`,
+                                    [last,getData]
+                                );
+                            }
                         }
                     }
                 }catch(err){
