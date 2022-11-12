@@ -4,7 +4,7 @@ const { getGreenHouse } = require("../utils/greenhouse-util");
 const { isNotificationExist } = require("../utils/notification-util");
 
 const uploadNotification = async (request, h) => {
-	const { detail, type, status, id_actuator } = request.payload;
+	const { detail, type, status, id_sensor } = request.payload;
 
 	let response = "";
 
@@ -13,12 +13,12 @@ const uploadNotification = async (request, h) => {
 			timeZone: "Asia/Jakarta",
 		});
 
-		const actuator = await getActuator(id_actuator);
+		const actuator = await getActuator(id_sensor);
 		const id_user = (await getGreenHouse(actuator.id_greenhouse)).id_user;
 
 		const result = await pool.query(
-			`INSERT INTO public."notification" (detail, created_at, type, status, id_actuator) VALUES($1,$2,$3,$4,$5) RETURNING *`,
-			[detail, created_at, type, status, id_actuator]
+			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
+			[detail, created_at, type, status, id_sensor]
 		);
 
 		const makeReceiver = await pool.query(
@@ -37,7 +37,7 @@ const uploadNotification = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					type: result.rows[0].type,
 					status: result.rows[0].status,
-					id_actuator: result.rows[0].id_actuator,
+					id_sensor: result.rows[0].id_sensor,
 					receive_status: "received",
 				},
 			});
@@ -138,9 +138,9 @@ const getNotifications = async (request, h) => {
 					created_at: row.created_at,
 					type: row.type,
 					status: row.status,
-					id_actuator: row.id_actuator,
-					id_greenhouse: (await getActuator(row.id_actuator)).id_greenhouse,
-					greenhouse_loc: (await getActuator(row.id_actuator)).greenhouse_loc,
+					id_sensor: row.id_sensor,
+					id_greenhouse: (await getActuator(row.id_sensor)).id_greenhouse,
+					greenhouse_loc: (await getActuator(row.id_sensor)).greenhouse_loc,
 				}))
 			),
 			totalPage: totalPage,
@@ -228,7 +228,7 @@ const getNotificationDetail = async (request, h) => {
 					created_at: result.rows[0].created_at,
 					type: result.rows[0].type,
 					status: result.rows[0].status,
-					id_actuator: result.rows[0].id_actuator,
+					id_sensor: result.rows[0].id_sensor,
 				},
 			});
 

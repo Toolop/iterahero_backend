@@ -39,6 +39,7 @@ const subscribeSensor = () =>{
                 try{
                     let getData = await JSON.parse((payload.toString()));
                     let save = await sensor.insertMany(getData);
+                    let message = "";
                     for (i in getData){
                         const sensor = await  getSensor(getData[i].id_sensor);
                         const id_user = await (getGreenHouse(sensor.id_greenhouse));
@@ -51,20 +52,29 @@ const subscribeSensor = () =>{
                         });
                         
                         for (i in list_automation){
+                            let pubTopic = `iterahero/actuator/${list_automation[i].id_actuator}`;
                             if(list_automation[i].automationStatus == "1"){
                                 if(list_automation[i].between == "<" && parseFloat(getData[i].value) < sensor.range_min){
                                     message = list_automation[i].status_lifecycle;
                                 }else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max){
                                     message = list_automation[i].status_lifecycle;
-                                }else if(list_automation[i].between == "<" && parseFloat(getData[i].value) < sensor.range_min+list_automation[i].constanta){
+                                }else if(list_automation[i].between == "<" && parseFloat(getData[i].value) > sensor.range_min + parseFloat(list_automation[i].constanta)){
                                     if(list_automation[i].status_lifecycle == "1"){
                                         message = "0";
-                                }
-                                }else if(list_automation[i].between == ">" && parseFloat(getData[i].value) > sensor.range_max-list_automation[i].constanta){
+                                    }
+                                }else if(list_automation[i].between == ">" && parseFloat(getData[i].value) < sensor.range_max - parseFloat(list_automation[i].constanta)){
                                     if(list_automation[i].status_lifecycle == "1"){
                                         message = "0";
                                     }
                                 }
+                                await client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
+                                    if (error) {
+                                        console.error(error);
+                                    }
+                                    else{
+                                        console.error("on");
+                                    }
+                                });
                             }
                         }
                         
