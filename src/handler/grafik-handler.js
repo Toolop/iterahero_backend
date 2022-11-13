@@ -23,7 +23,7 @@ const getGrafik = async (request, h) => {
               {
                   $project: {
                     label: '$_id.day',
-                    date: {$concat: [ {$toString:"$_id.year"}, "/",{$toString: "$_id.month"},"/",{$toString:{ $dayOfMonth : "$createdAt" }} ] },
+                    date: {$concat: [ {$toString:"$_id.year"}, "/", {$cond : { if: { $lte: [{$strLenCP:{$toString: "$_id.month"}},1] }, then:{ $concat: ["0", {$toString: "$_id.month"} ] }, else: {$toString: "$_id.month"}}} ,"/",{$cond : { if: { $lte: [{$strLenCP:{$toString: "$_id.day"}},1] }, then:{ $concat: ["0", {$toString: "$_id.day"} ] }, else: {$toString: "$_id.day"}}} ] },
                     data : { $round: [ "$data", 2 ] },
                   }
               },
