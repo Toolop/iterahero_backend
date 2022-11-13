@@ -52,7 +52,7 @@ const getGrafik = async (request, h) => {
           {
               $project: {
                 label: "$_id.week",
-                date: {$concat: ["Minggu : ", {$toString:"$_id.year"}, "/",{$toString: "$_id.month"},"/",{$toString: "$_id.week"}] },
+                date: {$concat: ["Minggu : ", {$toString:"$_id.year"}, "/",{$cond : { if: { $lte: [{$strLenCP:{$toString: "$_id.month"}},1] }, then:{ $concat: ["0", {$toString: "$_id.month"} ] }, else: {$toString: "$_id.month"}}},"/",{$toString: "$_id.week"}] },
                 data : { $round: [ "$data", 2 ] },
               }
           },
