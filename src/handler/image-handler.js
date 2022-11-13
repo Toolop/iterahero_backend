@@ -106,7 +106,7 @@ const uploadImageServer = async (request, h) => {
 			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_sensor,id_greenhouse) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
 			[created_at, image,email,camera,line,id_sensor,id_greenhouse]
 		);
-		await pool.query(
+		const update = await pool.query(
 			'UPDATE public."sensor" SET range_max = $1 WHERE id_sensor = $2',
 				[volume,
 				id_sensor]

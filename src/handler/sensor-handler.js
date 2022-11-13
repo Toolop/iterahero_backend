@@ -3,6 +3,7 @@ const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const { getSensorCategory } = require("../utils/category-utils");
 const { isSensorExist } = require("../utils/sensor-utils");
 const { getGreenHouseName } = require("../utils/greenhouse-util");
+const sensor = require('../models/model-sensor');
 
 const uploadSensor = async (request, h) => {
 	const {
@@ -40,7 +41,7 @@ const uploadSensor = async (request, h) => {
 				id_category_sensor,
 			]
 		);
-
+		
 		if (result) {
 			response = h.response({
 				code: 201,
