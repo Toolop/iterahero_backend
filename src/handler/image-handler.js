@@ -61,24 +61,24 @@ const uploadImageServer = async (request, h) => {
 			let count = total.rowCount;
 			if (count >= 14 && count <= 50){
 				if(condition ==  "daun kuning"){
-					volume = "800";
+					volume = "160";
 				}
 				else if(condition == "bercak"){
-					volume = "700";
+					volume = "140";
 				}
 				else if(condition == "daun sehat"){
-					volume = "600";
+					volume = "120";
 				}
 			}
 			else if(count >50){
 				if(condition ==  "daun kuning"){
-					volume = "1900";
+					volume = "380";
 				}
 				else if(condition == "bercak"){
-					volume = "1700";
+					volume = "340";
 				}
 				else if(condition == "daun sehat"){
-					volume = "1500";
+					volume = "300";
 				}
 			}
 			
