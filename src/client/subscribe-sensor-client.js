@@ -11,7 +11,7 @@ const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
 
 const connectUrl = `mqtt://${host}:${port}`;
 
-const subscribeSensor = () =>{
+const subscribeSensor = async() =>{
     try{
             const client = mqtt.connect(connectUrl, {
                 clientId,
@@ -28,7 +28,7 @@ const subscribeSensor = () =>{
                 reconnectPeriod: 1000,
             });
             const topic = "iterahero/sensor/#"
-            client.on('connect', () => {
+            await client.on('connect', () => {
                 console.log('Connected')
                 client.subscribe([topic], () => {
                     console.log(`Subscribe to topic '${topic}'`)

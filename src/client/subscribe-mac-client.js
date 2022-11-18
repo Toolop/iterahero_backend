@@ -10,7 +10,7 @@ const port = '1883'
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
 
 const connectUrl = `mqtt://${host}:${port}`;
-const subscribeMac = () =>{
+const subscribeMac = async() =>{
     try{
             const client = mqtt.connect(connectUrl, {
                 clientId,
@@ -23,7 +23,7 @@ const subscribeMac = () =>{
                 reconnectPeriod: 1000,
             });
             const topic = "iterahero/macaddress/#"
-            client.on('connect', () => {
+            await client.on('connect', () => {
                 console.log('Connected')
                 client.subscribe([topic], () => {
                     console.log(`Subscribe to topic '${topic}'`)
