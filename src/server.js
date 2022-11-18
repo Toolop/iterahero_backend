@@ -39,7 +39,7 @@ const init = async () =>{
     
     try{
       await server.start();
-      subscribeSensor();
+      //subscribeSensor();
       subscribeActuator();
       subscribeMac();
     }

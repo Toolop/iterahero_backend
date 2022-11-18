@@ -56,13 +56,6 @@ const subscribeMac = async() =>{
                     console.log(err);
                 }
             });
-            client.on('connect', () => {
-                console.log('Connected')
-                client.subscribe([topic], () => {
-                    console.log(`Subscribe to topic '${topic}'`)
-                })
-            });
-
             
     }catch(err){
         console.log(err);
