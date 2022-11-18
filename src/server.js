@@ -39,9 +39,9 @@ const init = async () =>{
     
     try{
       await server.start();
-      await subscribeSensor();
-      await subscribeActuator();
-      await subscribeMac();
+      subscribeSensor();
+      subscribeActuator();
+      subscribeMac();
     }
     catch(err){
         console.log(err);
