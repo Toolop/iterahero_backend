@@ -4,6 +4,7 @@ const {
 	isGreenhouseExist,
 	deletimageGreenhouse,
 } = require("../utils/greenhouse-util");
+const { getLocalISOString } = require("../utils/timestamp-utils");
 const { getUser } = require("../utils/user-util");
 
 const getGreenHouses = async (request, h) => {
@@ -125,9 +126,7 @@ const uploadGreenHouse = async (request, h) => {
 			image = addText + getUrl;
 		}
 
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
+		const created_at = getLocalISOString();
 
 		const result = await pool.query(
 			`INSERT INTO public."greenhouse" (name, image, location, created_at, id_user) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
@@ -182,9 +181,7 @@ const updateGreenhouse = async (request, h) => {
 
 	try {
 		if (await isGreenhouseExist(id)) {
-			const updated_at = new Date().toLocaleString("en-US", {
-				timeZone: "Asia/Jakarta",
-			});
+			const updated_at = getLocalISOString();
 
 			if (image) {
 				deletimageGreenhouse(id);

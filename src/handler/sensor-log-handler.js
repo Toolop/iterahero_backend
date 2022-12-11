@@ -7,10 +7,7 @@ const uploadSensorLog = async (request, h) => {
 	let response = "";
 
 	try {
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
-
+		const created_at = getLocalISOString();
 		const result = await pool.query(
 			`INSERT INTO public."sensor_log" (value, created_at,status,id_sensor) VALUES($1,$2,$3,$4) RETURNING *`,
 			[value, created_at, status, id_sensor]
@@ -149,3 +146,4 @@ module.exports = {
 	getSensorLogBySensor,
 	getSensorLogDetail,
 };
+

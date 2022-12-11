@@ -1,5 +1,4 @@
 const mqtt = require('mqtt')
-const actuator = require('../models/model-actuator');
 const pool = require("../config/db");
 const { isActuatorExist } = require("../utils/actuator-util");
 const { isSensorExist } = require("../utils/sensor-utils");

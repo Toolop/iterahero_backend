@@ -2,6 +2,7 @@ const pool = require("../config/db");
 const { getActuator } = require("../utils/actuator-util");
 const { getGreenHouse } = require("../utils/greenhouse-util");
 const { isNotificationExist } = require("../utils/notification-util");
+const { getLocalISOString } = require("../utils/timestamp-utils");
 
 const uploadNotification = async (request, h) => {
 	const { detail, type, status, id_sensor } = request.payload;
@@ -9,9 +10,7 @@ const uploadNotification = async (request, h) => {
 	let response = "";
 
 	try {
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
+		const created_at = getLocalISOString();
 
 		const actuator = await getActuator(id_sensor);
 		const id_user = (await getGreenHouse(actuator.id_greenhouse)).id_user;

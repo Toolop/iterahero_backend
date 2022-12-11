@@ -4,6 +4,7 @@ const { getSensorCategory } = require("../utils/category-utils");
 const { isSensorExist } = require("../utils/sensor-utils");
 const { getGreenHouseName } = require("../utils/greenhouse-util");
 const sensor = require('../models/model-sensor');
+const { getLocalISOString } = require("../utils/timestamp-utils");
 
 const uploadSensor = async (request, h) => {
 	const {
@@ -16,17 +17,16 @@ const uploadSensor = async (request, h) => {
 		range_min,
 		range_max,
 		id_category_sensor,
+		calibration, 
 	} = request.payload;
 
 	let response = "";
 
 	try {
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
+		const created_at = getLocalISOString();
 
 		const result = await pool.query(
-			`INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *;`,
+			`INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor,calibration) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *;`,
 			[
 				name,
 				unit_measurement,
@@ -39,6 +39,7 @@ const uploadSensor = async (request, h) => {
 				range_min,
 				range_max,
 				id_category_sensor,
+				calibration,
 			]
 		);
 		
@@ -59,6 +60,7 @@ const uploadSensor = async (request, h) => {
 					id_category_sensor: result.rows[0].id_category_sensor,
 					created_at: result.rows[0].created_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
+					calibration:result.rows[0].calibration
 				},
 			});
 
@@ -132,6 +134,7 @@ const getSensorByGreenHouse = async (request, h) => {
 					greenhouse: await getGreenHouseName(sensor.id_greenhouse),
 					created_at: sensor.created_at,
 					id_greenhouse: sensor.id_greenhouse,
+					calibration: sensor.calibration,
 				}))
 			),
 			totalPage: totalPage,
@@ -182,6 +185,7 @@ const getSensorById = async (request, h) => {
 						created_at: sensor.created_at,
 						id_greenhouse: sensor.id_greenhouse,
 						greenhouse: await getGreenHouseName(sensor.id_greenhouse),
+						calibration: sensor.calibration, 
 					}))
 				),
 			});
@@ -222,18 +226,17 @@ const updateSensor = async (request, h) => {
 		range_min,
 		range_max,
 		id_category_sensor,
+		calibration,
 	} = request.payload;
 	let result = "";
 	let response = "";
 
 	try {
 		if (await isSensorExist(id)) {
-			const updated_at = new Date().toLocaleString("en-US", {
-				timeZone: "Asia/Jakarta",
-			});
+			const updated_at = getLocalISOString();
 
 			result = await pool.query(
-				'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9 WHERE id_sensor = $10',
+				'UPDATE public."sensor" SET "name"=$1, unit_measurement=$2, brand=$3, updated_at=$4, icon=$5, color=$6, range_min = $7,range_max = $8,id_category_sensor = $9, calibration = $10 WHERE id_sensor = $11',
 				[
 					name,
 					unit_measurement,
@@ -244,6 +247,7 @@ const updateSensor = async (request, h) => {
 					range_min,
 					range_max,
 					id_category_sensor,
+					calibration,
 					id,
 				]
 			);

@@ -1,5 +1,6 @@
 const pool = require("../config/db");
-const mqtt = require('mqtt')
+const mqtt = require('mqtt');
+const { getLocalISOString } = require("../utils/timestamp-utils");
 const host = 'broker.hivemq.com'
 const port = '1883'
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
@@ -28,43 +29,20 @@ const uploadActuatorLog = async (request, h) => {
 
 		const topic = "iterahero";
 		const pubTopic = `${topic}/actuator/${id_actuator}`;
-		const subtopic = `${topic}/respon/actuator/#`;
 
 		client.on('connect', async() => {
 				var message =  parseInt(on_off_status);
 				await client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
 					if (error) {
 						console.error(error)
-					}
-					else{
-						await client.subscribe([subtopic], () => {
-							console.log(`Subscribe to topic '${subtopic}'`)
-						});
-				
-						await client.on('message', async(topic, payload) => {
-							console.log(payload);
-							getDataBroker = payload.toString();
-							console.log(getDataBroker);
-							var n = topic.lastIndexOf('/');
-							var id_actuator = topic.substring(n + 1);
-							const created_at = new Date().toLocaleString("en-US", {
-								timeZone: "Asia/Jakarta",
-							});
-				
-							await pool.query(
-								`UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-								[getDataBroker, id_actuator]
-							);
-							client.end();
-						});
+					}else{
 						client.end();
 					}
 				});
 		});
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
-		await pool.query(
+		const created_at = getLocalISOString();
+
+		result =  await pool.query(
 			`INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
 			[id_actuator,on_off_status, created_at]
 		);
@@ -73,7 +51,6 @@ const uploadActuatorLog = async (request, h) => {
 			[on_off_status, id_actuator]
 		);
 		
-		result = 1;
 		if (result) {
 			response = h.response({
 				code: 201,

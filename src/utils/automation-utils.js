@@ -29,4 +29,28 @@ const getAutomation = async (id) => {
 	return automation;
 };
 
-module.exports = {getAutomation};
+const isAutomationExist = async (id) =>{
+	let isExist = [];
+  
+	try{
+	  const result = await pool.query(
+		'SELECT * FROM public."automation" WHERE id_automation = $1',
+		[id],
+	  );
+  
+	  if (result.rows[0]){
+		isExist = true;
+	  }
+	  else{
+		isExist = false;
+	  }
+  
+	}
+	catch(err){
+	  console.log(err);
+	}
+  
+	return isExist;
+  }
+
+module.exports = {getAutomation,isAutomationExist};

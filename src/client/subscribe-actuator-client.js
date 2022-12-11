@@ -30,15 +30,16 @@ const subscribeActuator = async() =>{
             client.on('message', async(topic, payload) => {
                 try{
                     let getData = JSON.parse((payload.toString()));
-                    console.log(getData);
-                    if(getData[0].status == "offline"){
-                        await pool.query(
-                            `UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-                            [0, getData[0].id_actuator]
-                        );
+                    const result = await actuator.find({id_actuator:getData[0].id_actuator}).sort( { createdAt:-1 } ).limit(1);
+                    if(result[0].status != getData[0].status){
+                        if(getData[0].status == "offline"){
+                            await pool.query(
+                                `UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
+                                [0, getData[0].id_actuator]
+                            );
+                        }
+                        let save = await actuator.insertMany(getData);
                     }
-                    let save = await actuator.insertMany(getData);
-
                 }catch(err){
                     console.log(err);
                 }
