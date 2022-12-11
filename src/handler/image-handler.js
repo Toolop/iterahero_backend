@@ -122,7 +122,7 @@ const uploadImageServer = async (request, h) => {
 		);
 		
 
-		if (result) {
+		if (result && getNotif) {
 			response = h.response({
 				code: 201,
 				status: "Created",
