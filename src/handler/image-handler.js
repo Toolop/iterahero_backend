@@ -11,7 +11,7 @@ const uploadImageServer = async (request, h) => {
 	let result = "";
 	let response = "";
 	let volume = 0;
-	let condition = "";
+	let condition = "daun sehat";
 
 	try {
 		let imageBase64 = await Buffer.from(image).toString('base64');
@@ -58,6 +58,7 @@ const uploadImageServer = async (request, h) => {
 					}
 				}
 			}
+			
 		
 			let count = total.rowCount;
 			if (count >= 0 && count <= 36){
@@ -71,7 +72,7 @@ const uploadImageServer = async (request, h) => {
 					volume = 120 * parseInt(plant);
 				}
 			}
-			else if(count >50){
+			else{
 				if(condition ==  "daun kuning"){
 					volume = 380 * parseInt(plant);
 				}
@@ -104,8 +105,8 @@ const uploadImageServer = async (request, h) => {
 		const created_at = getLocalISOString();
 
 		const result = await pool.query(
-			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_sensor,id_greenhouse) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-			[created_at, image,email,camera,line,id_sensor,id_greenhouse]
+			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_sensor,id_greenhouse,condition) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+			[created_at, image,email,camera,line,id_sensor,id_greenhouse,condition]
 		);
 		const update = await pool.query(
 			'UPDATE public."sensor" SET range_max = $1 WHERE id_sensor = $2',
@@ -113,8 +114,8 @@ const uploadImageServer = async (request, h) => {
 				id_sensor]
 		);
 		const getNotif = await pool.query(
-			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
-			[detail, created_at, type, status,id_sensor]
+			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor,photo) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
+			[detail, created_at, type, status,id_sensor,image]
 		);
 		await pool.query(
 			`INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
@@ -199,6 +200,7 @@ const getImageServer= async (request, h) => {
 					image:image.image,
 					camera:image.camera,
 					line:image.line,
+					condition: image.condition,
 					id_sensor:image.id_sensor,
 				}))
 			),

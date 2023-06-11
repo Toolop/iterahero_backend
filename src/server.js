@@ -22,7 +22,7 @@ const init = async () =>{
     });
 
     await server.register(jwt);
-    await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.4e0t2al.mongodb.net/iterahero?retryWrites=true&w=majority`, {
+    await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.s082abg.mongodb.net/iterahero?retryWrites=true&w=majority`, {
         useNewUrlParser: true,
     });  
 

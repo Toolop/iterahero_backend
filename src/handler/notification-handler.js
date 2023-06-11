@@ -140,6 +140,7 @@ const getNotifications = async (request, h) => {
 					id_sensor: row.id_sensor,
 					id_greenhouse: (await getActuator(row.id_sensor)).id_greenhouse,
 					greenhouse_loc: (await getActuator(row.id_sensor)).greenhouse_loc,
+					photo: row.photo,
 				}))
 			),
 			totalPage: totalPage,

@@ -32,15 +32,6 @@ const responActuator = async() =>{
                 getDataBroker = payload.toString();
                 var n = topic.lastIndexOf('/');
                 var id_actuator = topic.substring(n + 1);
-                const created_at = getLocalISOString();
-                await pool.query(
-                    `INSERT INTO public."actuator_log" (id_actuator, on_off_status, created_at) VALUES($1,$2,$3) RETURNING *`,
-                    [id_actuator,getDataBroker, created_at]
-                );
-                await pool.query(
-                    `UPDATE public."actuator" SET "status_lifecycle"=$1 WHERE id_actuator = $2`,
-                    [getDataBroker, id_actuator]
-                );
             });         
 
     }catch(err){
