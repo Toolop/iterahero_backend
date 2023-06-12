@@ -32,7 +32,7 @@ const uploadActuatorLog = async (request, h) => {
 
 		client.on('connect', async() => {
 				var message =  parseInt(on_off_status);
-				await client.publish(pubTopic, JSON.stringify(message) , { qos: 0, retain: false }, async (error) => {
+				await client.publish(pubTopic, JSON.stringify(message) , { qos: 2, retain: false }, async (error) => {
 					if (error) {
 						console.error(error)
 					}
@@ -60,6 +60,7 @@ const uploadActuatorLog = async (request, h) => {
 							);
 							client.end();
 						});
+						
 					}
 				});
 		});
