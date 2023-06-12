@@ -4,16 +4,16 @@ const routes = require('./route');
 const jwt = require('hapi-auth-jwt2');
 const {validate} = require('./utils/jwt-utils');
 const mongoose = require('mongoose');
-const {subscribeSensor} = require('./client/subscribe-sensor-client')
 const {subscribeActuator} = require('./client/subscribe-actuator-client')
+const {subscribeMac} = require('./client/subscribe-mac-client');
+const { responActuator } = require('./client/responActuator-client');
 
 const init = async () =>{
     dotenv.config();
 
     const server = await Hapi.server({
-//        port: process.env.PORT || 80,
-        port: process.env.PORT || 3001,
-        host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
+        port: process.env.PORT || 8080,
+        host: '0.0.0.0',
         routes: {
             cors: {
               origin: ['*'],
@@ -22,7 +22,7 @@ const init = async () =>{
     });
 
     await server.register(jwt);
-    await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.4e0t2al.mongodb.net/iterahero?retryWrites=true&w=majority`, {
+    await mongoose.connect(`mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.s082abg.mongodb.net/iterahero?retryWrites=true&w=majority`, {
         useNewUrlParser: true,
     });  
 
@@ -38,8 +38,9 @@ const init = async () =>{
     
     try{
       await server.start();
-      await subscribeSensor();
-      await subscribeActuator();
+      subscribeActuator();
+      subscribeMac();
+      //responActuator();
     }
     catch(err){
         console.log(err);

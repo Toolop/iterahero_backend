@@ -43,7 +43,7 @@ const {
 	getSensorLogDetail,
 } = require("./handler/sensor-log-handler.js");
 const { getCountDashboard } = require("./handler/dashboard-count-handler");
-const { uploadImageServer,getImageServer } = require("./handler/image-handler");
+const { uploadImageServer,getImageServer, deleteImageML } = require("./handler/image-handler");
 const {uploadSensorBroker,getSensorBroker} = require("./handler/sensor-broker-handler");
 const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler')
 
@@ -51,6 +51,7 @@ const {getGrafik, getHistorySensor, getyear} = require('./handler/grafik-handler
 const { handler } = require("@hapi/hapi/lib/cors.js");
 const { getIcon, uploadIcon } = require("./handler/icon-handler.js");
 const { getActuatorBroker } = require("./handler/actuator-broker.js");
+const { uploadAutomation, getAllAutomation, updateAutomation, deleteAutomation} = require("./handler/automation-handler.js");
 
 const prefix = "/api/v1";
 
@@ -382,7 +383,46 @@ const routes = [
 		 },
 		handler: getActuatorBroker,
 	},
-
+	{
+		method: "POST",
+		path: `${prefix}/automation`,
+		config: { 
+			auth: false,
+		 },
+		handler: uploadAutomation,
+	},
+	{
+		method: "GET",
+		path: `${prefix}/automation`,
+		config: { 
+			auth: false,
+		 },
+		handler: getAllAutomation,
+	},
+	{
+		method: "PUT",
+		path: `${prefix}/automation/{id}`,
+		config: { 
+			auth: false,
+		 },
+		handler: updateAutomation,
+	},
+	{
+		method: "DELETE",
+		path: `${prefix}/automation/{id}`,
+		config: { 
+			auth: false,
+		 },
+		handler: deleteAutomation,
+	},
+	{
+		method: "DELETE",
+		path: `${prefix}/image/ml`,
+		config: { 
+			auth: false,
+		 },
+		handler: deleteImageML,
+	},
 ];
 
 module.exports = routes;

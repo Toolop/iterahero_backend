@@ -17,8 +17,8 @@ const getActuator = async (id) => {
 				name: actuatorData.name,
 				status_lifecycle: actuatorData.status_lifecycle,
 				id_greenhouse: actuatorData.id_greenhouse,
-				greenhouse_loc: (await getGreenHouse(actuatorData.id_greenhouse))
-					.location,
+				greenhouse_loc: (await getGreenHouse(actuatorData.id_greenhouse)).location,
+				automation: actuatorData.automation,
 			};
 		}
 	} catch (err) {

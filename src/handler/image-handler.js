@@ -1,19 +1,20 @@
 const { uploadImage } = require("../utils/cloudinary");
 const { getGreenHouse } = require("../utils/greenhouse-util");
 const { getSensor } = require("../utils/sensor-utils");
+const { getLocalISOString } = require("../utils/timestamp-utils");
 const pool = require("../config/db");
 const axios = require("axios");
 
 const uploadImageServer = async (request, h) => {
-	let {email,camera,line,id_sensor,id_greenhouse} = request.payload;
+	let {email,camera,line,id_sensor,id_greenhouse,plant} = request.payload;
 	let { image } = request.payload;
 	let result = "";
 	let response = "";
 	let volume = 0;
-	let condition = "";
+	let condition = "daun sehat";
 
 	try {
-		let imageBase64 = await new Buffer(image).toString('base64');
+		let imageBase64 = await Buffer.from(image).toString('base64');
 		const total = await  pool.query(`SELECT * FROM public."ml_image" WHERE camera = $1`,
 		[camera]);
 		
@@ -57,28 +58,29 @@ const uploadImageServer = async (request, h) => {
 					}
 				}
 			}
+			
 		
 			let count = total.rowCount;
-			if (count >= 14 && count <= 50){
+			if (count >= 0 && count <= 36){
 				if(condition ==  "daun kuning"){
-					volume = "800";
+					volume = 160 * parseInt(plant);
 				}
 				else if(condition == "bercak"){
-					volume = "700";
+					volume = 140 * parseInt(plant);
 				}
 				else if(condition == "daun sehat"){
-					volume = "600";
+					volume = 120 * parseInt(plant);
 				}
 			}
-			else if(count >50){
+			else{
 				if(condition ==  "daun kuning"){
-					volume = "1900";
+					volume = 380 * parseInt(plant);
 				}
 				else if(condition == "bercak"){
-					volume = "1700";
+					volume = 340 * parseInt(plant);
 				}
 				else if(condition == "daun sehat"){
-					volume = "1500";
+					volume = 300 * parseFloat(plant)
 				}
 			}
 			
@@ -86,34 +88,34 @@ const uploadImageServer = async (request, h) => {
 		.catch(function(error) {
 			console.log(error.message);
 		});
-
+	
 		const uploadImagePayload = await uploadImage("ml_images", image);
 		let getCountURL = uploadImagePayload.url.length;
 		let getUrl = uploadImagePayload.url.slice(4,getCountURL);
 		let addText = "https";
+		
 		image = addText + getUrl;
+
 		const sensor = await getSensor(id_sensor);
 		const id_user = await getGreenHouse(id_greenhouse);
 		let type = condition;
 		let status = 0;
 		let detail = `line ${line} pada greenhouse ${sensor.greenhouse} kondisi ${condition}`;
 	
-		const created_at = new Date().toLocaleString("en-US", {
-		timeZone: "Asia/Jakarta",
-		});
+		const created_at = getLocalISOString();
 
 		const result = await pool.query(
-			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_sensor,id_greenhouse) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-			[created_at, image,email,camera,line,id_sensor,id_greenhouse]
+			`INSERT INTO public."ml_image" (created_at, image,email,camera,line,id_sensor,id_greenhouse,condition) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+			[created_at, image,email,camera,line,id_sensor,id_greenhouse,condition]
 		);
-		await pool.query(
+		const update = await pool.query(
 			'UPDATE public."sensor" SET range_max = $1 WHERE id_sensor = $2',
 				[volume,
 				id_sensor]
 		);
 		const getNotif = await pool.query(
-			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor) VALUES($1,$2,$3,$4,$5) RETURNING *`,
-			[detail, created_at, type, status,id_sensor]
+			`INSERT INTO public."notification" (detail, created_at, type, status, id_sensor,photo) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
+			[detail, created_at, type, status,id_sensor,image]
 		);
 		await pool.query(
 			`INSERT INTO public."receive" (id_user, id_notification) VALUES($1,$2) RETURNING *`,
@@ -121,7 +123,7 @@ const uploadImageServer = async (request, h) => {
 		);
 		
 
-		if (result) {
+		if (result && getNotif) {
 			response = h.response({
 				code: 201,
 				status: "Created",
@@ -135,6 +137,7 @@ const uploadImageServer = async (request, h) => {
 					id_sensor:result.rows[0].id_sensor,
 					id_greenhouse:result.rows[0].id_greenhouse,
 					condition:condition,
+					plant:plant,
 				}
 			});
 
@@ -164,7 +167,7 @@ const uploadImageServer = async (request, h) => {
 
 
 const getImageServer= async (request, h) => {
-	const { email, date} = request.query;
+	const { email, date,kamera} = request.query;
 	let response = "";
 	let result = "";
 
@@ -180,6 +183,12 @@ const getImageServer= async (request, h) => {
 				`SELECT * FROM public."ml_image" WHERE created_at::date = '%${date}%' ORDER BY created_at ASC`
 			);
 		}
+		else if (kamera){
+			result = await pool.query(
+				`SELECT * FROM public."ml_image" WHERE camera = $1 ORDER BY created_at ASC`,[kamera]
+			);
+		}
+
 
 		response = h.response({
 			code: 200,
@@ -191,6 +200,7 @@ const getImageServer= async (request, h) => {
 					image:image.image,
 					camera:image.camera,
 					line:image.line,
+					condition: image.condition,
 					id_sensor:image.id_sensor,
 				}))
 			),
@@ -212,4 +222,61 @@ const getImageServer= async (request, h) => {
 	return response;
 };
 
-module.exports = {uploadImageServer,getImageServer};
+
+const deleteImageML = async (request, h) => {
+	const {email,kamera} = request.query;
+	let result = "";
+	let response = "";
+
+	try {
+		if (kamera) {
+			result = await pool.query(
+				'DELETE FROM public."ml_image" WHERE camera=$1',
+				[kamera]
+			);
+		}else if(email){
+			result = await pool.query(
+				'DELETE FROM public."ml_image" WHERE email=$1',
+				[email]
+			);
+		}
+		else{
+			result = await pool.query(
+				'DELETE FROM public."ml_image"',
+				[email]
+			);
+		}
+
+		if (result) {
+			response = h.response({
+				code: 200,
+				status: "OK",
+				message: "Image Ml has been deleted",
+			});
+
+			response.code(200);
+		} else {
+			response = h.response({
+				code: 500,
+				status: "Internal Server Error",
+				message: "Image Ml cannot be deleted",
+			});
+
+			response.code(500);
+		}
+
+	} catch (err) {
+		response = h.response({
+			code: 400,
+			status: "Bad Request",
+			message: "error",
+		});
+
+		response.code(400);
+		console.log(err);
+	}
+
+	return response;
+};
+
+module.exports = {uploadImageServer,getImageServer,deleteImageML};

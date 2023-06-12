@@ -2,6 +2,7 @@ const pool = require("../config/db");
 const { uploadImage, deleteImage } = require("../utils/cloudinary");
 const { isActuatorExist } = require("../utils/actuator-util");
 const { getGreenHouseName } = require("../utils/greenhouse-util");
+const {getLocalISOString}  = require("../utils/timestamp-utils");
 
 const uploadActuator = async (request, h) => {
 	const { name, color, id_greenhouse, icon } = request.payload;
@@ -11,9 +12,7 @@ const uploadActuator = async (request, h) => {
 	try {
 		const status_lifecycle = 0;
 
-		const created_at = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Jakarta",
-		});
+		const created_at = getLocalISOString();
 
 		const result = await pool.query(
 			`INSERT INTO public."actuator" (name, status_lifecycle, color, icon, created_at, id_greenhouse) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
@@ -106,6 +105,7 @@ const getActuators = async (request, h) => {
 					updated_at: actuator.updated_at,
 					id_greenhouse: actuator.id_greenhouse,
 					greenhouse: await getGreenHouseName(actuator.id_greenhouse),
+					automation: actuator.automation
 				}))
 			),
 			totalPage: totalPage,
@@ -150,6 +150,7 @@ const getActuatorDetail = async (request, h) => {
 					updated_at: result.rows[0].updated_at,
 					id_greenhouse: result.rows[0].id_greenhouse,
 					greenhouse: await getGreenHouseName(result.rows[0].id_greenhouse),
+					automation: result.rows[0].automation
 				},
 			});
 
@@ -180,20 +181,26 @@ const getActuatorDetail = async (request, h) => {
 
 const updateActuator = async (request, h) => {
 	const { id } = request.params;
-	const { name, color, icon, topic_broker } = request.payload;
+	const { name, color, icon,automation } = request.payload;
 	let result = "";
 	let response = "";
 
 	try {
 		if (await isActuatorExist(id)) {
-			const updated_at = new Date().toLocaleString("en-US", {
-				timeZone: "Asia/Jakarta",
-			});
+			const updated_at = getLocalISOString();
 
-			result = await pool.query(
-				'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
-				[name, updated_at, icon, color, id]
-			);
+			if (automation){
+				result = await pool.query(
+					'UPDATE public."actuator" SET automation=$1, updated_at=$2 WHERE id_actuator = $3',
+					[automation, updated_at,id]
+				);
+			}
+			else{
+				result = await pool.query(
+					'UPDATE public."actuator" SET "name"=$1, updated_at=$2, icon=$3, color=$4 WHERE id_actuator = $5',
+					[name, updated_at, icon, color, id]
+				);
+			}
 
 			if (result) {
 				response = h.response({
