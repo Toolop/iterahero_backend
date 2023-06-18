@@ -1,13 +1,10 @@
 
 const mqtt = require('mqtt')
 const pool = require("../config/db");
-const { getLocalISOString }  = require("../utils/timestamp-utils");
 
-const host = 'broker.hivemq.com'
-const port = '1883'
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
 
-const connectUrl = `mqtt://${host}:${port}`;
+const connectUrl = `ws://broker.hivemq.com:8000/mqtt`;
 const responActuator = async() =>{
     try{
             const client = mqtt.connect(connectUrl, {

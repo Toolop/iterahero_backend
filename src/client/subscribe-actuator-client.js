@@ -2,11 +2,9 @@ const mqtt = require('mqtt')
 const actuator = require('../models/model-actuator');
 const pool = require("../config/db");
 
-const host = 'broker.hivemq.com'
-const port = '1883'
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
 
-const connectUrl = `mqtt://${host}:${port}`;
+const connectUrl = `ws://broker.hivemq.com:8000/mqtt`;
 const subscribeActuator = async() =>{
     try{
             const client = mqtt.connect(connectUrl, {

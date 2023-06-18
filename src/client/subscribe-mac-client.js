@@ -4,11 +4,9 @@ const { isActuatorExist } = require("../utils/actuator-util");
 const { isSensorExist } = require("../utils/sensor-utils");
 const { isMacExist } = require("../utils/mac-utils");
 
-const host = 'broker.hivemq.com'
-const port = '1883'
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`
 
-const connectUrl = `mqtt://${host}:${port}`;
+const connectUrl = `ws://broker.hivemq.com:8000/mqtt`;
 const subscribeMac = async() =>{
     try{
             const client = mqtt.connect(connectUrl, {

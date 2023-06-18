@@ -48,5 +48,27 @@ const isActuatorExist = async (id) => {
 
 	return isExist;
 };
+const getNameActuatorByID = async (id) => {
+	let sensor = {};
+  
+	try {
+	  const result = await pool.query(
+		  'SELECT * FROM public."actuator" WHERE id_actuator = $1',
+		  [id],
+	  );
+  
+	  if (result.rows[0]) {
+		  sensor = {
+			  id: result.rows[0].id_actuator,
+			  name: result.rows[0].name,
+		  };
+	  }
+  
+	  } catch (err) {
+		  console.log(err);
+	  }
+  
+	return sensor;
+  };
 
-module.exports = { getActuator, isActuatorExist };
+module.exports = { getActuator, isActuatorExist,getNameActuatorByID };

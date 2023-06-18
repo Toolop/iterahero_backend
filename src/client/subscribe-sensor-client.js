@@ -1,40 +1,23 @@
 const mqtt = require("mqtt");
-const sensor = require("./models/model-sensor");
-const mongoose = require("mongoose");
-const Hapi = require("@hapi/hapi");
-const pool = require("./config/db");
-const { getSensor } = require("./utils/sensor-utils");
-const { getGreenHouse } = require("./utils/greenhouse-util");
+const sensor = require("../models/model-sensor");
+const pool = require("../config/db");
+const { getSensor } = require("../utils/sensor-utils");
+const { getGreenHouse } = require("../utils/greenhouse-util");
 const {
   getAutomation,
   isAutomationExistidSensor,
-} = require("./utils/automation-utils");
+} = require("../utils/automation-utils");
 const dotenv = require("dotenv");
 const axios = require("axios");
-const { getActuator } = require("./utils/actuator-util");
+const { getActuator } = require("../utils/actuator-util");
 
-const host = "broker.hivemq.com";
-const mqttport = "1883";
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
 
-const connectUrl = `mqtt://${host}:${mqttport}`;
+const connectUrl = `ws://broker.hivemq.com:8000/mqtt`;
 
 const subscribeSensor = async () => {
   try {
     dotenv.config();
-
-    mongoose.connect(
-      `mongodb+srv://${process.env.MONGGOUSERNAME}:${process.env.MONGGOPASSWORD}@iteraherosensors.s082abg.mongodb.net/iterahero?retryWrites=true&w=majority`,
-      {
-        useNewUrlParser: true,
-      }
-    );
-
-    const server = Hapi.server({
-      port: process.env.PORT || 3001,
-      host: "0.0.0.0",
-    });
-    server.start();
 
     const client = mqtt.connect(connectUrl, {
       clientId,
@@ -227,4 +210,4 @@ const subscribeSensor = async () => {
   }
 };
 
-subscribeSensor();
+module.exports = {subscribeSensor};
