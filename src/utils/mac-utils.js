@@ -1,27 +1,24 @@
-const pool = require('../config/db');
+const pool = require("../config/db");
 
-const isMacExist = async (id) =>{
+const isMacExist = async (id) => {
   let isExist = [];
 
-  try{
+  try {
     const result = await pool.query(
       'SELECT * FROM public."mac_address" WHERE id_sensor = $1 OR id_actuator = $2',
-      [id,id],
+      [id, id]
     );
 
-    if (result.rows[0]){
+    if (result.rows[0]) {
       isExist = true;
-    }
-    else{
+    } else {
       isExist = false;
     }
-
-  }
-  catch(err){
+  } catch (err) {
     console.log(err);
   }
 
   return isExist;
-}
+};
 
-module.exports = {isMacExist};
+module.exports = { isMacExist };
