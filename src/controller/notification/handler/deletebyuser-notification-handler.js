@@ -1,51 +1,50 @@
 const pool = require("../../../config/db");
 
 const deleteNotificationByUser = async (request, h) => {
-	const { user_id } = request.params;
-	let result = "";
-	let response = "";
+  const { user_id } = request.params;
+  let result = "";
+  let response = "";
 
-	try {
-		if (user_id) {
-			result = await pool.query(
-				`DELETE FROM public."receive" WHERE id_notification = $1`,
-				[user_id]
-			);
+  try {
+    if (user_id) {
+      result = await pool.query(
+        `DELETE FROM public."receive" WHERE id_notification = $1`,
+        [user_id]
+      );
 
+      if (result) {
+        response = h.response({
+          code: 200,
+          status: "OK",
+          message: "Notification successfully deleted",
+        });
 
-			if (result) {
-				response = h.response({
-					code: 200,
-					status: "OK",
-					message: "Notification successfully deleted",
-				});
+        response.code(200);
+      } else {
+        response = h.response({
+          code: 500,
+          status: "Internal Server Error",
+          message: "Notification failed to delete",
+        });
 
-				response.code(200);
-			} else {
-				response = h.response({
-					code: 500,
-					status: "Internal Server Error",
-					message: "Notification failed to delete",
-				});
+        response.code(500);
+      }
+    }
+  } catch (err) {
+    response = h.response({
+      code: 400,
+      status: "Bad Request",
+      message: "error",
+    });
 
-				response.code(500);
-			}
-		}
-	} catch (err) {
-		response = h.response({
-			code: 400,
-			status: "Bad Request",
-			message: "error",
-		});
+    response.code(400);
 
-		response.code(400);
+    console.log(err);
+  }
 
-		console.log(err);
-	}
-
-	return response;
+  return response;
 };
 
 module.exports = {
-	deleteNotificationByUser,
+  deleteNotificationByUser,
 };

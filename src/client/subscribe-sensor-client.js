@@ -210,4 +210,4 @@ const subscribeSensor = async () => {
   }
 };
 
-module.exports = {subscribeSensor};
+module.exports = { subscribeSensor };
