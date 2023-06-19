@@ -13,7 +13,11 @@ const sensorLogRoute = require("../controller/sensor-log/sensor-log-route");
 const sensorRoute = require("../controller/sensor/sensor-route");
 const userRoute = require("../controller/user/user-route");
 const sensorBrokerRoute = require("../controller/sensor-broker/sensor-broker-route")
+const scheduleRoute = require("../controller/scheduling/schedule-route")
 
-const routes = [].concat(actuatorBrokerRoute,actuatorLogRoute,sensorBrokerRoute,actuatorRoute,automationRoute,categoryRoute,dashboardRoute,grafikRoute,greenhouseRoutes,iconRoute,imageMlRoute,notificationRoute,sensorLogRoute,sensorRoute,userRoute);
+const routes = [].concat(actuatorBrokerRoute,actuatorLogRoute,sensorBrokerRoute,
+                        actuatorRoute,automationRoute,categoryRoute,dashboardRoute,
+                        grafikRoute,greenhouseRoutes,iconRoute,imageMlRoute,notificationRoute,
+                        sensorLogRoute,sensorRoute,userRoute,scheduleRoute);
 
 module.exports = routes;

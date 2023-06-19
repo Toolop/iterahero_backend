@@ -19,6 +19,7 @@
         "image-to-base64": "^2.2.0",
         "mongoose": "^6.6.5",
         "mqtt": "^4.3.7",
+        "node-schedule": "^2.1.1",
         "pg": "^8.8.0",
         "streamifier": "^0.1.1"
     },
