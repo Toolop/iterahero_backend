@@ -1,5 +1,5 @@
 const pool = require("../../../config/db");
-const { uploadImage } = require("../../../utils/cloudinary");
+const { uploadImage, deleteImage } = require("../../../utils/cloudinary");
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
 const { getUser } = require("../../../utils/user-util");
 const uploadGreenHouse = async (request, h) => {
@@ -22,8 +22,8 @@ const uploadGreenHouse = async (request, h) => {
     const created_at = getLocalISOString();
 
     const result = await pool.query(
-      `INSERT INTO public."greenhouse" (name, image, location, created_at, id_user) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [name, image, location, created_at, id_user]
+      `INSERT INTO public."greenhouse" (name, image, location, created_at,updated_at, id_user) VALUES ($1, $2, $3, $4, $5,$6) RETURNING *`,
+      [name, image, location, created_at, created_at, id_user]
     );
 
     if (result) {
@@ -44,6 +44,10 @@ const uploadGreenHouse = async (request, h) => {
 
       response.code(201);
     } else {
+      if (image) {
+        deleteImage(image);
+      }
+
       response = h.response({
         code: 500,
         status: "Internal Server Error",
@@ -51,6 +55,9 @@ const uploadGreenHouse = async (request, h) => {
       });
     }
   } catch (err) {
+    if (image) {
+      deleteImage(image);
+    }
     response = h.response({
       code: 400,
       status: "Bad Request",

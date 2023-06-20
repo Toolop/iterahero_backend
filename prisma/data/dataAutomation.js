@@ -1,0 +1,88 @@
+const { getLocalISOString } = require("../../src/utils/timestamp-utils");
+
+const date = getLocalISOString();
+
+const dataAutomation = [
+  {
+    id_sensor: 17,
+    id_actuator: 8,
+    condition: ">",
+    status_lifecycle: 1,
+    created_at: date,
+    updated_at: date,
+    constanta: 2,
+    id_automation: 1,
+  },
+  {
+    id_sensor: 8,
+    id_actuator: 2,
+    condition: ">",
+    status_lifecycle: 0,
+    created_at: date,
+    updated_at: date,
+    constanta: 0,
+    id_automation: 2,
+  },
+  {
+    id_sensor: 9,
+    id_actuator: 3,
+    condition: ">",
+    status_lifecycle: 0,
+    created_at: date,
+    updated_at: date,
+    constanta: 0,
+    id_automation: 3,
+  },
+  {
+    id_sensor: 17,
+    id_actuator: 7,
+    condition: ">",
+    status_lifecycle: 1,
+    created_at: date,
+    updated_at: date,
+    constanta: 2,
+    id_automation: 6,
+  },
+  {
+    id_sensor: 10,
+    id_actuator: 4,
+    condition: ">",
+    status_lifecycle: 0,
+    created_at: date,
+    updated_at: date,
+    constanta: 0,
+    id_automation: 7,
+  },
+  {
+    id_sensor: 11,
+    id_actuator: 5,
+    condition: ">",
+    status_lifecycle: 0,
+    created_at: date,
+    updated_at: date,
+    constanta: 0,
+    id_automation: 8,
+  },
+  {
+    id_sensor: 7,
+    id_actuator: 9,
+    condition: ">",
+    status_lifecycle: 0,
+    created_at: date,
+    updated_at: date,
+    constanta: 0,
+    id_automation: 9,
+  },
+  {
+    id_sensor: 7,
+    id_actuator: 1,
+    condition: ">",
+    status_lifecycle: 0,
+    created_at: date,
+    updated_at: date,
+    constanta: 0,
+    id_automation: 10,
+  },
+];
+
+module.exports = dataAutomation;

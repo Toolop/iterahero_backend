@@ -13,69 +13,71 @@ datasource db {
 model user {
   id_user    Int          @id @default(autoincrement())
   email      String       @unique
-  name       String?
+  name       String
   password   String
+  username   String
   created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
-  grenhouse  greenhouse[]
+  updated_at DateTime?    @updatedAt
+  Greenhouse greenhouse[]
   Receive    receive[]
 }
 
 model greenhouse {
-  id_grenhouse Int        @id @default(autoincrement())
-  name         String
-  image        String
-  location     String
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
-  id_user      Int
-  user         user?      @relation(fields: [id_user], references: [id_user])
-  sensor       sensor[]
-  actuator     actuator[]
+  id_greenhouse Int        @id @default(autoincrement())
+  name          String
+  image         String
+  location      String
+  created_at    DateTime   @default(now())
+  updated_at    DateTime?  @updatedAt
+  id_user       Int
+  User          user?      @relation(fields: [id_user], references: [id_user])
+  Sensor        sensor[]
+  Actuator      actuator[]
 }
 
 model sensor {
   id_sensor          Int              @id @default(autoincrement())
-  name               String?
+  name               String
   unit_measurement   String
-  brand              Int              @unique
+  brand              String           @unique
   created_at         DateTime         @default(now())
-  updated_at         DateTime         @updatedAt
+  updated_at         DateTime?        @updatedAt
   icon               String
   color              String
-  greenhouse         greenhouse?      @relation(fields: [id_greenhouse], references: [id_grenhouse])
+  Greenhouse         greenhouse?      @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse      Int
-  range_min          Int
-  range_max          Int
+  range_min          Int?
+  range_max          Int?
   id_category_sensor Int
   categorySensor     category_sensor? @relation(fields: [id_category_sensor], references: [id_category_sensor])
-  notify             Boolean
-  calibration        String
-  automation         automation[]
-  mac_address        mac_address[]
-  notification       notification[]
+  notify             Int?
+  calibration        String?
+  Automation         automation[]
+  MacAddress         mac_address[]
+  Notification       notification[]
 }
 
 model category_sensor {
   id_category_sensor Int      @id @default(autoincrement())
   name               String?
-  sensor             sensor[]
+  Sensor             sensor[]
 }
 
 model actuator {
   id_actuator      Int            @id @default(autoincrement())
   name             String
-  status_lifecycle Boolean
+  status_lifecycle Int
   created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
+  updated_at       DateTime?      @updatedAt
   icon             String
   color            String
-  greenhouse       greenhouse?    @relation(fields: [id_greenhouse], references: [id_grenhouse])
+  automation       Int
+  Greenhouse       greenhouse?    @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse    Int
-  automation       automation[]
-  actuator_log     actuator_log[]
-  mac_address      mac_address[]
-  notification     notification[]
+  Automation       automation[]
+  ActuatorLog      actuator_log[]
+  MacAddress       mac_address[]
+  Notification     notification[]
 }
 
 model automation {
@@ -83,21 +85,20 @@ model automation {
   id_sensor        Int
   condition        String
   status_lifecycle Int
-  id_automation    Int      @id @default(autoincrement())
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  id_automation    Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now())
+  updated_at       DateTime? @updatedAt
   constanta        Int
-  sensor           sensor?  @relation(fields: [id_sensor], references: [id_sensor])
-  sensorId_sensor  Int?
-  actuator         actuator @relation(fields: [id_actuator], references: [id_actuator])
+  Sensor           sensor?   @relation(fields: [id_sensor], references: [id_sensor])
+  Actuator         actuator  @relation(fields: [id_actuator], references: [id_actuator])
 }
 
 model actuator_log {
   id_actuator_log Int       @id @default(autoincrement())
   created_at      DateTime  @default(now())
-  on_off_status   Boolean
+  on_off_status   Int
   id_actuator     Int
-  actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
+  Actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
 }
 
 model icon {
@@ -111,8 +112,8 @@ model icon {
 model mac_address {
   id_sensor   Int
   id_actuator Int
-  actuator    actuator? @relation(fields: [id_actuator], references: [id_actuator])
-  sensor      sensor?   @relation(fields: [id_sensor], references: [id_sensor])
+  Actuator    actuator? @relation(fields: [id_actuator], references: [id_actuator])
+  Sensor      sensor?   @relation(fields: [id_sensor], references: [id_sensor])
   mac_address String
   id_mac      Int       @id @default(autoincrement())
 }
@@ -123,10 +124,10 @@ model notification {
   created_at      DateTime  @default(now())
   type            String
   status          String
-  id_actuator     Int
-  id_sensor       Int
-  actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
-  sensor          sensor?   @relation(fields: [id_sensor], references: [id_sensor])
+  id_actuator     Int?
+  id_sensor       Int?
+  Actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
+  Sensor          sensor?   @relation(fields: [id_sensor], references: [id_sensor])
   Receive         receive[]
 }
 
@@ -134,6 +135,6 @@ model receive {
   id_user         Int
   id_notification Int
   id_receive      Int           @id @default(autoincrement())
-  user            user?         @relation(fields: [id_user], references: [id_user])
-  notification    notification? @relation(fields: [id_notification], references: [id_notification])
+  User            user?         @relation(fields: [id_user], references: [id_user])
+  Notification    notification? @relation(fields: [id_notification], references: [id_notification])
 }
