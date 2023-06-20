@@ -38,12 +38,12 @@ model greenhouse {
 model sensor {
   id_sensor          Int              @id @default(autoincrement())
   name               String
-  unit_measurement   String
-  brand              String           @unique
+  unit_measurement   String?
+  brand              String?
   created_at         DateTime         @default(now())
   updated_at         DateTime?        @updatedAt
-  icon               String
-  color              String
+  icon               String?
+  color              String?
   Greenhouse         greenhouse?      @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse      Int
   range_min          Int?
@@ -52,7 +52,7 @@ model sensor {
   categorySensor     category_sensor? @relation(fields: [id_category_sensor], references: [id_category_sensor])
   notify             Int?
   calibration        String?
-  Automation         automation[]
+  AutomationTable    automation[]
   MacAddress         mac_address[]
   Notification       notification[]
 }
@@ -74,7 +74,7 @@ model actuator {
   automation       Int
   Greenhouse       greenhouse?    @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse    Int
-  Automation       automation[]
+  AutomationTable  automation[]
   ActuatorLog      actuator_log[]
   MacAddress       mac_address[]
   Notification     notification[]
@@ -90,7 +90,7 @@ model automation {
   updated_at       DateTime? @updatedAt
   constanta        Int
   Sensor           sensor?   @relation(fields: [id_sensor], references: [id_sensor])
-  Actuator         actuator  @relation(fields: [id_actuator], references: [id_actuator])
+  Actuator         actuator? @relation(fields: [id_actuator], references: [id_actuator])
 }
 
 model actuator_log {

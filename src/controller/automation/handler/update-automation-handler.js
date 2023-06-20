@@ -4,7 +4,7 @@ const { isAutomationExist } = require("../../../utils/automation-utils");
 const updateAutomation = async (request, h) => {
   const { id } = request.params;
 
-  const { id_actuator, id_sensor, between, status_lifecycle, constanta } =
+  const { id_actuator, id_sensor, condition, status_lifecycle, constanta } =
     request.payload;
 
   let result = "";
@@ -13,8 +13,8 @@ const updateAutomation = async (request, h) => {
   try {
     if (await isAutomationExist(id)) {
       result = await pool.query(
-        'UPDATE public."automation" SET id_actuator=$1,id_sensor=$2,between=$3,status_lifecycle=$4,constanta=$5 WHERE id_automation = $6',
-        [id_actuator, id_sensor, between, status_lifecycle, constanta, id]
+        'UPDATE public."automation" SET id_actuator=$1,id_sensor=$2,condition=$3,status_lifecycle=$4,constanta=$5 WHERE id_automation = $6',
+        [id_actuator, id_sensor, condition, status_lifecycle, constanta, id]
       );
 
       if (result) {

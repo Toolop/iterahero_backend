@@ -27,14 +27,17 @@ async function main() {
     data: dataGreenhouse,
     skipDuplicates: true, // Skip 'Bobo'
   });
-
+  const sensorInsert = await prisma.sensor.createMany({
+    data: dataSensor,
+    skipDuplicates: false, // Skip 'Bobo'
+  });
   const actuatorInsert = await prisma.actuator.createMany({
     data: dataActuator,
-    skipDuplicates: true, // Skip 'Bobo'
+    skipDuplicates: false, // Skip 'Bobo'
   });
   const automationInsert = await prisma.automation.createMany({
     data: dataAutomation,
-    skipDuplicates: true, // Skip 'Bobo'
+    skipDuplicates: false, // Skip 'Bobo'
   });
 
   console.log({
