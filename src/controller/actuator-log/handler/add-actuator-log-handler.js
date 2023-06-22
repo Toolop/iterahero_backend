@@ -33,7 +33,7 @@ const uploadActuatorLog = async (request, h) => {
       await client.publish(
         pubTopic,
         JSON.stringify(message),
-        { qos: 2, retain: false },
+        { qos: 1, retain: false },
         async (error) => {
           if (error) {
             console.error(error);

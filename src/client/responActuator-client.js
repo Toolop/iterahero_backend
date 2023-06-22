@@ -9,7 +9,7 @@ const responActuator = async () => {
     const client = mqtt.connect(connectUrl, {
       clientId,
       keepalive: 30,
-      protocolId: "MQTT",
+      protocolId: "ws",
       protocolVersion: 4,
       clean: true,
       connectTimeout: 30 * 1000,

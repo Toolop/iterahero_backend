@@ -78,6 +78,7 @@ model actuator {
   ActuatorLog      actuator_log[]
   MacAddress       mac_address[]
   Notification     notification[]
+  schedule         schedule[]
 }
 
 model automation {
@@ -91,6 +92,22 @@ model automation {
   constanta        Int
   Sensor           sensor?   @relation(fields: [id_sensor], references: [id_sensor])
   Actuator         actuator? @relation(fields: [id_actuator], references: [id_actuator])
+}
+
+model schedule {
+  id_actuator     Int
+  start_time      Int
+  repeat          Int
+  id_schedule     Int       @id @default(autoincrement())
+  created_at      DateTime  @default(now())
+  updated_at      DateTime? @updatedAt
+  duration        Int
+  interval        Int
+  status_schedule Int
+  hour            Int[]
+  minute          Int[]
+  dayOfWeek       Int[]     @default([0, 1, 2, 3, 4, 5, 6, 7])
+  Actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
 }
 
 model actuator_log {

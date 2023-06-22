@@ -17,7 +17,7 @@ const subscribeSensor = () => {
       keepalive: 30,
       protocolId: "MQTT",
       protocolVersion: 4,
-      clean: true,
+      clean: false,
       connectTimeout: 30 * 1000,
       rejectUnauthorized: false,
 
@@ -26,21 +26,39 @@ const subscribeSensor = () => {
       //   password: 'public',
       reconnectPeriod: 1000,
     });
-    const topic = "iterahero/sensor/#";
+    const topic = "iterahero/test";
+
     client.on("connect", () => {
       console.log("Connected");
-      client.subscribe([topic], () => {
-        console.log(`Subscribe to topic '${topic}'`);
-      });
-    });
-
-    client.on("message", async (topic, payload) => {
-      try {
-        let getData = await JSON.parse(payload.toString());
-        console.log(getData);
-      } catch (err) {
-        console.log(err);
-      }
+      setInterval(function () {
+        let message = [
+          {
+            value: Math.floor(Math.random() * 10 + 30),
+            id_sensor: 2,
+            status: "online",
+          },
+          {
+            value: Math.floor(Math.random() * 10 + 70),
+            id_sensor: 3,
+            status: "online",
+          },
+          {
+            value: Math.floor(Math.random() * 10 + 100),
+            id_sensor: 4,
+            status: "online",
+          },
+        ];
+        client.publish(
+          topic,
+          JSON.stringify(message),
+          { qos: 1, retain: false },
+          async (error) => {
+            if (error) {
+              console.error(error);
+            }
+          }
+        );
+      }, 1000);
     });
   } catch (err) {
     console.log(err);
