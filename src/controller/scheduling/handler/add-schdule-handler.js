@@ -1,5 +1,6 @@
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
 const pool = require("../../../config/db");
+const { updateScheduleUtil } = require("../../../utils/schedule-util");
 
 const addSchedule = async (request, h) => {
   let { start, interval, repeat, duration, id_actuator } = request.payload;
@@ -11,16 +12,21 @@ const addSchedule = async (request, h) => {
   const listOffHour = [];
   const listOffMinute = [];
   try {
+    let splittingStart = start.split(":");
+    let jamAwal = parseInt(splittingStart[0]);
+    let menitAwal = parseInt(splittingStart[1]);
     let intervalMenit = parseInt(interval) % 60;
     let intervalJam = Math.floor(parseInt(interval) / 60);
-    let tempMinute = 0;
-    let temp = parseInt(start);
-    let menitMati = parseInt(duration);
+    let tempMinute = menitAwal;
+    let temp = jamAwal;
+    let menitMati = menitAwal + parseInt(duration);
     let jamMati = Math.floor(parseInt(duration) / 60) + parseInt(start);
 
     for (let i = 0; i < repeat; i++) {
       tempMinute = tempMinute % 60;
       menitMati = menitMati % 60;
+      temp = temp % 24;
+      jamMati = jamMati % 24;
       listOffHour.push(jamMati);
       listOffMinute.push(menitMati);
       listOnHour.push(temp);
@@ -39,7 +45,7 @@ const addSchedule = async (request, h) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)  RETURNING *;`,
       [
         parseInt(id_actuator),
-        parseInt(start),
+        start,
         parseInt(interval),
         parseInt(repeat),
         created_at,
@@ -57,7 +63,7 @@ const addSchedule = async (request, h) => {
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;`,
       [
         parseInt(id_actuator),
-        parseInt(start),
+        start,
         parseInt(interval),
         parseInt(repeat),
         created_at,
@@ -69,6 +75,7 @@ const addSchedule = async (request, h) => {
       ]
     );
     if (resultOn && resultOff) {
+      updateScheduleUtil();
       response = h.response({
         code: 201,
         status: "Created",

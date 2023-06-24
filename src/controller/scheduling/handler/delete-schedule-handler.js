@@ -1,5 +1,8 @@
 const pool = require("../../../config/db");
-const { isScheduleExist } = require("../../../utils/schedule-util");
+const {
+  isScheduleExist,
+  updateScheduleUtil,
+} = require("../../../utils/schedule-util");
 
 const deleteSchedule = async (request, h) => {
   const { id } = request.params;
@@ -12,11 +15,13 @@ const deleteSchedule = async (request, h) => {
         `DELETE FROM public."schedule" WHERE id_schedule = $1`,
         [id]
       );
-      await pool.query(`DELETE FROM public."schedule" WHERE id_schedule = $1`, [
-        id + 1,
-      ]);
+      result = await pool.query(
+        `DELETE FROM public."schedule" WHERE id_schedule = $1`,
+        [parseInt(id) + 1]
+      );
 
       if (result) {
+        updateScheduleUtil();
         response = h.response({
           code: 200,
           status: "OK",

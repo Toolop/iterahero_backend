@@ -96,7 +96,7 @@ model automation {
 
 model schedule {
   id_actuator     Int
-  start_time      Int
+  start_time      String
   repeat          Int
   id_schedule     Int       @id @default(autoincrement())
   created_at      DateTime  @default(now())

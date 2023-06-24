@@ -62,6 +62,7 @@ const getNameActuatorByID = async (id) => {
       sensor = {
         id: result.rows[0].id_actuator,
         name: result.rows[0].name,
+        automation_status: result.rows[0].automation,
       };
     }
   } catch (err) {

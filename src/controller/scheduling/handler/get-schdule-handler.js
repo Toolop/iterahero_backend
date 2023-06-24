@@ -1,4 +1,6 @@
 const pool = require("../../../config/db");
+const client = require("../../../config/mqtt");
+const { getNameActuatorByID } = require("../../../utils/actuator-util");
 
 const getSchedule = async (request, h) => {
   let { status, actuatorid } = request.query;
@@ -31,11 +33,9 @@ const getSchedule = async (request, h) => {
         FROM public.schedule;`
       );
     }
-
     response = h.response({
       code: 200,
       status: "Ok",
-      message: "Schedule successfully created",
       data: await Promise.all(
         result.rows.map(async (row) => ({
           start: row.start_time,
@@ -44,7 +44,7 @@ const getSchedule = async (request, h) => {
           status: row.status_schedule,
           duration: row.duration,
           id_schedule: row.id_schedule,
-          id_actuator: row.id_actuator,
+          actuator: await getNameActuatorByID(row.id_actuator),
           hour: row.hour,
           minute: row.minute,
           dayOfWeek: row.dayOfWeek,

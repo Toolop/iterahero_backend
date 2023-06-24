@@ -8,6 +8,10 @@ const { subscribeActuator } = require("./client/subscribe-actuator-client");
 // const {subscribeMac} = require('./client/subscribe-mac-client');
 // const { responActuator } = require('./client/responActuator-client');
 const { subscribeSensor } = require("./client/subscribe-sensor-client");
+const { updateScheduleUtil } = require("./utils/schedule-util");
+const { initSchedule } = require("./controller/scheduling/handler/scheduler");
+const client = require("./config/mqtt");
+const { initAgenda } = require("./agenda/delete-actuator");
 
 const init = async () => {
   dotenv.config();
@@ -39,10 +43,13 @@ const init = async () => {
 
   try {
     await server.start();
-    subscribeActuator();
+    await updateScheduleUtil();
     // subscribeMac();
-    subscribeSensor();
     // responActuator();
+    subscribeActuator();
+    initAgenda();
+    subscribeSensor();
+    initSchedule();
   } catch (err) {
     console.log(err);
   }

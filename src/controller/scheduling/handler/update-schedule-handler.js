@@ -1,5 +1,9 @@
 const pool = require("../../../config/db");
-const { isScheduleExist } = require("../../../utils/schedule-util");
+const {
+  isScheduleExist,
+  updateScheduleUtil,
+} = require("../../../utils/schedule-util");
+const { getLocalISOString } = require("../../../utils/timestamp-utils");
 
 const updateSchedule = async (request, h) => {
   const { id } = request.params;
@@ -12,17 +16,22 @@ const updateSchedule = async (request, h) => {
   const listOffMinute = [];
 
   try {
-    if (await isScheduleExist) {
+    if (await isScheduleExist(id)) {
+      let splittingStart = start.split(":");
+      let jamAwal = parseInt(splittingStart[0]);
+      let menitAwal = parseInt(splittingStart[1]);
       let intervalMenit = parseInt(interval) % 60;
       let intervalJam = Math.floor(parseInt(interval) / 60);
-      let tempMinute = 0;
-      let temp = parseInt(start);
-      let menitMati = parseInt(duration);
+      let tempMinute = menitAwal;
+      let temp = jamAwal;
+      let menitMati = menitAwal + parseInt(duration);
       let jamMati = Math.floor(parseInt(duration) / 60) + parseInt(start);
 
       for (let i = 0; i < repeat; i++) {
         tempMinute = tempMinute % 60;
         menitMati = menitMati % 60;
+        temp = temp % 24;
+        jamMati = jamMati % 24;
         listOffHour.push(jamMati);
         listOffMinute.push(menitMati);
         listOnHour.push(temp);
@@ -35,7 +44,7 @@ const updateSchedule = async (request, h) => {
 
       const updated_at = getLocalISOString();
       result = await pool.query(
-        `UPDATE public.schedule
+        `UPDATE public."schedule" 
           SET repeat=$1, updated_at=$2, duration=$3, hour=$4, minute=$5, "interval"=$6, start_time=$7
           WHERE id_schedule=$8;`,
         [
@@ -50,7 +59,7 @@ const updateSchedule = async (request, h) => {
         ]
       );
       await pool.query(
-        `UPDATE public.schedule
+        `UPDATE public."schedule" 
           SET repeat=$1, updated_at=$2, duration=$3, hour=$4, minute=$5, "interval"=$6, start_time=$7
           WHERE id_schedule=$8;`,
         [
@@ -61,11 +70,12 @@ const updateSchedule = async (request, h) => {
           listOffMinute,
           interval,
           start,
-          id + 1,
+          parseInt(id) + 1,
         ]
       );
 
       if (result) {
+        updateScheduleUtil();
         response = h.response({
           code: 200,
           status: "Update Successfully",

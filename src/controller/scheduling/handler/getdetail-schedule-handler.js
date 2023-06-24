@@ -1,22 +1,23 @@
 const pool = require("../../../config/db");
 
 const getDetailSchedule = async (request, h) => {
+  const { id } = request.params;
   let result = "";
   let response = "";
 
   try {
     result = await pool.query(
       `SELECT id_actuator, repeat, id_schedule, created_at, updated_at, duration, status_schedule, hour, minute, "dayOfWeek", "interval", start_time
-        FROM public.schedule LIMIT 1;`
+        FROM public.schedule where id_schedule =$1 LIMIT 1;`,
+      [id]
     );
     if (result.rowCount > 0) {
       response = h.response({
         code: 200,
         status: "Ok",
-        message: "Schedule successfully created",
         data: {
           start: result.rows[0].start_time,
-          interval: result.rows[0].row.interval,
+          interval: result.rows[0].interval,
           repeat: result.rows[0].repeat,
           status: result.rows[0].status_schedule,
           duration: result.rows[0].duration,

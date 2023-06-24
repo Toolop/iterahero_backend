@@ -14,7 +14,7 @@ const getAutomation = async (id) => {
         result.rows.map(async (automation) => ({
           id_actuator: automation.id_actuator,
           id_sensor: automation.id_sensor,
-          between: automation.between,
+          condition: automation.condition,
           status_lifecycle: automation.status_lifecycle,
           created_at: automation.created_at,
           constanta: automation.constanta,
