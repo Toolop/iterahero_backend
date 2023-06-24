@@ -1,6 +1,4 @@
-const mqtt = require("mqtt");
 const sensor = require("../models/model-sensor");
-const pool = require("../config/db");
 const { getSensor } = require("../utils/sensor-utils");
 const { getGreenHouse } = require("../utils/greenhouse-util");
 const {
@@ -10,29 +8,14 @@ const {
 const dotenv = require("dotenv");
 const axios = require("axios");
 const { getActuator } = require("../utils/actuator-util");
-
-const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
-
-const connectUrl = `ws://broker.hivemq.com:8000/mqtt`;
+const client = require("../config/mqtt");
+const { uploadActuatorLogUtil } = require("../utils/actuator-log-utli");
+const tempServer = [];
 
 const subscribeSensor = async () => {
   try {
     dotenv.config();
 
-    const client = mqtt.connect(connectUrl, {
-      clientId,
-      keepalive: 30,
-      protocolId: "MQTT",
-      protocolVersion: 4,
-      clean: true,
-      connectTimeout: 30 * 1000,
-      rejectUnauthorized: false,
-
-      //uncomment if need username or password
-      //   username: 'emqx',
-      //   password: 'public',
-      reconnectPeriod: 1000,
-    });
     const topic = "iterahero/sensor/#";
     client.on("connect", () => {
       console.log("Connected");
@@ -68,98 +51,84 @@ const subscribeSensor = async () => {
                 value: value,
                 status: getData[i].status,
               };
-              save = await sensor.create(fix_sensor);
+              tempServer.push(fix_sensor);
+              if (tempServer[0])
+                if (await isAutomationExistidSensor(getData[i].id_sensor)) {
+                  const list_automation = await getAutomation(
+                    getData[i].id_sensor
+                  );
+                  if (list_automation) {
+                    for (const auto in list_automation) {
+                      if (list_automation[auto].automationStatus == "1") {
+                        const actuatorDB = await getActuator(
+                          list_automation[auto].id_actuator
+                        );
 
-              if (await isAutomationExistidSensor(getData[i].id_sensor)) {
-                const list_automation = await getAutomation(
-                  getData[i].id_sensor
-                );
-                if (list_automation) {
-                  for (const auto in list_automation) {
-                    if (list_automation[auto].automationStatus == "1") {
-                      const actuatorDB = await getActuator(
-                        list_automation[auto].id_actuator
-                      );
-
-                      if (
-                        list_automation[auto].between == "<" &&
-                        parseFloat(value) < sensorDB.range_min
-                      ) {
                         if (
-                          actuatorDB.status_lifecycle !=
-                          list_automation[auto].status_lifecycle
+                          list_automation[auto].condition == "<" &&
+                          parseFloat(value) < sensorDB.range_min
                         ) {
-                          axios.post(
-                            "https://iterahero.fly.dev/api/v1/actuator-log",
-                            {
-                              id_actuator: list_automation[auto].id_actuator,
-                              on_off_status:
-                                list_automation[auto].status_lifecycle,
-                            }
-                          );
-                        }
-                      } else if (
-                        list_automation[auto].between == ">" &&
-                        parseFloat(value) > sensorDB.range_max
-                      ) {
-                        if (
-                          actuatorDB.status_lifecycle !=
-                          list_automation[auto].status_lifecycle
-                        ) {
-                          axios.post(
-                            "https://iterahero.fly.dev/api/v1/actuator-log",
-                            {
-                              id_actuator: list_automation[auto].id_actuator,
-                              on_off_status:
-                                list_automation[auto].status_lifecycle,
-                            }
-                          );
-                        }
-                      } else if (
-                        list_automation[auto].between == "<" &&
-                        parseFloat(value) >
-                          parseFloat(sensorDB.range_min) +
-                            parseFloat(list_automation[auto].constanta)
-                      ) {
-                        if (list_automation[auto].status_lifecycle == "1") {
                           if (
-                            actuatorDB.status_lifecycle ==
+                            actuatorDB.status_lifecycle !=
                             list_automation[auto].status_lifecycle
                           ) {
-                            axios.post(
-                              "https://iterahero.fly.dev/api/v1/actuator-log",
-                              {
-                                id_actuator: list_automation[auto].id_actuator,
-                                on_off_status: "0",
-                              }
+                            uploadActuatorLogUtil(
+                              list_automation[auto].id_actuator,
+                              list_automation[auto].status_lifecycle
                             );
                           }
-                        }
-                      } else if (
-                        list_automation[auto].between == ">" &&
-                        parseFloat(value) <
-                          parseFloat(sensorDB.range_max) -
-                            parseFloat(list_automation[auto].constanta)
-                      ) {
-                        if (list_automation[auto].status_lifecycle == "1") {
+                        } else if (
+                          list_automation[auto].condition == ">" &&
+                          parseFloat(value) > sensorDB.range_max
+                        ) {
                           if (
-                            actuatorDB.status_lifecycle ==
+                            actuatorDB.status_lifecycle !=
                             list_automation[auto].status_lifecycle
                           ) {
-                            axios.post(
-                              "https://iterahero.fly.dev/api/v1/actuator-log",
-                              {
-                                id_actuator: list_automation[auto].id_actuator,
-                                on_off_status: "0",
-                              }
+                            uploadActuatorLogUtil(
+                              list_automation[auto].id_actuator,
+                              list_automation[auto].status_lifecycle
                             );
+                          }
+                        } else if (
+                          list_automation[auto].condition == "<" &&
+                          parseFloat(value) >
+                            parseFloat(sensorDB.range_min) +
+                              parseFloat(list_automation[auto].constanta)
+                        ) {
+                          if (list_automation[auto].status_lifecycle == "1") {
+                            if (
+                              actuatorDB.status_lifecycle ==
+                              list_automation[auto].status_lifecycle
+                            ) {
+                              uploadActuatorLogUtil(
+                                list_automation[auto].id_actuator,
+                                0
+                              );
+                            }
+                          }
+                        } else if (
+                          list_automation[auto].condition == ">" &&
+                          parseFloat(value) <
+                            parseFloat(sensorDB.range_max) -
+                              parseFloat(list_automation[auto].constanta)
+                        ) {
+                          if (list_automation[auto].status_lifecycle == "1") {
+                            if (
+                              actuatorDB.status_lifecycle ==
+                              list_automation[auto].status_lifecycle
+                            ) {
+                              uploadActuatorLogUtil(
+                                list_automation[auto].id_actuator,
+                                0
+                              );
+                            }
                           }
                         }
                       }
                     }
                   }
                 }
-              }
 
               // let type = "sensor";
               // let status = 0;

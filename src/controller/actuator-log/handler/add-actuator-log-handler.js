@@ -1,10 +1,6 @@
 const pool = require("../../../config/db");
-const mqtt = require("mqtt");
+const client = require("../../../config/mqtt");
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
-const host = "broker.hivemq.com";
-const port = "1883";
-const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
-const connectUrl = `mqtt://${host}:${port}`;
 
 const uploadActuatorLog = async (request, h) => {
   const { id_actuator, on_off_status } = request.payload;
@@ -14,26 +10,15 @@ const uploadActuatorLog = async (request, h) => {
   let test = "";
 
   try {
-    const client = mqtt.connect(connectUrl, {
-      clientId,
-      keepalive: 30,
-      protocolId: "MQTT",
-      protocolVersion: 4,
-      clean: true,
-      connectTimeout: 30 * 1000,
-      rejectUnauthorized: false,
-      reconnectPeriod: 1000,
-    });
-
     const topic = "iterahero";
     const pubTopic = `${topic}/actuator/${id_actuator}`;
 
-    client.on("connect", async () => {
+    await client.on("connect", async () => {
       var message = parseInt(on_off_status);
       await client.publish(
         pubTopic,
         JSON.stringify(message),
-        { qos: 2, retain: false },
+        { qos: 1, retain: false },
         async (error) => {
           if (error) {
             console.error(error);

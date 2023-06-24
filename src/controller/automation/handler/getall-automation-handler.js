@@ -26,7 +26,7 @@ const getAllAutomation = async (request, h) => {
         result.rows.map(async (automation) => ({
           sensor: await getNameSensorByID(automation.id_sensor),
           actuator: await getNameActuatorByID(automation.id_actuator),
-          between: automation.between,
+          condition: automation.condition,
           status_lifecycle: automation.status_lifecycle,
           created_at: automation.created_at,
           constanta: automation.constanta,

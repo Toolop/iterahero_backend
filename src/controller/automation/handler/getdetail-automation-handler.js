@@ -21,7 +21,7 @@ const getDetailAutomation = async (request, h) => {
         data: {
           sensor: await getNameSensorByID(result.rows[0].id_sensor),
           actuator: await getNameActuatorByID(result.rows[0].id_actuator),
-          between: result.rows[0].between,
+          condition: result.rows[0].condition,
           status_lifecycle: result.rows[0].status_lifecycle,
           created_at: result.rows[0].created_at,
           constanta: result.rows[0].constanta,

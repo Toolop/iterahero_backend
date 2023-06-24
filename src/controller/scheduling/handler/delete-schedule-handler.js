@@ -1,27 +1,31 @@
 const pool = require("../../../config/db");
-const { isAutomationExist } = require("../../../utils/automation-utils");
+const {
+  isScheduleExist,
+  updateScheduleUtil,
+} = require("../../../utils/schedule-util");
 
-const updateAutomation = async (request, h) => {
+const deleteSchedule = async (request, h) => {
   const { id } = request.params;
-
-  const { id_actuator, id_sensor, condition, status_lifecycle, constanta } =
-    request.payload;
-
   let result = "";
   let response = "";
 
   try {
-    if (await isAutomationExist(id)) {
+    if (await isScheduleExist) {
       result = await pool.query(
-        'UPDATE public."automation" SET id_actuator=$1,id_sensor=$2,condition=$3,status_lifecycle=$4,constanta=$5 WHERE id_automation = $6',
-        [id_actuator, id_sensor, condition, status_lifecycle, constanta, id]
+        `DELETE FROM public."schedule" WHERE id_schedule = $1`,
+        [id]
+      );
+      result = await pool.query(
+        `DELETE FROM public."schedule" WHERE id_schedule = $1`,
+        [parseInt(id) + 1]
       );
 
       if (result) {
+        updateScheduleUtil();
         response = h.response({
           code: 200,
           status: "OK",
-          message: "Automation has been edited successfully",
+          message: "Schedule successfully deleted",
         });
 
         response.code(200);
@@ -29,7 +33,7 @@ const updateAutomation = async (request, h) => {
         response = h.response({
           code: 500,
           status: "Internal Server Error",
-          message: "Automation cannot be edited",
+          message: "Schedule failed to delete",
         });
 
         response.code(500);
@@ -38,10 +42,10 @@ const updateAutomation = async (request, h) => {
       response = h.response({
         code: 404,
         status: "Not Found",
-        message: "Automation is not found",
+        message: "Schedule is not found",
       });
 
-      response.code(404);
+      response.code(500);
     }
   } catch (err) {
     response = h.response({
@@ -59,5 +63,5 @@ const updateAutomation = async (request, h) => {
 };
 
 module.exports = {
-  updateAutomation,
+  deleteSchedule,
 };

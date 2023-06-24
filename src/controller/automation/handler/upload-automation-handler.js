@@ -2,7 +2,7 @@ const pool = require("../../../config/db");
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
 
 const uploadAutomation = async (request, h) => {
-  const { id_actuator, id_sensor, between, status_lifecycle, constanta } =
+  const { id_actuator, id_sensor, condition, status_lifecycle, constanta } =
     request.payload;
 
   let response = "";
@@ -11,8 +11,15 @@ const uploadAutomation = async (request, h) => {
     const created_at = getLocalISOString();
 
     const result = await pool.query(
-      `INSERT INTO public.automation (id_actuator,id_sensor,between,status_lifecycle,created_at,constanta) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;`,
-      [id_actuator, id_sensor, between, status_lifecycle, created_at, constanta]
+      `INSERT INTO public.automation (id_actuator,id_sensor,condition,status_lifecycle,created_at,constanta) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;`,
+      [
+        id_actuator,
+        id_sensor,
+        condition,
+        status_lifecycle,
+        created_at,
+        constanta,
+      ]
     );
 
     if (result) {
@@ -23,7 +30,7 @@ const uploadAutomation = async (request, h) => {
         data: {
           id_actuator: result.rows[0].id_actuator,
           id_sensor: result.rows[0].id_sensor,
-          between: result.rows[0].between,
+          condition: result.rows[0].condition,
           status_lifecycle: result.rows[0].status_lifecycle,
           created_at: result.rows[0].created_at,
           constanta: result.rows[0].constanta,
