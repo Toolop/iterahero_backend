@@ -15,8 +15,8 @@ const initSchedule = async () => {
           parseInt(item.minute[index]) == parseInt(minutes) &&
           parseInt(item.actuator.automation_status) == 1
         ) {
-          console.log(item.id_actuator);
           uploadActuatorLogUtil(item.id_actuator, item.status);
+          uploadNotification(item.status, item.id_actuator);
         }
       });
     });
@@ -33,6 +33,7 @@ const initSchedule = async () => {
           item.actuator.automation_status == 1
         ) {
           uploadActuatorLogUtil(item.id_actuator, item.status);
+          uploadNotification(item.status, item.id_actuator);
         }
       });
     });

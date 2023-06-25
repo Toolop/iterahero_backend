@@ -27,8 +27,7 @@ const updateSchedule = async (request, h) => {
         Math.floor(parseInt(duration) / 60);
       let tempMinute = menitAwal;
       let temp = jamAwal;
-      let menitMati =
-        menitAwal + (parseInt(duration) % 60) + (parseInt(duration) % 60);
+      let menitMati = menitAwal + (parseInt(duration) % 60);
       let jamMati = Math.floor(parseInt(duration) / 60) + parseInt(start);
 
       for (let i = 0; i < repeat; i++) {

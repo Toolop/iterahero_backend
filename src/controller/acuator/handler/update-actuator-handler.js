@@ -1,5 +1,6 @@
 const pool = require("../../../config/db");
 const { isActuatorExist } = require("../../../utils/actuator-util");
+const { updateScheduleUtil } = require("../../../utils/schedule-util");
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
 
 const updateActuator = async (request, h) => {

@@ -3,6 +3,7 @@ const mqtt = require("mqtt");
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
 const connectUrl = `mqtt://broker.hivemq.com:1883/mqtt`;
 const { getLocalISOString } = require("./timestamp-utils");
+const { uploadNotification } = require("./notification-util");
 
 const uploadActuatorLogUtil = async (id_actuator, on_off_status) => {
   let result = "";
