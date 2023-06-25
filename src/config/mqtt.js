@@ -1,6 +1,6 @@
 const mqtt = require("mqtt");
 const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
-const connectUrl = `ws://broker.hivemq.com:8000/mqtt`;
+const connectUrl = `mqtt://broker.hivemq.com:1883/mqtt`;
 
 const client = mqtt.connect(connectUrl, {
   clientId,

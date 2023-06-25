@@ -16,8 +16,8 @@ model user {
   name       String
   password   String
   username   String
-  created_at DateTime     @default(now())
-  updated_at DateTime?    @updatedAt
+  created_at DateTime
+  updated_at DateTime?
   Greenhouse greenhouse[]
   Receive    receive[]
 }
@@ -27,8 +27,8 @@ model greenhouse {
   name          String
   image         String
   location      String
-  created_at    DateTime   @default(now())
-  updated_at    DateTime?  @updatedAt
+  created_at    DateTime
+  updated_at    DateTime?
   id_user       Int
   User          user?      @relation(fields: [id_user], references: [id_user])
   Sensor        sensor[]
@@ -40,8 +40,8 @@ model sensor {
   name               String
   unit_measurement   String?
   brand              String?
-  created_at         DateTime         @default(now())
-  updated_at         DateTime?        @updatedAt
+  created_at         DateTime
+  updated_at         DateTime?
   icon               String?
   color              String?
   Greenhouse         greenhouse?      @relation(fields: [id_greenhouse], references: [id_greenhouse])
@@ -67,11 +67,11 @@ model actuator {
   id_actuator      Int            @id @default(autoincrement())
   name             String
   status_lifecycle Int
-  created_at       DateTime       @default(now())
-  updated_at       DateTime?      @updatedAt
+  created_at       DateTime
+  updated_at       DateTime?
   icon             String
   color            String
-  automation       Int
+  automation       Int            @default(0)
   Greenhouse       greenhouse?    @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse    Int
   AutomationTable  automation[]
@@ -87,8 +87,8 @@ model automation {
   condition        String
   status_lifecycle Int
   id_automation    Int       @id @default(autoincrement())
-  created_at       DateTime  @default(now())
-  updated_at       DateTime? @updatedAt
+  created_at       DateTime
+  updated_at       DateTime?
   constanta        Int
   Sensor           sensor?   @relation(fields: [id_sensor], references: [id_sensor])
   Actuator         actuator? @relation(fields: [id_actuator], references: [id_actuator])
@@ -99,8 +99,8 @@ model schedule {
   start_time      String
   repeat          Int
   id_schedule     Int       @id @default(autoincrement())
-  created_at      DateTime  @default(now())
-  updated_at      DateTime? @updatedAt
+  created_at      DateTime
+  updated_at      DateTime?
   duration        Int
   interval        Int
   status_schedule Int
@@ -112,7 +112,7 @@ model schedule {
 
 model actuator_log {
   id_actuator_log Int       @id @default(autoincrement())
-  created_at      DateTime  @default(now())
+  created_at      DateTime
   on_off_status   Int
   id_actuator     Int
   Actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
@@ -138,7 +138,7 @@ model mac_address {
 model notification {
   id_notification Int       @id @default(autoincrement())
   detail          String
-  created_at      DateTime  @default(now())
+  created_at      DateTime
   type            String
   status          String
   id_actuator     Int?

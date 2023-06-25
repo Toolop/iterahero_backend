@@ -1,5 +1,4 @@
 const pool = require("../../../config/db");
-const client = require("../../../config/mqtt");
 const { getNameActuatorByID } = require("../../../utils/actuator-util");
 
 const getSchedule = async (request, h) => {
@@ -11,7 +10,7 @@ const getSchedule = async (request, h) => {
     if (actuatorid && status) {
       result = await pool.query(
         `SELECT id_actuator, repeat, id_schedule, created_at, updated_at, duration, status_schedule, hour, minute, "dayOfWeek", "interval", start_time
-        FROM public.schedule where status_schedule=$1 AND id_actuator;`,
+        FROM public.schedule where status_schedule=$1 AND id_actuator=$2;`,
         [status, actuatorid]
       );
     }
@@ -24,7 +23,7 @@ const getSchedule = async (request, h) => {
     } else if (actuatorid) {
       result = await pool.query(
         `SELECT id_actuator, repeat, id_schedule, created_at, updated_at, duration, status_schedule, hour, minute, "dayOfWeek", "interval", start_time
-        FROM public.schedule where status_schedule=$1 && id_actuator=$2;`,
+        FROM public.schedule where status_schedule=$1 AND id_actuator=$2;`,
         [1, actuatorid]
       );
     } else {

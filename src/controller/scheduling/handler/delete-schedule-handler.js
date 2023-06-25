@@ -21,7 +21,7 @@ const deleteSchedule = async (request, h) => {
       );
 
       if (result) {
-        updateScheduleUtil();
+        await updateScheduleUtil();
         response = h.response({
           code: 200,
           status: "OK",

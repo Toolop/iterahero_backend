@@ -25,6 +25,7 @@ const updateActuator = async (request, h) => {
       }
 
       if (result) {
+        await updateScheduleUtil();
         response = h.response({
           code: 200,
           status: "OK",

@@ -7,19 +7,22 @@ const addSchedule = async (request, h) => {
   let resultOn = "";
   let resultOff = "";
   let response = "";
+  const gmt = 0;
   const listOnHour = [];
   const listOnMinute = [];
   const listOffHour = [];
   const listOffMinute = [];
   try {
     let splittingStart = start.split(":");
-    let jamAwal = parseInt(splittingStart[0]);
+    let jamAwal = parseInt(splittingStart[0]) + gmt;
     let menitAwal = parseInt(splittingStart[1]);
-    let intervalMenit = parseInt(interval) % 60;
-    let intervalJam = Math.floor(parseInt(interval) / 60);
+    let intervalMenit = (parseInt(interval) % 60) + (parseInt(duration) % 60);
+    let intervalJam =
+      Math.floor(parseInt(interval) / 60) + Math.floor(parseInt(duration) / 60);
     let tempMinute = menitAwal;
     let temp = jamAwal;
-    let menitMati = menitAwal + parseInt(duration);
+    let menitMati =
+      menitAwal + (parseInt(duration) % 60) + (parseInt(duration) % 60);
     let jamMati = Math.floor(parseInt(duration) / 60) + parseInt(start);
 
     for (let i = 0; i < repeat; i++) {
@@ -75,7 +78,7 @@ const addSchedule = async (request, h) => {
       ]
     );
     if (resultOn && resultOff) {
-      updateScheduleUtil();
+      await updateScheduleUtil();
       response = h.response({
         code: 201,
         status: "Created",

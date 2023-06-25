@@ -7,18 +7,17 @@ const mongoose = require("mongoose");
 const { subscribeActuator } = require("./client/subscribe-actuator-client");
 // const {subscribeMac} = require('./client/subscribe-mac-client');
 // const { responActuator } = require('./client/responActuator-client');
-const { subscribeSensor } = require("./client/subscribe-sensor-client");
+// const { subscribeSensor } = require("./client/subscribe-sensor-client");
 const { updateScheduleUtil } = require("./utils/schedule-util");
 const { initSchedule } = require("./controller/scheduling/handler/scheduler");
-const client = require("./config/mqtt");
 const { initAgenda } = require("./agenda/delete-actuator");
+const client = require("./config/mqtt");
 
 const init = async () => {
   dotenv.config();
-
   const server = await Hapi.server({
-    port: process.env.PORT || 8000,
-    host: process.env.host || "localhost",
+    port: 8000,
+    host: "localhost",
     routes: {
       cors: {
         origin: ["*"],
@@ -27,7 +26,8 @@ const init = async () => {
   });
 
   await server.register(jwt);
-  await mongoose.connect("mongodb://127.0.0.1:27017/iterahero", {
+  await mongoose.set("strictQuery", false);
+  await mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
   });
 
@@ -42,14 +42,13 @@ const init = async () => {
   server.route(routes);
 
   try {
-    await server.start();
     await updateScheduleUtil();
     // subscribeMac();
     // responActuator();
-    subscribeActuator();
-    initAgenda();
-    subscribeSensor();
-    initSchedule();
+    await subscribeActuator();
+    await initAgenda();
+    await initSchedule();
+    await server.start();
   } catch (err) {
     console.log(err);
   }
