@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { pathImage, deleteImage } = require("./cloudinary");
 const { getGreenHouse } = require("./greenhouse-util");
 
 const getActuator = async (id) => {
@@ -20,6 +21,9 @@ const getActuator = async (id) => {
         greenhouse_loc: (await getGreenHouse(actuatorData.id_greenhouse))
           .location,
         automation: actuatorData.automation,
+        detailact: result.rows[0].detailact,
+        actuator_image: result.rows[0].actuator_image,
+        posisitionact: result.rows[0].posisitionact,
       };
     }
   } catch (err) {
@@ -71,5 +75,42 @@ const getNameActuatorByID = async (id) => {
 
   return sensor;
 };
+const deletimagePosistionAct = async (id) => {
+  let old_image = "";
 
-module.exports = { getActuator, isActuatorExist, getNameActuatorByID };
+  try {
+    old_image = await pool.query(
+      'SELECT posisitionact from public."actuator" WHERE id_actuator=$1',
+      [id]
+    );
+
+    let publicId = await pathImage(old_image.rows[0].posisitionact);
+    await deleteImage(publicId);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const deletimageActuator = async (id) => {
+  let old_image = "";
+
+  try {
+    old_image = await pool.query(
+      'SELECT actuator_image from public."actuator" WHERE id_actuator=$1',
+      [id]
+    );
+
+    let publicId = await pathImage(old_image.rows[0].actuator_image);
+    await deleteImage(publicId);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = {
+  getActuator,
+  isActuatorExist,
+  getNameActuatorByID,
+  deletimagePosistionAct,
+  deletimageActuator,
+};

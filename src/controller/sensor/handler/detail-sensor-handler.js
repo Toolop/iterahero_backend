@@ -32,6 +32,9 @@ const getSensorById = async (request, h) => {
             id_greenhouse: sensor.id_greenhouse,
             greenhouse: await getGreenHouseName(sensor.id_greenhouse),
             calibration: sensor.calibration,
+            detail: sensor.detail,
+            sensor_image: sensor.sensor_image,
+            posisition: sensor.posisition,
           }))
         ),
       });

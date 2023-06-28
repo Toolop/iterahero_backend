@@ -50,6 +50,9 @@ const getSensorByGreenHouse = async (request, h) => {
           created_at: sensor.created_at,
           id_greenhouse: sensor.id_greenhouse,
           calibration: sensor.calibration,
+          detail: sensor.detail,
+          sensor_image: sensor.sensor_image,
+          posisition: sensor.posisition,
         }))
       ),
       totalPage: totalPage,

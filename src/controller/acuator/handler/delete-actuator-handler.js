@@ -1,6 +1,9 @@
 const pool = require("../../../config/db");
-const { isActuatorExist } = require("../../../utils/actuator-util");
-
+const {
+  isActuatorExist,
+  deletimageActuator,
+  deletimagePosistionAct,
+} = require("../../../utils/actuator-util");
 const deleteActuator = async (request, h) => {
   const { id } = request.params;
   let result = "";
@@ -8,6 +11,8 @@ const deleteActuator = async (request, h) => {
 
   try {
     if (await isActuatorExist(id)) {
+      await deletimageActuator(id);
+      await deletimagePosistionAct(id);
       result = await pool.query(
         'DELETE FROM public."actuator" WHERE id_actuator=$1',
         [id]

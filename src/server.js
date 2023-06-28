@@ -16,7 +16,7 @@ const client = require("./config/mqtt");
 const init = async () => {
   dotenv.config();
   const server = await Hapi.server({
-    port: 8000,
+    port: 8080,
     host: "localhost",
     routes: {
       cors: {

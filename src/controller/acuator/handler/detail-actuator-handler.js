@@ -27,6 +27,9 @@ const getActuatorDetail = async (request, h) => {
           id_greenhouse: result.rows[0].id_greenhouse,
           greenhouse: await getGreenHouseName(result.rows[0].id_greenhouse),
           automation: result.rows[0].automation,
+          detailact: result.rows[0].detailact,
+          posisitionact: result.rows[0].posisitionact,
+          actuator_image: result.rows[0].actuator_image,
         },
       });
 

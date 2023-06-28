@@ -19,7 +19,8 @@ const uploadImage = (folderName, image) =>
     streamifier.createReadStream(image).pipe(uploadStream);
   });
 
-const pathImage = async (old_image) => {
+const pathImage = async (image) => {
+  let old_image = toString(image);
   const pathNames = old_image.split("/");
   const publicId = `${pathNames[pathNames.length - 2]}/${
     pathNames[pathNames.length - 1]
@@ -32,4 +33,11 @@ const deleteImage = async (publicId) => {
   cloudinary.uploader.destroy(publicId);
 };
 
-module.exports = { uploadImage, deleteImage, pathImage };
+const changeHttps = async (uploadImagePayload) => {
+  let getCount = uploadImagePayload.url.length;
+  let getUrl = uploadImagePayload.url.slice(4, getCount);
+  let addText = "https";
+  return toString(addText + getUrl);
+};
+
+module.exports = { uploadImage, deleteImage, pathImage, changeHttps };

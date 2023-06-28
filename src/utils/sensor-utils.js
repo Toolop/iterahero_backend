@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const { getSensorCategory } = require("./category-utils");
+const { deleteImage, pathImage, uploadImage } = require("./cloudinary");
 const { getGreenHouseName } = require("./greenhouse-util");
 
 const getSensor = async (id) => {
@@ -26,6 +27,9 @@ const getSensor = async (id) => {
         created_at: sensorData.created_at,
         id_greenhouse: sensorData.id_greenhouse,
         greenhouse: await getGreenHouseName(sensorData.id_greenhouse),
+        detail: sensorData.detail,
+        sensor_image: sensorData.sensor_image,
+        posisition: sensorData.posisition,
         notify: sensorData.notify,
       };
     }
@@ -78,4 +82,42 @@ const isSensorExist = async (id) => {
   return isExist;
 };
 
-module.exports = { getNameSensorByID, isSensorExist, getSensor };
+const deletimagePosistion = async (id) => {
+  let old_image = "";
+
+  try {
+    old_image = await pool.query(
+      'SELECT posisition from public."sensor" WHERE id_sensor=$1',
+      [id]
+    );
+
+    let publicId = await pathImage(old_image.rows[0].posisition);
+    await deleteImage(publicId);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const deletimageSensor = async (id) => {
+  let old_image = "";
+
+  try {
+    old_image = await pool.query(
+      'SELECT sensor_image from public."sensor" WHERE id_sensor=$1',
+      [id]
+    );
+
+    let publicId = await pathImage(old_image.rows[0].sensor_image);
+    await deleteImage(publicId);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = {
+  getNameSensorByID,
+  isSensorExist,
+  getSensor,
+  deletimagePosistion,
+  deletimageSensor,
+};

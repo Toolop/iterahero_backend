@@ -1,4 +1,5 @@
 const sensor = require("../../../models/model-sensor");
+const { getLocalISOString } = require("../../../utils/timestamp-utils");
 
 const getGrafik = async (request, h) => {
   let { getDateQuery, page, size } = request.query;
@@ -21,9 +22,97 @@ const getGrafik = async (request, h) => {
   ];
 
   try {
-    if (getDateQuery == "Week") {
+    if (getDateQuery == "Day") {
+      var start = new Date();
+      start.setHours(0, 0, 0, 0);
+
+      var end = new Date();
+      end.setHours(23, 59, 59, 999);
       result = await sensor.aggregate([
-        { $match: { id_sensor: parseInt(id_sensor) } },
+        {
+          $match: {
+            $and: [
+              { id_sensor: parseInt(id_sensor) },
+              { createdAt: { $gte: start, $lt: end } },
+              { status: "online" },
+            ],
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+              day: { $dayOfMonth: "$createdAt" },
+              hour: { $hour: "$createdAt" },
+            },
+            data: { $avg: "$value" },
+          },
+        },
+        {
+          $project: {
+            label: "$_id.hour",
+            date: {
+              $concat: [
+                { $toString: "$_id.year" },
+                "/",
+                {
+                  $cond: {
+                    if: {
+                      $lte: [{ $strLenCP: { $toString: "$_id.month" } }, 1],
+                    },
+                    then: { $concat: ["0", { $toString: "$_id.month" }] },
+                    else: { $toString: "$_id.month" },
+                  },
+                },
+                "/",
+                {
+                  $cond: {
+                    if: { $lte: [{ $strLenCP: { $toString: "$_id.day" } }, 1] },
+                    then: { $concat: ["0", { $toString: "$_id.day" }] },
+                    else: { $toString: "$_id.day" },
+                  },
+                },
+                " ",
+                {
+                  $cond: {
+                    if: {
+                      $lte: [{ $strLenCP: { $toString: "$_id.hour" } }, 1],
+                    },
+                    then: { $concat: ["0", { $toString: "$_id.hour" }] },
+                    else: { $toString: "$_id.hour" },
+                  },
+                },
+              ],
+            },
+            data: { $round: ["$data", 2] },
+          },
+        },
+        {
+          $sort: { date: 1 },
+        },
+      ]);
+    }
+    if (getDateQuery == "Week") {
+      var date = new Date();
+      const month = date.getMonth();
+      const year = date.getFullYear();
+
+      result = await sensor.aggregate([
+        {
+          $match: {
+            $and: [
+              { id_sensor: parseInt(id_sensor) },
+              {
+                createdAt: {
+                  $gte: new Date(year, month, 1),
+                  $lt: new Date(year, month + 1, 0),
+                },
+              },
+              { status: "online" },
+            ],
+          },
+        },
         {
           $group: {
             _id: {
@@ -64,18 +153,28 @@ const getGrafik = async (request, h) => {
           },
         },
         {
-          $sort: { date: -1 },
-        },
-        {
-          $limit: 7,
-        },
-        {
           $sort: { date: 1 },
         },
       ]);
     } else if (getDateQuery == "Month") {
+      var date = new Date();
+      const month = date.getMonth();
+      const year = date.getFullYear();
       result = await sensor.aggregate([
-        { $match: { id_sensor: parseInt(id_sensor) } },
+        {
+          $match: {
+            $and: [
+              { id_sensor: parseInt(id_sensor) },
+              {
+                createdAt: {
+                  $gte: new Date(year, month, 1),
+                  $lt: new Date(year, month + 1, 0),
+                },
+              },
+              { status: "online" },
+            ],
+          },
+        },
         {
           $group: {
             _id: {
@@ -132,18 +231,27 @@ const getGrafik = async (request, h) => {
           },
         },
         {
-          $sort: { date: -1 },
-        },
-        {
-          $limit: 7,
-        },
-        {
           $sort: { date: 1 },
         },
       ]);
     } else if (getDateQuery == "Year") {
+      var date = new Date();
+      const year = date.getFullYear();
       result = await sensor.aggregate([
-        { $match: { id_sensor: parseInt(id_sensor) } },
+        {
+          $match: {
+            $and: [
+              { id_sensor: parseInt(id_sensor) },
+              {
+                createdAt: {
+                  $gte: new Date(year, 1, 1),
+                  $lt: new Date(year, 12, 0),
+                },
+              },
+              { status: "online" },
+            ],
+          },
+        },
         {
           $group: {
             _id: {
@@ -172,12 +280,6 @@ const getGrafik = async (request, h) => {
             data: { $round: ["$data", 2] },
             count: 1,
           },
-        },
-        {
-          $sort: { date: -1 },
-        },
-        {
-          $limit: 12,
         },
         {
           $sort: { date: 1 },

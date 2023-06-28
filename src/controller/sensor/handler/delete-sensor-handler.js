@@ -1,5 +1,9 @@
 const pool = require("../../../config/db");
-const { isSensorExist } = require("../../../utils/sensor-utils");
+const {
+  isSensorExist,
+  deletimagePosistion,
+  deletimageSensor,
+} = require("../../../utils/sensor-utils");
 
 const deleteSensor = async (request, h) => {
   const { id } = request.params;
@@ -8,6 +12,8 @@ const deleteSensor = async (request, h) => {
 
   try {
     if (await isSensorExist(id)) {
+      await deletimageSensor(id);
+      await deletimagePosistion(id);
       result = await pool.query(
         'DELETE FROM public."sensor" WHERE id_sensor=$1',
         [id]

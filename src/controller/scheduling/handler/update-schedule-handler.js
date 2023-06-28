@@ -10,7 +10,7 @@ const updateSchedule = async (request, h) => {
   let { start, interval, repeat, duration } = request.payload;
   let result = "";
   let response = "";
-  const gmt = 0;
+  const gmt = 7;
   const listOnHour = [];
   const listOnMinute = [];
   const listOffHour = [];
@@ -19,7 +19,7 @@ const updateSchedule = async (request, h) => {
   try {
     if (await isScheduleExist(id)) {
       let splittingStart = start.split(":");
-      let jamAwal = parseInt(splittingStart[0]) + gmt;
+      let jamAwal = (24 + (parseInt(splittingStart[0]) - gmt)) % 24;
       let menitAwal = parseInt(splittingStart[1]);
       let intervalMenit = (parseInt(interval) % 60) + (parseInt(duration) % 60);
       let intervalJam =
@@ -28,7 +28,7 @@ const updateSchedule = async (request, h) => {
       let tempMinute = menitAwal;
       let temp = jamAwal;
       let menitMati = menitAwal + (parseInt(duration) % 60);
-      let jamMati = Math.floor(parseInt(duration) / 60) + parseInt(start);
+      let jamMati = Math.floor(parseInt(duration) / 60) + jamAwal;
 
       for (let i = 0; i < repeat; i++) {
         tempMinute = tempMinute % 60;

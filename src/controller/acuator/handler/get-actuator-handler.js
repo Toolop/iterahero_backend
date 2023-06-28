@@ -49,6 +49,9 @@ const getActuators = async (request, h) => {
           id_greenhouse: actuator.id_greenhouse,
           greenhouse: await getGreenHouseName(actuator.id_greenhouse),
           automation: actuator.automation,
+          detailact: actuator.detailact,
+          posisitionact: actuator.posisitionact,
+          actuator_image: actuator.actuator_image,
         }))
       ),
       totalPage: totalPage,

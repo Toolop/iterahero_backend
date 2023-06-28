@@ -28,10 +28,6 @@ const updateScheduleUtil = async () => {
   let result1 = "";
   let result2 = "";
   try {
-    const date = new Date();
-    var minutes = date.getMinutes();
-    var hour = date.getHours();
-    console.log(hour, minutes);
     result1 = await pool.query(
       `SELECT id_actuator, repeat, id_schedule, created_at, updated_at, duration, status_schedule, hour, minute, "dayOfWeek", "interval", start_time
       FROM public.schedule where status_schedule=$1;`,

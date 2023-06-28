@@ -1,4 +1,5 @@
 const pool = require("../../../config/db");
+const { uploadImage, changeHttps } = require("../../../utils/cloudinary");
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
 
 const uploadSensor = async (request, h) => {
@@ -13,15 +14,36 @@ const uploadSensor = async (request, h) => {
     range_max,
     id_category_sensor,
     calibration,
+    detail,
   } = request.payload;
+
+  let { sensor_image, posisition } = request.payload;
 
   let response = "";
 
   try {
+    if (sensor_image) {
+      const sensor_image_payload = await uploadImage(
+        "sensor_images",
+        sensor_image
+      );
+      let getCount = sensor_image_payload.url.length;
+      let getUrl = sensor_image_payload.url.slice(4, getCount);
+      let addText = "https";
+      sensor_image = addText + getUrl;
+    }
+    if (posisition) {
+      const posistion_payload = await uploadImage("sensor_images", posisition);
+      let getCount = posistion_payload.url.length;
+      let getUrl = posistion_payload.url.slice(4, getCount);
+      let addText = "https";
+      posisition = addText + getUrl;
+    }
+
     const created_at = getLocalISOString();
 
     const result = await pool.query(
-      `INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor,calibration) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *;`,
+      `INSERT INTO public.sensor ("name", unit_measurement, brand, created_at, updated_at, icon, color, id_greenhouse, range_min, range_max, id_category_sensor,calibration,detail,sensor_image,posisition) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *;`,
       [
         name,
         unit_measurement,
@@ -35,6 +57,9 @@ const uploadSensor = async (request, h) => {
         range_max,
         id_category_sensor,
         calibration,
+        detail,
+        sensor_image,
+        posisition,
       ]
     );
 
@@ -56,6 +81,9 @@ const uploadSensor = async (request, h) => {
           created_at: result.rows[0].created_at,
           id_greenhouse: result.rows[0].id_greenhouse,
           calibration: result.rows[0].calibration,
+          detail: result.rows[0].detail,
+          sensor_image: result.rows[0].sensor_image,
+          posisition: result.rows[0].posisition,
         },
       });
 

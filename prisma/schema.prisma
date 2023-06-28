@@ -52,6 +52,9 @@ model sensor {
   categorySensor     category_sensor? @relation(fields: [id_category_sensor], references: [id_category_sensor])
   notify             Int?
   calibration        String?
+  detail             String?
+  sensor_image       String?
+  posisition         String?
   AutomationTable    automation[]
   MacAddress         mac_address[]
   Notification       notification[]
@@ -74,6 +77,9 @@ model actuator {
   automation       Int            @default(0)
   Greenhouse       greenhouse?    @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse    Int
+  detailact        String?
+  actuator_image   String?
+  posisitionact    String?
   AutomationTable  automation[]
   ActuatorLog      actuator_log[]
   MacAddress       mac_address[]
