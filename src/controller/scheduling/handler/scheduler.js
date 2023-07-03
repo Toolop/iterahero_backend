@@ -4,7 +4,7 @@ const scheduleListOn = require("../../../models/model-scheduleOn");
 const { uploadActuatorLogUtil } = require("../../../utils/actuator-log-utli");
 const { uploadNotification } = require("../../../utils/notification-util");
 const initSchedule = async () => {
-  const JobOn = schedule.scheduleJob(scheduleListOn[0], function () {
+  schedule.scheduleJob(scheduleListOn[0], function () {
     const date = new Date();
     var minutes = date.getMinutes();
     var hour = date.getHours();
@@ -21,7 +21,7 @@ const initSchedule = async () => {
       });
     });
   });
-  const JobOff = schedule.scheduleJob(scheduleListOff[0], function () {
+  schedule.scheduleJob(scheduleListOff[0], function () {
     const date = new Date();
     var minutes = date.getMinutes();
     var hour = date.getHours();

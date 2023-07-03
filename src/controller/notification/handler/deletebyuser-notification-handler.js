@@ -1,14 +1,14 @@
 const pool = require("../../../config/db");
 
 const deleteNotificationByUser = async (request, h) => {
-  const { user_id } = request.params;
+  const { user_id } = request.query;
   let result = "";
   let response = "";
 
   try {
     if (user_id) {
       result = await pool.query(
-        `DELETE FROM public."receive" WHERE id_notification = $1`,
+        `DELETE FROM public."receive" WHERE id_user = $1`,
         [user_id]
       );
 

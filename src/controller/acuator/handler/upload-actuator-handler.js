@@ -9,7 +9,7 @@ const uploadActuator = async (request, h) => {
   let response = "";
 
   try {
-    if (actuator_image) {
+    if (actuator_image != "null") {
       const actuator_image_payload = await uploadImage(
         "actuator_images",
         actuator_image
@@ -19,7 +19,7 @@ const uploadActuator = async (request, h) => {
       let addText = "https";
       actuator_image = addText + getUrl;
     }
-    if (posisitionact) {
+    if (posisitionact != "null") {
       const posistion_payload = await uploadImage(
         "actuator_images",
         posisitionact

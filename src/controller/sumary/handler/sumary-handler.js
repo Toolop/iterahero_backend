@@ -121,7 +121,22 @@ const getSummary = async (request, h) => {
         },
       ]);
     }
+
     if (Object.keys(result).length > 0) {
+      if (result[0].average > sensorValue.range_max) {
+        console.log(result[0].average);
+        condition = `Kondisi Tidak Ideal, Nilai kondisi terlalu besar seharusnya diantara ${sensorValue.range_min}-${sensorValue.range_max} ${sensorValue.unit_measurement}`;
+        conditionType = 0;
+      } else if (result[0].average < sensorValue.range_min) {
+        condition = `Kondisi Tidak Ideal, Nilai kondisi terlalu kecil seharusnya diantara ${sensorValue.range_min}-${sensorValue.range_max} ${sensorValue.unit_measurement}`;
+        conditionType = 0;
+      } else {
+        condition = "Kondisi ideal";
+        conditionType = 1;
+      }
+      result[0].condition = condition;
+      result[0].conditionType = conditionType;
+
       response = h.response({
         code: 200,
         status: "OK",

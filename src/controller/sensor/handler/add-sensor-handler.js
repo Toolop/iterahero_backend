@@ -22,7 +22,7 @@ const uploadSensor = async (request, h) => {
   let response = "";
 
   try {
-    if (sensor_image) {
+    if (sensor_image != "null") {
       const sensor_image_payload = await uploadImage(
         "sensor_images",
         sensor_image
@@ -32,7 +32,7 @@ const uploadSensor = async (request, h) => {
       let addText = "https";
       sensor_image = addText + getUrl;
     }
-    if (posisition) {
+    if (posisition != "null") {
       const posistion_payload = await uploadImage("sensor_images", posisition);
       let getCount = posistion_payload.url.length;
       let getUrl = posistion_payload.url.slice(4, getCount);
