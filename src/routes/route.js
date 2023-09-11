@@ -15,6 +15,7 @@ const userRoute = require("../controller/user/user-route");
 const sensorBrokerRoute = require("../controller/sensor-broker/sensor-broker-route");
 const scheduleRoute = require("../controller/scheduling/schedule-route");
 const sumaryRoute = require("../controller/sumary/sumary-route");
+const cameraBrokerRoute = require("../controller/camera-broker/camera-broker-route");
 
 const routes = [].concat(
   actuatorBrokerRoute,
@@ -33,7 +34,8 @@ const routes = [].concat(
   sensorRoute,
   userRoute,
   scheduleRoute,
-  sumaryRoute
+  sumaryRoute,
+  cameraBrokerRoute
 );
 
 module.exports = routes;

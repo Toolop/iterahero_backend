@@ -11,13 +11,13 @@ const { subscribeActuator } = require("./client/subscribe-actuator-client");
 const { updateScheduleUtil } = require("./utils/schedule-util");
 const { initSchedule } = require("./controller/scheduling/handler/scheduler");
 const { initAgenda } = require("./agenda/delete-actuator");
-const client = require("./config/mqtt");
+const { subscribeCamera } = require("./client/subscribe-camera-client");
 
 const init = async () => {
   dotenv.config();
   const server = await Hapi.server({
     port: 8080,
-    host: "0.0.0.0",
+    host: "localhost",
     routes: {
       cors: {
         origin: ["*"],
@@ -45,6 +45,7 @@ const init = async () => {
     await updateScheduleUtil();
     // subscribeMac();
     // responActuator();
+    await subscribeCamera();
     await subscribeActuator();
     await initAgenda();
     await initSchedule();
