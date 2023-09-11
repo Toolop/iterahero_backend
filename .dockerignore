@@ -1,3 +1,19 @@
-Dockerfile
-node_modules
-.git
+# flyctl launch added from .gitignore
+**\node_modules
+**\.env
+**\fly.toml
+**\.dockerignore
+**\prisma\migrations
+
+# flyctl launch added from src\routes\.gitignore
+src\routes\node_modules
+src\routes\**\.env
+
+src\routes\**\CREATE TABLE receive (
+src\routes\**\	id_user serial4 NOT NULL,
+src\routes\**\	id_notification serial4 NOT NULL
+src\routes\**\);
+
+
+src\routes\**\ALTER TABLE receive ADD CONSTRAINT receive_fk FOREIGN KEY (id_notification) REFERENCES notification(id_notification) ON DELETE CASCADE ON UPDATE CASCADE;
+src\routes\**\ALTER TABLE receive ADD CONSTRAINT receive_fk_1 FOREIGN KEY (id_user) REFERENCES "user"(id_user) ON DELETE CASCADE ON UPDATE CASCADE;

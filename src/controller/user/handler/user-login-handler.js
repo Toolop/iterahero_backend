@@ -30,9 +30,15 @@ const login = async (request, h) => {
         response = h.response({
           code: 401,
           status: "Unauthorized",
-          message: "Username or password is incorrect",
+          message: "Email or password is incorrect",
         });
       }
+    } else {
+      response = h.response({
+        code: 404,
+        status: "Not Found",
+        message: "Email is not found",
+      });
     }
   } catch (err) {
     response = h.response({

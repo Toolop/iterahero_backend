@@ -1,0 +1,11 @@
+/node_modules
+.env
+
+CREATE TABLE receive (
+	id_user serial4 NOT NULL,
+	id_notification serial4 NOT NULL
+);
+
+
+ALTER TABLE receive ADD CONSTRAINT receive_fk FOREIGN KEY (id_notification) REFERENCES notification(id_notification) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE receive ADD CONSTRAINT receive_fk_1 FOREIGN KEY (id_user) REFERENCES "user"(id_user) ON DELETE CASCADE ON UPDATE CASCADE;

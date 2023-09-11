@@ -149,6 +149,7 @@ model notification {
   status          String
   id_actuator     Int?
   id_sensor       Int?
+  photo           String?
   Actuator        actuator? @relation(fields: [id_actuator], references: [id_actuator])
   Sensor          sensor?   @relation(fields: [id_sensor], references: [id_sensor])
   Receive         receive[]
@@ -160,4 +161,16 @@ model receive {
   id_receive      Int           @id @default(autoincrement())
   User            user?         @relation(fields: [id_user], references: [id_user])
   Notification    notification? @relation(fields: [id_notification], references: [id_notification])
+}
+
+model ml_image {
+  id_ml_image   Int      @id @default(autoincrement())
+  created_at    DateTime
+  image         String
+  email         String
+  camera        String
+  line          String
+  id_sensor     Int
+  id_greenhouse Int
+  condition     String
 }
