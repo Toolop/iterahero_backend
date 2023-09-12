@@ -33,6 +33,7 @@ model greenhouse {
   User          user?      @relation(fields: [id_user], references: [id_user])
   Sensor        sensor[]
   Actuator      actuator[]
+  Camera        camera[]
 }
 
 model sensor {
@@ -154,4 +155,23 @@ model receive {
   id_receive      Int           @id @default(autoincrement())
   User            user?         @relation(fields: [id_user], references: [id_user])
   Notification    notification? @relation(fields: [id_notification], references: [id_notification])
+}
+
+model camera {
+  id_camera     Int   @id @default(autoincrement())
+  Greenhouse greenhouse? @relation(fields: [id_greenhouse], references: [id_greenhouse])
+  id_greenhouse Int
+  name          String
+  Camera_log  camera_log[]
+  created_at DateTime     @default(now())
+  updated_at DateTime?    @updatedAt
+}
+
+model camera_log {
+  id_camera_log Int @id @default(autoincrement())
+  Camera  camera? @relation(fields: [id_camera], references: [id_camera])
+  id_camera Int
+  image   String
+  created_at DateTime     @default(now())
+  updated_at DateTime?    @updatedAt
 }
