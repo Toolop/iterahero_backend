@@ -9,9 +9,9 @@ const deleteCamera = async (request, h) => {
 
   try {
     if (await isCameraExist(id)) {
-      result = await prisma.user.delete({
+      result = await prisma.camera.delete({
         where: {
-          id_camera: id,
+          id_camera: parseInt(id),
         },
       });
 

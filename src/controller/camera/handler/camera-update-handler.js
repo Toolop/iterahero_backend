@@ -10,9 +10,9 @@ const updateCamera = async (request, h) => {
 
   try {
     if (await isCameraExist(id)) {
-      result = await prisma.user.update({
+      result = await prisma.camera.update({
         where: {
-          id_camera: id,
+          id_camera: parseInt(id),
         },
         data: {
           name: name,

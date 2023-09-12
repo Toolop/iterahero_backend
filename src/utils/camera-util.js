@@ -6,13 +6,12 @@ const isCameraExist = async (id) => {
   let isExist = false;
 
   try {
-    const result = await prisma.camera.findUnique({
+    const result = await prisma.camera.findMany({
       where: {
-        id_camera: id,
+        id_camera: parseInt(id),
       },
     });
-
-    if (result.rows[0]) {
+    if (result[0].id_camera) {
       isExist = true;
     } else {
       isExist = false;
