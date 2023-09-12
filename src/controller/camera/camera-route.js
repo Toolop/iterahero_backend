@@ -16,6 +16,9 @@ module.exports = [
         path: `${prefix}/camera`,
         config: {
             auth: "jwt",
+            payload: {
+                multipart: true
+            }
         },
         handler: addCameraByGreenhouseId
     }
