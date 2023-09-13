@@ -191,6 +191,7 @@ model camera_log {
   Camera        camera?   @relation(fields: [id_camera], references: [id_camera])
   id_camera     Int
   image         String
+  prediction    String
   created_at    DateTime  @default(now())
   updated_at    DateTime? @updatedAt
 }

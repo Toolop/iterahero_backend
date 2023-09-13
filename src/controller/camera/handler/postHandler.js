@@ -3,17 +3,17 @@ const pool = require("../../../config/db");
 const addCameraByGreenhouseId = async (request, h) => {
   let response;
 
-  const { id_greenhouse, name } = request.payload;
+  const { by_id_greenhouse, nama_kamera } = request.payload;
 
   try {
     await pool.query(
       `INSERT INTO public.camera (id_greenhouse, name) VALUES ($1, $2);`,
-      [id_greenhouse, name]
+      [by_id_greenhouse, nama_kamera]
     );
     response = h
       .response({
         status: "success",
-        message: `kamera dengan nama ${name} berhasil ditambahkan`,
+        message: `kamera dengan nama ${nama_kamera} berhasil ditambahkan`,
       })
       .code(201);
   } catch (e) {
