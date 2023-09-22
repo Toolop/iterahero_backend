@@ -5,7 +5,6 @@ const { generateJwt } = require("../../../utils/jwt-utils");
 
 const login = async (request, h) => {
   const { email, password } = request.payload;
-
   let response = " ";
 
   try {
@@ -14,16 +13,18 @@ const login = async (request, h) => {
       [email]
     );
 
-    if (result.rows[0]) {
+    if (result.rows.length > 0) {
       const hashedPassword = result.rows[0].password;
 
       if (await bcrypt.compare(password, hashedPassword)) {
+        let accessToken = generateJwt(jwt, email, result.rows[0].id_user, result.rows[0].role)
         response = h.response({
           code: 200,
           status: "Ok",
           data: {
             email: result.rows[0].email,
-            accessToken: generateJwt(jwt, email, result.rows[0].id_user),
+            accessToken,
+            role: result.rows[0].role
           },
         });
       } else {
@@ -33,6 +34,12 @@ const login = async (request, h) => {
           message: "Username or password is incorrect",
         });
       }
+    } else {
+      response = h.response({
+        code: 401,
+        status: "Unauthorized",
+        message: "User is not registered.",
+      });
     }
   } catch (err) {
     response = h.response({

@@ -10,12 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Jam {
+  TIME
+}
 model user {
-  id_user    Int          @id @default(autoincrement())
+  id_user    Int          @id @default(autoincrement())   @unique
   email      String       @unique
   name       String
   password   String
   username   String
+  role       String
   created_at DateTime     @default(now())
   updated_at DateTime?    @updatedAt
   Greenhouse greenhouse[]
@@ -162,6 +166,7 @@ model camera {
   Greenhouse greenhouse? @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse Int
   name          String
+  status        Boolean
   Camera_log  camera_log[]
   created_at DateTime     @default(now())
   updated_at DateTime?    @updatedAt
@@ -175,4 +180,31 @@ model camera_log {
   prediction String
   created_at DateTime     @default(now())
   updated_at DateTime?    @updatedAt
+}
+
+model Peracikan {
+  id_peracikan    Int       @id     @default(autoincrement())
+  ppm             Int
+  ph              Float
+  nama            String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime? @updatedAt
+}
+
+model Resep {
+  id_resep        Int       @id     @default(autoincrement())
+  nama            String
+  ppm             Int
+  ph              Float
+  created_at      DateTime
+  updated_at      DateTime? @updatedAt
+}
+
+model Penjadwalan {
+  id_penjadwalan  Int       @id     @default(autoincrement())
+  waktu           String[]
+  iterasi         Int
+  interval        Int
+  created_at      DateTime  @default(now())
+  updated_at      DateTime? @updatedAt
 }

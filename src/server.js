@@ -21,7 +21,7 @@ const init = async () => {
     host: process.env.host || "localhost",
     routes: {
       cors: {
-        origin: ["*"],
+        origin: ["*"]
       },
     },
   });
@@ -33,7 +33,7 @@ const init = async () => {
 
   server.auth.strategy("jwt", "jwt", {
     key: process.env.JWT_SECRET,
-    expiresIn: "365d",
+    expiresIn: "3d",
     validate: validate,
   });
 
