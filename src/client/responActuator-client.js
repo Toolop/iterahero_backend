@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-const client = require("../config/mqtt");
+const { client } = require("../config/mqtt");
 
 const responActuator = async () => {
   try {

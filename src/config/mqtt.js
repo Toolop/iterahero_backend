@@ -13,4 +13,12 @@ const client = mqtt.connect(connectUrl, {
   reconnectPeriod: 1000,
 });
 
-module.exports = client;
+function publishData (topic, message) {
+  if (client) {
+    client.publish(topic, message);
+  } else {
+    console.error("MQTT is not Connected");
+  }
+}
+
+module.exports = { client, publishData };

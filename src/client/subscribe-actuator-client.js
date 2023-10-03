@@ -1,6 +1,6 @@
 const actuator = require("../models/model-actuator");
 const pool = require("../config/db");
-const client = require("../config/mqtt");
+const { client } = require("../config/mqtt");
 
 const subscribeActuator = async () => {
   try {

@@ -3,7 +3,7 @@ const { getLocalISOString } = require("../../src/utils/timestamp-utils");
 const date = getLocalISOString();
 const dataSensor = [
   {
-    id_sensor: 1,
+    // id_sensor: 1,
     name: "Suhu Lingkungan 1",
     unit_measurement: "Celcius",
     brand: "SHT20",
@@ -19,7 +19,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 2,
+    // id_sensor: 2,
     name: "Kelembapan Udara 1",
     unit_measurement: "%",
     brand: "SHT20",
@@ -35,7 +35,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 3,
+    // id_sensor: 3,
     name: "Sensor Cahaya",
     unit_measurement: "LUX",
     brand: "Matahari",
@@ -51,7 +51,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 4,
+    // id_sensor: 4,
     name: "PH Nutrisi",
     unit_measurement: "pH",
     brand: "defrobot",
@@ -67,7 +67,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 5,
+    // id_sensor: 5,
     name: "EC Nutrisi",
     unit_measurement: "mS/cm",
     brand: "DFROBOT",
@@ -83,7 +83,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 6,
+    // id_sensor: 6,
     name: "Suhu Nutrisi",
     unit_measurement: "Celcius",
     brand: "Termistor",
@@ -99,7 +99,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 7,
+    // id_sensor: 7,
     name: "Volume Aliran Utama",
     unit_measurement: "ml",
     brand: "YSVS",
@@ -115,7 +115,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 8,
+    // id_sensor: 8,
     name: "Volume Nutrisi Line 1",
     unit_measurement: "ml",
     brand: "YSVS",
@@ -131,7 +131,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 9,
+    // id_sensor: 9,
     name: "Volume Nutrisi Line 2",
     unit_measurement: "ml",
     brand: "YSVS",
@@ -147,7 +147,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 10,
+    // id_sensor: 10,
     name: "Volume Nutrisi Line 3",
     unit_measurement: "ml",
     brand: "YSVS",
@@ -163,7 +163,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 11,
+    // id_sensor: 11,
     name: "Volume Nutrisi Line 4",
     unit_measurement: "ml",
     brand: "YSVS",
@@ -179,7 +179,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 14,
+    // id_sensor: 14,
     name: "Sensor Suhu Lingkungan 2",
     unit_measurement: "Celcius",
     brand: "SHT 20",
@@ -195,7 +195,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 15,
+    // id_sensor: 15,
     name: "Kelembapan Udara 2 ",
     unit_measurement: "%",
     brand: "SHT20",
@@ -211,7 +211,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 16,
+    // id_sensor: 16,
     name: "Sensor Cahaya 2",
     unit_measurement: "LUX",
     brand: "Matahari",
@@ -227,7 +227,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 17,
+    // id_sensor: 17,
     name: "Sensor Suhu Lingkungan 3",
     unit_measurement: "Celcius",
     brand: "SHT 20",
@@ -243,7 +243,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 18,
+    // id_sensor: 18,
     name: "Kelembapan Udara 3",
     unit_measurement: "%",
     brand: "SHT 20",
@@ -259,7 +259,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 19,
+    // id_sensor: 19,
     name: "Sensor Cahaya 3",
     unit_measurement: "LUX",
     brand: "Matahari",
@@ -275,7 +275,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 20,
+    // id_sensor: 20,
     name: "Kadar PPM Nutrisi",
     unit_measurement: "ppm",
     brand: "DFRobot",
@@ -291,7 +291,7 @@ const dataSensor = [
     notify: 0,
   },
   {
-    id_sensor: 21,
+    // id_sensor: 21,
     name: "Suhu Nutrisi Peracikan",
     unit_measurement: "Celcius",
     brand: "DS18B20",

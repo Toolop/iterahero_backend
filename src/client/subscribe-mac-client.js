@@ -2,7 +2,7 @@ const pool = require("../config/db");
 const { isActuatorExist } = require("../utils/actuator-util");
 const { isSensorExist } = require("../utils/sensor-utils");
 const { isMacExist } = require("../utils/mac-utils");
-const client = require("../config/mqtt");
+const { client } = require("../config/mqtt");
 
 const subscribeMac = async () => {
   try {
