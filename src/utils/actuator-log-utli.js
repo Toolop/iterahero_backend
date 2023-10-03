@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-const client = require("../config/mqtt");
+const { client } = require("../config/mqtt");
 const { getLocalISOString } = require("./timestamp-utils");
 
 const uploadActuatorLogUtil = async (id_actuator, on_off_status) => {

@@ -8,7 +8,7 @@ const {
 const dotenv = require("dotenv");
 const axios = require("axios");
 const { getActuator } = require("../utils/actuator-util");
-const client = require("../config/mqtt");
+const { client } = require("../config/mqtt");
 const { uploadActuatorLogUtil } = require("../utils/actuator-log-utli");
 const tempServer = [];
 

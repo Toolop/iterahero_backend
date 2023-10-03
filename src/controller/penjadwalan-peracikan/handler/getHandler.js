@@ -1,23 +1,29 @@
+const Boom = require("@hapi/boom");
 const prisma = require("../../../config/prisma");
 
 const getHandler = async (request, h) => {
-    let response;
     try {
-        const data = await prisma.penjadwalan.findMany();
-        response = h.response({
+        const data = await prisma.penjadwalan.findMany({
+            include: {
+                resep: true
+            }
+        });
+
+        if (!data) {
+            return Boom.notFound("Tidak ada data penjadwalan")
+        }
+        return h.response({
             status: 'success',
             data
         }).code(200)
     }
     catch (e) {
-        response = h.response({
-            status: 'failed',
-            message: e
-        })
-        console.error(e)
+        if (e instanceof Error) {
+            return Boom.internal(e.message)
+        }
+    } finally {
+        prisma.$disconnect();
     }
-    prisma.$disconnect();
-    return response;
 }
 
-module.exports = getHandler;
+module.exports = { getHandler }
