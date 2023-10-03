@@ -13,6 +13,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@hapi/boom": "^10.0.1",
         "@hapi/hapi": "^20.2.2",
         "@hapi/jwt": "^3.2.0",
         "@prisma/client": "^4.15.0",

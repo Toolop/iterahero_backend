@@ -14,10 +14,13 @@ const sensorRoute = require("../controller/sensor/sensor-route");
 const userRoute = require("../controller/user/user-route");
 const sensorBrokerRoute = require("../controller/sensor-broker/sensor-broker-route");
 const scheduleRoute = require("../controller/scheduling/schedule-route");
-const cameraRoute = require('../controller/camera/camera-route');
+const cameraRoute = require("../controller/camera/camera-route");
 const cameraLogRoute = require("../controller/camera-log/camera-log-route");
-const peracikanRoute = require('../controller/peracikan/peracikan-route')
-const penjadwalanPeracikanRoute = require('../controller/penjadwalan-peracikan/penjadwalan-peracikan-route');
+const peracikanRoute = require("../controller/peracikan/peracikan-route");
+const penjadwalanPeracikanRoute = require("../controller/penjadwalan-peracikan/penjadwalan-peracikan-route");
+const resepRoute = require("../controller/resep/resep-route");
+const tandoUtamaRoute = require("../controller/tandonUtama/tandonUtama-route");
+const tandonUtamaRoute = require("../controller/tandonUtama/tandonUtama-route");
 
 const routes = [].concat(
   actuatorBrokerRoute,
@@ -39,7 +42,9 @@ const routes = [].concat(
   cameraRoute,
   cameraLogRoute,
   peracikanRoute,
-  penjadwalanPeracikanRoute
+  penjadwalanPeracikanRoute,
+  resepRoute,
+  tandonUtamaRoute
 );
 
 module.exports = routes;
