@@ -4,7 +4,7 @@ const date = getLocalISOString();
 
 const dataActuator = [
   {
-    id_actuator: 1,
+    // id_actuator: 1,
     name: "Switching Utama",
     status_lifecycle: 0,
     color: "#78B8EB",
@@ -15,7 +15,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 2,
+    // id_actuator: 2,
     name: "Switching 1",
     status_lifecycle: 0,
     color: "#78B8EB",
@@ -26,7 +26,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 3,
+    // id_actuator: 3,
     name: "Switching 2",
     status_lifecycle: 0,
     color: "#78B8EB",
@@ -37,7 +37,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 4,
+    // id_actuator: 4,
     name: "Switching 3",
     status_lifecycle: 0,
     color: "#78B8EB",
@@ -48,7 +48,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 5,
+    // id_actuator: 5,
     name: "Switching 4",
     status_lifecycle: 0,
     color: "#78B8EB",
@@ -59,7 +59,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 7,
+    // id_actuator: 7,
     name: "Cooling Pad",
     status_lifecycle: 0,
     color: "#A6CE39",
@@ -70,7 +70,7 @@ const dataActuator = [
     automation: 0,
   },
   {
-    id_actuator: 8,
+    // id_actuator: 8,
     name: "Exhaust fan 1",
     status_lifecycle: 0,
     color: "#57A519",
@@ -81,7 +81,7 @@ const dataActuator = [
     automation: 0,
   },
   {
-    id_actuator: 9,
+    // id_actuator: 9,
     name: "Pompa Nutrisi",
     status_lifecycle: 0,
     color: "#A6CE39",
@@ -92,7 +92,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 10,
+    // id_actuator: 10,
     name: "Pompa Manual",
     status_lifecycle: 0,
     color: "#A6CE39",
@@ -103,7 +103,7 @@ const dataActuator = [
     automation: 1,
   },
   {
-    id_actuator: 15,
+    // id_actuator: 15,
     name: "Switching Peracikan",
     status_lifecycle: 0,
     color: "#78B8EB",

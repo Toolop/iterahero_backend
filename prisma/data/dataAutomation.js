@@ -11,7 +11,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 2,
-    id_automation: 1,
+    // id_automation: 1,
   },
   {
     id_sensor: 8,
@@ -21,7 +21,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 0,
-    id_automation: 2,
+    // id_automation: 2,
   },
   {
     id_sensor: 9,
@@ -31,7 +31,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 0,
-    id_automation: 3,
+    // id_automation: 3,
   },
   {
     id_sensor: 17,
@@ -41,7 +41,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 2,
-    id_automation: 6,
+    // id_automation: 6,
   },
   {
     id_sensor: 10,
@@ -51,7 +51,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 0,
-    id_automation: 7,
+    // id_automation: 7,
   },
   {
     id_sensor: 11,
@@ -61,7 +61,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 0,
-    id_automation: 8,
+    // id_automation: 8,
   },
   {
     id_sensor: 7,
@@ -71,7 +71,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 0,
-    id_automation: 9,
+    // id_automation: 9,
   },
   {
     id_sensor: 7,
@@ -81,7 +81,7 @@ const dataAutomation = [
     created_at: date,
     updated_at: date,
     constanta: 0,
-    id_automation: 10,
+    // id_automation: 10,
   },
 ];
 
