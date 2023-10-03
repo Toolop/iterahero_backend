@@ -160,7 +160,7 @@ async function main() {
         id_greenhouse: 1,
         calibration: "y = mx + b",
         notify: 0,
-        id_tandon_bahan: 2,
+        id_tandon_bahan: 3,
       },
       {
         name: "Sensor Ketinggian",
@@ -174,7 +174,7 @@ async function main() {
         id_greenhouse: 1,
         calibration: "y = mx + b",
         notify: 0,
-        id_tandon_bahan: 3,
+        id_tandon_bahan: 4,
       },
       {
         name: "Sensor Ketinggian",

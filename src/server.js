@@ -44,9 +44,16 @@ const init = async () => {
       timeSkewSec: 15
     },
     validate: (artifacts, request, h) => {
-      return {
-        isValid: true,
-        credentials: jwt.decode(artifacts.token)
+      const obj = jwt.decode(artifacts.token);
+      if (obj.exp > Date.now() / 1000) {
+        return {
+          isValid: true,
+          credentials: jwt.decode(artifacts.token)
+        }
+      } else {
+        return {
+          isValid: false
+        }
       }
     },
   });
