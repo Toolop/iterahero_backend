@@ -5,7 +5,6 @@ const { generateJwt } = require("../../../utils/jwt-utils");
 
 const login = async (request, h) => {
   const { email, password } = request.payload;
-
   let response = " ";
 
   try {
@@ -14,16 +13,30 @@ const login = async (request, h) => {
       [email]
     );
 
-    if (result.rows[0]) {
+    if (result.rows.length > 0) {
       const hashedPassword = result.rows[0].password;
 
       if (await bcrypt.compare(password, hashedPassword)) {
+        // let accessToken = generateJwt(jwt, email, result.rows[0].id_user, result.rows[0].role)
+        const payloadJwt = {
+          email,
+          id_user: result.rows[0].id_user,
+          role: result.rows[0].role,
+          aud: process.env.JWT_AUD,
+          iss: process.env.JWT_ISS,
+          sub: process.env.JWT_SUB,
+        };
+
+        let accessToken = jwt.sign(payloadJwt, process.env.JWT_SECRET, {
+          expiresIn: "3d",
+        });
         response = h.response({
           code: 200,
           status: "Ok",
           data: {
             email: result.rows[0].email,
-            accessToken: generateJwt(jwt, email, result.rows[0].id_user),
+            accessToken,
+            role: result.rows[0].role,
           },
         });
       } else {
@@ -35,9 +48,9 @@ const login = async (request, h) => {
       }
     } else {
       response = h.response({
-        code: 404,
-        status: "Not Found",
-        message: "Email is not found",
+        code: 401,
+        status: "Unauthorized",
+        message: "User is not registered.",
       });
     }
   } catch (err) {

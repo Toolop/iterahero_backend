@@ -14,7 +14,9 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@hapi/boom": "^10.0.1",
         "@hapi/hapi": "^20.2.2",
+        "@hapi/jwt": "^3.2.0",
         "@prisma/client": "^4.15.0",
         "bcrypt": "^5.0.1",
         "cloudinary": "^1.31.0",

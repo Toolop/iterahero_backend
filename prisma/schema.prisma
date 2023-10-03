@@ -16,10 +16,12 @@ model user {
   name       String
   password   String
   username   String
-  created_at DateTime
-  updated_at DateTime?
+  role       String
+  created_at DateTime     @default(now())
+  updated_at DateTime?    @updatedAt
   Greenhouse greenhouse[]
   Receive    receive[]
+  tandon     Tandon[]
 }
 
 model greenhouse {
@@ -34,6 +36,7 @@ model greenhouse {
   Sensor        sensor[]
   Actuator      actuator[]
   Camera        camera[]
+  selenoid      Selenoid[]
 }
 
 model sensor {
@@ -59,6 +62,10 @@ model sensor {
   AutomationTable    automation[]
   MacAddress         mac_address[]
   Notification       notification[]
+  tandonBahan        TandonBahan?     @relation(fields: [id_tandon_bahan], references: [id])
+  id_tandon_bahan    Int?
+  tandon             Tandon?          @relation(fields: [id_tandon], references: [id])
+  id_tandon          Int?
 }
 
 model category_sensor {
@@ -181,6 +188,7 @@ model camera {
   Greenhouse    greenhouse?  @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse Int
   name          String
+  status        Boolean
   Camera_log    camera_log[]
   created_at    DateTime     @default(now())
   updated_at    DateTime?    @updatedAt
@@ -194,4 +202,55 @@ model camera_log {
   prediction    String
   created_at    DateTime  @default(now())
   updated_at    DateTime? @updatedAt
+}
+
+model Selenoid {
+  id           Int        @id @default(autoincrement())
+  nama         String
+  merek        String
+  status       Boolean
+  tandon       Tandon     @relation(fields: [tandonId], references: [id])
+  tandonId     Int
+  greenhouse   greenhouse @relation(fields: [greenhouseId], references: [id_greenhouse])
+  greenhouseId Int
+}
+
+model TandonBahan {
+  id       Int      @id @default(autoincrement())
+  nama     String
+  sensor   sensor[]
+  tandon   Tandon   @relation(fields: [tandonId], references: [id])
+  tandonId Int
+}
+
+model Tandon {
+  id          Int           @id @default(autoincrement())
+  nama        String
+  user        user          @relation(fields: [userId], references: [id_user])
+  userId      Int
+  status      String
+  isOnline    Boolean
+  sensor      sensor[]
+  selenoid    Selenoid[]
+  tandonBahan TandonBahan[]
+  penjadwalan Penjadwalan[]
+}
+
+model Resep {
+  id          Int           @id @default(autoincrement())
+  ppm         Int
+  ph          Float
+  nama        String
+  interval    Int
+  penjadwalan Penjadwalan[]
+}
+
+model Penjadwalan {
+  id       Int     @id @default(autoincrement())
+  waktu    String  @unique
+  isActive Boolean
+  resep    Resep   @relation(fields: [resepId], references: [id])
+  resepId  Int
+  tandon   Tandon  @relation(fields: [tandonId], references: [id])
+  tandonId Int
 }

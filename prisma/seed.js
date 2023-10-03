@@ -20,18 +20,32 @@ async function main() {
     data: dataCategory,
     skipDuplicates: true, // Skip 'Bobo'
   });
-  const hashedPassword = await bcrypt.hash("iterahero2022", 10);
+  const hashedPasswordAdmin = await bcrypt.hash("iterahero2022", 10);
+  const hashedPasswordMitra = await bcrypt.hash("mitraiterahero", 10);
 
   const userInsert = await prisma.user.createMany({
-    data: {
-      id_user: 1,
-      username: "iterahero2022",
-      email: "iterahero2022@gmail.com",
-      name: "iterahero",
-      password: hashedPassword,
-      created_at: date,
-      updated_at: date,
-    },
+    data: [
+      {
+        // id_user: 1,
+        username: "iterahero2022",
+        email: "iterahero2022@gmail.com",
+        name: "iterahero",
+        role: "admin",
+        password: hashedPasswordAdmin,
+        created_at: date,
+        updated_at: date,
+      },
+      {
+        // id_user: 2,
+        username: "mitraiterahero",
+        email: "mitraiterahero@gmail.com",
+        name: "mitra",
+        role: "operator",
+        password: hashedPasswordMitra,
+        created_at: date,
+        updated_at: date,
+      },
+    ],
     skipDuplicates: true, // Skip 'Bobo'
   });
   const greenhouseInsert = await prisma.greenhouse.createMany({
@@ -50,6 +64,141 @@ async function main() {
     data: dataAutomation,
     skipDuplicates: false, // Skip 'Bobo'
   });
+  const tandon = await prisma.tandon.create({
+    data: {
+      nama: "Tandon Peracikan",
+      userId: 1,
+      isOnline: true,
+      status: "Menyiram",
+    },
+  });
+  const tandonBahan = await prisma.tandonBahan.createMany({
+    data: [
+      {
+        nama: "Nutrisi A",
+        tandonId: 1,
+      },
+      {
+        nama: "Nutrisi B",
+        tandonId: 1,
+      },
+      {
+        nama: "Air",
+        tandonId: 1,
+      },
+      {
+        nama: "Asam",
+        tandonId: 1,
+      },
+      {
+        nama: "Basa",
+        tandonId: 1,
+      },
+    ],
+  });
+  const resep = await prisma.resep.create({
+    data: {
+      nama: "melon",
+      ppm: 1000,
+      ph: 7.2,
+      interval: 120,
+    },
+  });
+  const sensor = await prisma.sensor.createMany({
+    data: [
+      {
+        name: "Sensor Ketinggian",
+        brand: "Adidas",
+        unit_measurement: "m",
+        icon: "",
+        color: "#319795",
+        range_min: 0,
+        range_max: 30,
+        id_category_sensor: 3,
+        id_greenhouse: 1,
+        calibration: "y = mx + b",
+        notify: 0,
+        id_tandon: 1,
+        created_at: date,
+      },
+      {
+        name: "Sensor Ketinggian",
+        brand: "Adidas",
+        unit_measurement: "m",
+        icon: "",
+        color: "#319795",
+        range_min: 0,
+        range_max: 30,
+        id_category_sensor: 3,
+        id_greenhouse: 1,
+        calibration: "y = mx + b",
+        notify: 0,
+        id_tandon_bahan: 1,
+        created_at: date,
+      },
+      {
+        name: "Sensor Ketinggian",
+        brand: "Adidas",
+        unit_measurement: "m",
+        icon: "",
+        color: "#319795",
+        range_min: 0,
+        range_max: 30,
+        id_category_sensor: 3,
+        id_greenhouse: 1,
+        calibration: "y = mx + b",
+        notify: 0,
+        id_tandon_bahan: 2,
+        created_at: date,
+      },
+      {
+        name: "Sensor Ketinggian",
+        brand: "Adidas",
+        unit_measurement: "m",
+        icon: "",
+        color: "#319795",
+        range_min: 0,
+        range_max: 30,
+        id_category_sensor: 3,
+        id_greenhouse: 1,
+        calibration: "y = mx + b",
+        notify: 0,
+        created_at: date,
+        id_tandon_bahan: 3,
+      },
+      {
+        name: "Sensor Ketinggian",
+        brand: "Adidas",
+        unit_measurement: "m",
+        icon: "",
+        color: "#319795",
+        range_min: 0,
+        range_max: 30,
+        id_category_sensor: 3,
+        id_greenhouse: 1,
+        calibration: "y = mx + b",
+        notify: 0,
+        created_at: date,
+        id_tandon_bahan: 4,
+      },
+      {
+        name: "Sensor Ketinggian",
+        brand: "Adidas",
+        unit_measurement: "m",
+        icon: "",
+        color: "#319795",
+        range_min: 0,
+        range_max: 30,
+        id_category_sensor: 3,
+        id_greenhouse: 1,
+        calibration: "y = mx + b",
+        notify: 0,
+        created_at: date,
+        id_tandon_bahan: 4,
+      },
+    ],
+  });
+  console.log({ resep, tandon, tandonBahan, sensor });
 
   console.log({
     iconInsert,
