@@ -10,11 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Jam {
-  TIME
-}
 model user {
-  id_user    Int          @id @default(autoincrement())   @unique
+  id_user    Int          @id @default(autoincrement())
   email      String       @unique
   name       String
   password   String
@@ -24,6 +21,7 @@ model user {
   updated_at DateTime?    @updatedAt
   Greenhouse greenhouse[]
   Receive    receive[]
+  tandon     Tandon[]
 }
 
 model greenhouse {
@@ -38,6 +36,7 @@ model greenhouse {
   Sensor        sensor[]
   Actuator      actuator[]
   Camera        camera[]
+  selenoid      Selenoid[]
 }
 
 model sensor {
@@ -60,6 +59,10 @@ model sensor {
   AutomationTable    automation[]
   MacAddress         mac_address[]
   Notification       notification[]
+  tandonBahan        TandonBahan?     @relation(fields: [id_tandon_bahan], references: [id])
+  id_tandon_bahan    Int?
+  tandon             Tandon?          @relation(fields: [id_tandon], references: [id])
+  id_tandon          Int?
 }
 
 model category_sensor {
@@ -162,49 +165,73 @@ model receive {
 }
 
 model camera {
-  id_camera     Int   @id @default(autoincrement())
-  Greenhouse greenhouse? @relation(fields: [id_greenhouse], references: [id_greenhouse])
+  id_camera     Int          @id @default(autoincrement())
+  Greenhouse    greenhouse?  @relation(fields: [id_greenhouse], references: [id_greenhouse])
   id_greenhouse Int
   name          String
   status        Boolean
-  Camera_log  camera_log[]
-  created_at DateTime     @default(now())
-  updated_at DateTime?    @updatedAt
+  Camera_log    camera_log[]
+  created_at    DateTime     @default(now())
+  updated_at    DateTime?    @updatedAt
 }
 
 model camera_log {
-  id_camera_log Int @id @default(autoincrement())
-  Camera  camera? @relation(fields: [id_camera], references: [id_camera])
-  id_camera Int
-  image   String
-  prediction String
-  created_at DateTime     @default(now())
-  updated_at DateTime?    @updatedAt
+  id_camera_log Int       @id @default(autoincrement())
+  Camera        camera?   @relation(fields: [id_camera], references: [id_camera])
+  id_camera     Int
+  image         String
+  prediction    String
+  created_at    DateTime  @default(now())
+  updated_at    DateTime? @updatedAt
 }
 
-model Peracikan {
-  id_peracikan    Int       @id     @default(autoincrement())
-  ppm             Int
-  ph              Float
-  nama            String
-  created_at      DateTime  @default(now())
-  updated_at      DateTime? @updatedAt
+model Selenoid {
+  id           Int        @id @default(autoincrement())
+  nama         String
+  merek        String
+  status       Boolean
+  tandon       Tandon     @relation(fields: [tandonId], references: [id])
+  tandonId     Int
+  greenhouse   greenhouse @relation(fields: [greenhouseId], references: [id_greenhouse])
+  greenhouseId Int
+}
+
+model TandonBahan {
+  id       Int      @id @default(autoincrement())
+  nama     String
+  sensor   sensor[]
+  tandon   Tandon   @relation(fields: [tandonId], references: [id])
+  tandonId Int
+}
+
+model Tandon {
+  id          Int           @id @default(autoincrement())
+  nama        String
+  user        user          @relation(fields: [userId], references: [id_user])
+  userId      Int
+  status      String
+  isOnline    Boolean
+  sensor      sensor[]
+  selenoid    Selenoid[]
+  tandonBahan TandonBahan[]
+  penjadwalan Penjadwalan[]
 }
 
 model Resep {
-  id_resep        Int       @id     @default(autoincrement())
-  nama            String
-  ppm             Int
-  ph              Float
-  created_at      DateTime
-  updated_at      DateTime? @updatedAt
+  id          Int           @id @default(autoincrement())
+  ppm         Int
+  ph          Float
+  nama        String
+  interval    Int
+  penjadwalan Penjadwalan[]
 }
 
 model Penjadwalan {
-  id_penjadwalan  Int       @id     @default(autoincrement())
-  waktu           String[]
-  iterasi         Int
-  interval        Int
-  created_at      DateTime  @default(now())
-  updated_at      DateTime? @updatedAt
+  id       Int     @id @default(autoincrement())
+  waktu    String  @unique
+  isActive Boolean
+  resep    Resep   @relation(fields: [resepId], references: [id])
+  resepId  Int
+  tandon   Tandon  @relation(fields: [tandonId], references: [id])
+  tandonId Int
 }
