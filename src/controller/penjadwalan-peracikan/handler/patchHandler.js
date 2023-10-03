@@ -1,4 +1,4 @@
-const { Boom } = require("@hapi/boom");
+const Boom = require("@hapi/boom");
 const prisma = require("../../../config/prisma");
 const { schedulePeracikan } = require("../../../utils/penjadwalan-util");
 
