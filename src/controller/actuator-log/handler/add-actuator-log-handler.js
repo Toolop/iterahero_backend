@@ -1,6 +1,13 @@
 const pool = require("../../../config/db");
-const client = require("../../../config/mqtt");
+
 const { getLocalISOString } = require("../../../utils/timestamp-utils");
+
+const mqtt = require("mqtt");
+const host = "broker.hivemq.com";
+const port = "1883";
+const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
+
+const connectUrl = `mqtt://${host}:${port}`;
 
 const uploadActuatorLog = async (request, h) => {
   const { id_actuator, on_off_status } = request.payload;

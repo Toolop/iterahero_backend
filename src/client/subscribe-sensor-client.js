@@ -8,13 +8,35 @@ const {
 const dotenv = require("dotenv");
 const axios = require("axios");
 const { getActuator } = require("../utils/actuator-util");
-const { client } = require("../config/mqtt");
+
 const { uploadActuatorLogUtil } = require("../utils/actuator-log-utli");
 const tempServer = [];
+
+const mqtt = require("mqtt");
+const host = "broker.hivemq.com";
+const port = "1883";
+const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
+
+const connectUrl = `mqtt://${host}:${port}`;
 
 const subscribeSensor = async () => {
   try {
     dotenv.config();
+    
+    const client = mqtt.connect(connectUrl, {
+      clientId,
+      keepalive: 30,
+      protocolId: "MQTT",
+      protocolVersion: 4,
+      clean: false,
+      connectTimeout: 30 * 1000,
+      rejectUnauthorized: false,
+
+      //uncomment if need username or password
+      //   username: 'emqx',
+      //   password: 'public',
+      reconnectPeriod: 1000,
+    });
 
     const topic = "iterahero/sensor/#";
     client.on("connect", () => {

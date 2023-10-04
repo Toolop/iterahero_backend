@@ -18,8 +18,8 @@ const init = async () => {
   dotenv.config();
 
   const server = Hapi.server({
-    port: process.env.PORT || 8000,
-    host: process.env.host || "localhost",
+    port: process.env.PORT || 8080,
+    host: process.env.host || "0.0.0.0",
     routes: {
       cors: {
         origin: ["*"]
@@ -28,9 +28,12 @@ const init = async () => {
   });
 
   await server.register(Jwt);
-  mongoose.connect("mongodb://127.0.0.1:27017/iterahero", {
-    useNewUrlParser: true,
-  });
+  mongoose.connect(
+    "mongodb+srv://iterahero:Sdkartika22@iterahero.s082abg.mongodb.net/iterahero",
+    {
+      useNewUrlParser: true,
+    }
+  );
 
   server.auth.strategy("jwt", "jwt", {
     keys: process.env.JWT_SECRET,
@@ -69,7 +72,7 @@ const init = async () => {
     // responActuator();
     subscribeActuator();
     initAgenda();
-    subscribeSensor();
+    // subscribeSensor();
     initSchedule();
   } catch (err) {
     console.log(err);

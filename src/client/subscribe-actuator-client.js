@@ -1,10 +1,30 @@
 const actuator = require("../models/model-actuator");
 const pool = require("../config/db");
-const { client } = require("../config/mqtt");
+
+const mqtt = require("mqtt");
+const host = "broker.hivemq.com";
+const port = "1883";
+const clientId = `mqttItera_${Math.random().toString(16).slice(3)}`;
+
+const connectUrl = `mqtt://${host}:${port}`;
 
 const subscribeActuator = async () => {
   try {
     const topic = "iterahero/status/actuator/#";
+    const client = mqtt.connect(connectUrl, {
+      clientId,
+      keepalive: 30,
+      protocolId: "MQTT",
+      protocolVersion: 4,
+      clean: false,
+      connectTimeout: 30 * 1000,
+      rejectUnauthorized: false,
+
+      //uncomment if need username or password
+      //   username: 'emqx',
+      //   password: 'public',
+      reconnectPeriod: 1000,
+    });
     await client.on("connect", () => {
       console.log("Connected");
       client.subscribe([topic], () => {
