@@ -12,7 +12,8 @@ const { initSchedule } = require("./controller/scheduling/handler/scheduler");
 const client = require("./config/mqtt");
 const { initAgenda } = require("./agenda/delete-actuator");
 const Jwt = require('@hapi/jwt');
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const { initPeracikan } = require("./utils/penjadwalan-util");
 
 const init = async () => {
   dotenv.config();
@@ -28,7 +29,7 @@ const init = async () => {
   });
 
   await server.register(Jwt);
-  mongoose.connect("mongodb://127.0.0.1:27017/iterahero", {
+  mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
   });
 
@@ -67,6 +68,7 @@ const init = async () => {
     await updateScheduleUtil();
     // subscribeMac();
     // responActuator();
+    initPeracikan();
     subscribeActuator();
     initAgenda();
     subscribeSensor();

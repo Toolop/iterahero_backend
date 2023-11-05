@@ -3,10 +3,10 @@ const Boom = require("@hapi/boom");
 
 const getHandler = async (request, h) => {
     try {
-        const { id } = request.query;
+        const { id_user } = request.auth.credentials;
         const data = await prisma.tandon.findFirst({
             where: {
-                id
+                userId: id_user
             },
             include: {
                 sensor: true,
@@ -20,7 +20,7 @@ const getHandler = async (request, h) => {
         });
 
         if (!data) {
-            return Boom.notFound("Tidak ada tandon terpilih");
+            return Boom.notFound("Tidak ada tandon yang tersedia");
         }
 
         return h.response({

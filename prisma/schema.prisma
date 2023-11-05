@@ -223,15 +223,20 @@ model Resep {
   ph          Float
   nama        String
   interval    Int
+  durasi      Int
   penjadwalan Penjadwalan[]
 }
 
 model Penjadwalan {
-  id       Int     @id @default(autoincrement())
-  waktu    String  @unique
-  isActive Boolean
-  resep    Resep   @relation(fields: [resepId], references: [id])
-  resepId  Int
-  tandon   Tandon  @relation(fields: [tandonId], references: [id])
-  tandonId Int
+  id         Int       @id @default(autoincrement())
+  waktu      String
+  isActive   Boolean
+  durasi     Int
+  hari       Int[]
+  resep      Resep     @relation(fields: [resepId], references: [id])
+  resepId    Int
+  tandon     Tandon    @relation(fields: [tandonId], references: [id])
+  tandonId   Int
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
 }

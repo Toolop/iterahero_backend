@@ -6,7 +6,15 @@ const getHandler = async (request, h) => {
         const data = await prisma.penjadwalan.findMany({
             include: {
                 resep: true
-            }
+            },
+            orderBy: [
+                {
+                    waktu: "asc"
+                },
+                {
+                    hari: "asc"
+                }
+            ]
         });
 
         if (!data) {
@@ -18,11 +26,12 @@ const getHandler = async (request, h) => {
         }).code(200)
     }
     catch (e) {
+        console.log(e)
         if (e instanceof Error) {
             return Boom.internal(e.message)
         }
     } finally {
-        prisma.$disconnect();
+        await prisma.$disconnect();
     }
 }
 

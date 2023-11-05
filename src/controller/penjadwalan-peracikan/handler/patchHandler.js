@@ -1,17 +1,17 @@
 const Boom = require("@hapi/boom");
 const prisma = require("../../../config/prisma");
-const { schedulePeracikan } = require("../../../utils/penjadwalan-util");
+const { schedulePeracikan, onOffPeracikan } = require("../../../utils/penjadwalan-util");
 
 const patchHandler = async (request, h) => {
     try {
         const { id } = request.query;
         const targetWaktu = await prisma.penjadwalan.findUnique({
-            where: { id },
+            where: { id: parseInt(id) },
         });
 
         if (targetWaktu) {
             await prisma.penjadwalan.update({
-                where: { id },
+                where: { id: parseInt(id) },
                 data: {
                     isActive: !targetWaktu.isActive
                 }
@@ -20,25 +20,20 @@ const patchHandler = async (request, h) => {
             return Boom.notFound("Penjadwalan terpilih tidak ditemukan");
         }
 
-        const data = await prisma.penjadwalan.findMany({
-            where: {
-                isActive: true
-            }
-        });
-        const jadwal = data.map(item => item.waktu);
-        schedulePeracikan(jadwal);
+        onOffPeracikan(targetWaktu.id);
 
         return h.response({
             status: 'success',
-            message: 'Penjadwalan berhasil di-nonaktifkan'
+            message: `Penjadwalan berhasil di-${targetWaktu.isActive ? 'nonaktifkan' : 'aktifkan'}`
         }).code(204);
     }
     catch (e) {
+        console.log(e)
         if (e instanceof Error) {
             return Boom.internal(e.message);
         }
     } finally {
-        prisma.$disconnect();
+        await prisma.$disconnect();
     }
 }
 

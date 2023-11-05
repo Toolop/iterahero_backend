@@ -102,6 +102,7 @@ async function main() {
       ppm: 1000,
       ph: 7.2,
       interval: 120,
+      durasi: 10
     },
   });
   const sensor = await prisma.sensor.createMany({

@@ -1,10 +1,10 @@
 const Boom = require("@hapi/boom");
 const prisma = require("../../../config/prisma");
-const { schedulePeracikan } = require("../../../utils/penjadwalan-util");
+const { schedulePeracikan, deletePeracikan } = require("../../../utils/penjadwalan-util");
 
 const deleteHandler = async (request, h) => {
     try {
-        const { id } = request.query;
+        const id = parseInt(request.query.id);
 
         await prisma.penjadwalan.delete({
             where: {
@@ -12,9 +12,7 @@ const deleteHandler = async (request, h) => {
             },
         });
 
-        const data = await prisma.penjadwalan.findMany();
-        const jadwal = data.map(item => item.waktu);
-        schedulePeracikan(jadwal);
+        deletePeracikan(id);
 
         return h.response({
             status: 'success',
