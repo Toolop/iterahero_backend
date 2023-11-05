@@ -64,13 +64,29 @@ async function main() {
     data: dataAutomation,
     skipDuplicates: false, // Skip 'Bobo'
   });
-  const tandon = await prisma.tandon.create({
-    data: {
-      nama: "Tandon Peracikan",
-      userId: 1,
-      isOnline: true,
-      status: "Menyiram",
-    },
+  const tandon = await prisma.tandon.createMany({
+    data: [
+      {
+        nama: "Tandon Peracikan - Kebun Raya",
+        userId: 1,
+        isOnline: true,
+        status: "Idle",
+        rasioA: 5,
+        rasioB: 5,
+        rasioAir: 1000,
+        ppm: 1500
+      },
+      {
+        nama: "Tandon Peracikan - Mitra",
+        userId: 2,
+        isOnline: true,
+        status: "Idle",
+        rasioA: 5,
+        rasioB: 5,
+        rasioAir: 1000,
+        ppm: 1500
+      },
+    ]
   });
   const tandonBahan = await prisma.tandonBahan.createMany({
     data: [

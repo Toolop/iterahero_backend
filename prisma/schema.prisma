@@ -37,6 +37,7 @@ model greenhouse {
   Actuator      actuator[]
   Camera        camera[]
   selenoid      Selenoid[]
+  aktuator      Aktuator[]
 }
 
 model sensor {
@@ -200,8 +201,11 @@ model TandonBahan {
   id       Int      @id @default(autoincrement())
   nama     String
   sensor   sensor[]
+  aktuator   Aktuator[]
   tandon   Tandon   @relation(fields: [tandonId], references: [id])
   tandonId Int
+  created_at DateTime   @default(now())
+  updated_at DateTime?  @updatedAt
 }
 
 model Tandon {
@@ -211,10 +215,49 @@ model Tandon {
   userId      Int
   status      String
   isOnline    Boolean
+  rasioA      Float
+  rasioB      Float
+  rasioAir    Float
+  ppm         Float
   sensor      sensor[]
   selenoid    Selenoid[]
   tandonBahan TandonBahan[]
   penjadwalan Penjadwalan[]
+  aktuator          Aktuator[]
+  tandonPenyimpanan TandonPenyimpanan[]
+  created_at        DateTime            @default(now())
+  updated_at        DateTime?           @updatedAt
+}
+
+// Gabakal kepake keknya
+model TandonPenyimpanan {
+  id            Int        @id @default(autoincrement())
+  nama          String     @unique
+  distributable Boolean
+  tandon        Tandon     @relation(fields: [tandonId], references: [id])
+  tandonId      Int
+  actuator      Aktuator[]
+  resep         Resep[]
+}
+
+model Aktuator {
+  id                  Int                @id @default(autoincrement())
+  name                String
+  merek               String
+  icon                String
+  color               String
+  status              Boolean
+  portRaspi           Int
+  tandon              Tandon?            @relation(fields: [tandonId], references: [id])
+  tandonId            Int?
+  greenhouse          greenhouse?        @relation(fields: [greenhouseId], references: [id_greenhouse])
+  greenhouseId        Int?
+  tandonPenyimpanan   TandonPenyimpanan? @relation(fields: [tandonPenyimpananId], references: [id])
+  tandonPenyimpananId Int?
+  tandonBahan         TandonBahan?       @relation(fields: [tandonBahanId], references: [id])
+  tandonBahanId       Int?
+  created_at          DateTime           @default(now())
+  updated_at          DateTime?          @updatedAt
 }
 
 model Resep {
@@ -225,6 +268,7 @@ model Resep {
   interval    Int
   durasi      Int
   penjadwalan Penjadwalan[]
+  tandonPenyimpanan TandonPenyimpanan[]
 }
 
 model Penjadwalan {
