@@ -1,7 +1,6 @@
 const Boom = require("@hapi/boom");
 const prisma = require("../../../config/prisma");
-const { schedulePeracikan, initPeracikan } = require("../../../utils/penjadwalan-util");
-const { publishData } = require("../../../config/mqtt");
+const { initPeracikan } = require("../../../utils/penjadwalan-util");
 
 const postHandler = async (request, h) => {
     try {

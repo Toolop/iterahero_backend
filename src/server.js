@@ -14,6 +14,7 @@ const { initAgenda } = require("./agenda/delete-actuator");
 const Jwt = require('@hapi/jwt');
 const jwt = require("jsonwebtoken");
 const { initPeracikan } = require("./utils/penjadwalan-util");
+const roleAuth = require("./middleware/roleAuth");
 
 const init = async () => {
   dotenv.config();
@@ -60,6 +61,7 @@ const init = async () => {
   });
 
   server.auth.default("jwt");
+  server.ext("onPreHandler", roleAuth.userAuthorization);
 
   server.route(routes);
 

@@ -4,14 +4,14 @@ const { schedulePeracikan, onOffPeracikan } = require("../../../utils/penjadwala
 
 const patchHandler = async (request, h) => {
     try {
-        const { id } = request.query;
+        const { id } = request.payload;
         const targetWaktu = await prisma.penjadwalan.findUnique({
-            where: { id: parseInt(id) },
+            where: { id },
         });
 
         if (targetWaktu) {
             await prisma.penjadwalan.update({
-                where: { id: parseInt(id) },
+                where: { id },
                 data: {
                     isActive: !targetWaktu.isActive
                 }
