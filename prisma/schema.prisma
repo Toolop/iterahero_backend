@@ -6,22 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model user {
-  id_user    Int          @id @default(autoincrement())
-  email      String       @unique
-  name       String
-  password   String
-  username   String
-  role       String
-  created_at DateTime     @default(now())
-  updated_at DateTime?    @updatedAt
-  Greenhouse greenhouse[]
-  Receive    receive[]
-  tandon     Tandon[]
+  id_user     Int           @id @default(autoincrement())
+  email       String        @unique
+  name        String
+  password    String
+  username    String
+  role        String
+  Greenhouse  greenhouse[]
+  Receive     receive[]
+  tandon      Tandon[]
+  penjadwalan Penjadwalan[]
+  created_at  DateTime      @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at  DateTime?     @updatedAt @db.Timestamptz()
 }
 
 model greenhouse {
@@ -29,77 +31,85 @@ model greenhouse {
   name          String
   image         String
   location      String
-  created_at    DateTime   @default(now())
-  updated_at    DateTime?  @updatedAt
   id_user       Int
   User          user?      @relation(fields: [id_user], references: [id_user])
   Sensor        sensor[]
   Actuator      actuator[]
   Camera        camera[]
-  selenoid      Selenoid[]
+  created_at    DateTime   @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at    DateTime?  @updatedAt @db.Timestamptz()
 }
 
 model sensor {
-  id_sensor          Int              @id @default(autoincrement())
-  name               String
-  unit_measurement   String?
-  brand              String?
-  created_at         DateTime         @default(now())
-  updated_at         DateTime?        @updatedAt
-  icon               String?
-  color              String?
-  Greenhouse         greenhouse?      @relation(fields: [id_greenhouse], references: [id_greenhouse])
-  id_greenhouse      Int
-  range_min          Int?
-  range_max          Int?
-  id_category_sensor Int
-  categorySensor     category_sensor? @relation(fields: [id_category_sensor], references: [id_category_sensor])
-  notify             Int?
-  calibration        String?
-  AutomationTable    automation[]
-  MacAddress         mac_address[]
-  Notification       notification[]
-  tandonBahan        TandonBahan?     @relation(fields: [id_tandon_bahan], references: [id])
-  id_tandon_bahan    Int?
-  tandon             Tandon?          @relation(fields: [id_tandon], references: [id])
-  id_tandon          Int?
+  id_sensor         Int              @id @default(autoincrement())
+  name              String
+  brand             String
+  range_min         Int?
+  range_max         Int?
+  notify            Int?
+  calibration       String
+  AutomationTable   automation[]
+  MacAddress        mac_address[]
+  Notification      notification[]
+  Greenhouse        greenhouse?      @relation(fields: [id_greenhouse], references: [id_greenhouse])
+  id_greenhouse     Int?
+  tandon            Tandon?          @relation(fields: [tandonId], references: [id])
+  tandonId          Int?
+  category          Category         @relation(fields: [categoryId], references: [id])
+  categoryId        Int
+  microcontroller   Microcontroller? @relation(fields: [microcontrollerId], references: [id])
+  microcontrollerId Int?
+  created_at        DateTime         @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at        DateTime?        @updatedAt @db.Timestamptz()
 }
 
-model category_sensor {
-  id_category_sensor Int      @id @default(autoincrement())
-  name               String?
-  Sensor             sensor[]
+model Category {
+  id               Int        @id @default(autoincrement())
+  name             String
+  type             String
+  icon             String
+  unit_measurement String?
+  color            String
+  sensor           sensor[]
+  actuator         actuator[]
+  created_at       DateTime   @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at       DateTime?  @updatedAt @db.Timestamptz()
 }
 
 model actuator {
-  id_actuator      Int            @id @default(autoincrement())
-  name             String
-  status_lifecycle Int
-  created_at       DateTime       @default(now())
-  updated_at       DateTime?      @updatedAt
-  icon             String
-  color            String
-  automation       Int
-  Greenhouse       greenhouse?    @relation(fields: [id_greenhouse], references: [id_greenhouse])
-  id_greenhouse    Int
-  AutomationTable  automation[]
-  ActuatorLog      actuator_log[]
-  MacAddress       mac_address[]
-  Notification     notification[]
-  schedule         schedule[]
+  id_actuator       Int              @id @default(autoincrement())
+  name              String
+  status_lifecycle  Int
+  automation        Int
+  isActive          Boolean          @default(false)
+  Greenhouse        greenhouse?      @relation(fields: [id_greenhouse], references: [id_greenhouse])
+  id_greenhouse     Int?
+  AutomationTable   automation[]
+  ActuatorLog       actuator_log[]
+  MacAddress        mac_address[]
+  Notification      notification[]
+  schedule          schedule[]
+  category          Category         @relation(fields: [categoryId], references: [id])
+  categoryId        Int
+  tandon            Tandon?          @relation(fields: [tandonId], references: [id])
+  tandonId          Int?
+  microcontroller   Microcontroller? @relation(fields: [microcontrollerId], references: [id])
+  microcontrollerId Int?
+  created_at        DateTime         @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at        DateTime?        @updatedAt @db.Timestamptz()
 }
 
 model automation {
-  id_actuator      Int
-  id_sensor        Int
   condition        String
   status_lifecycle Int
   id_automation    Int       @id @default(autoincrement())
-  created_at       DateTime  @default(now())
-  updated_at       DateTime? @updatedAt
   constanta        Int
   Sensor           sensor?   @relation(fields: [id_sensor], references: [id_sensor])
+  id_sensor        Int
   Actuator         actuator? @relation(fields: [id_actuator], references: [id_actuator])
+  id_actuator      Int
+  created_at       DateTime  @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at       DateTime? @updatedAt @db.Timestamptz()
 }
 
 model schedule {
@@ -171,8 +181,8 @@ model camera {
   name          String
   status        Boolean
   Camera_log    camera_log[]
-  created_at    DateTime     @default(now())
-  updated_at    DateTime?    @updatedAt
+  created_at    DateTime     @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at    DateTime?    @updatedAt @db.Timestamptz()
 }
 
 model camera_log {
@@ -181,57 +191,61 @@ model camera_log {
   id_camera     Int
   image         String
   prediction    String
-  created_at    DateTime  @default(now())
-  updated_at    DateTime? @updatedAt
-}
-
-model Selenoid {
-  id           Int        @id @default(autoincrement())
-  nama         String
-  merek        String
-  status       Boolean
-  tandon       Tandon     @relation(fields: [tandonId], references: [id])
-  tandonId     Int
-  greenhouse   greenhouse @relation(fields: [greenhouseId], references: [id_greenhouse])
-  greenhouseId Int
-}
-
-model TandonBahan {
-  id       Int      @id @default(autoincrement())
-  nama     String
-  sensor   sensor[]
-  tandon   Tandon   @relation(fields: [tandonId], references: [id])
-  tandonId Int
+  created_at    DateTime  @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at    DateTime? @updatedAt @db.Timestamptz()
 }
 
 model Tandon {
-  id          Int           @id @default(autoincrement())
-  nama        String
-  user        user          @relation(fields: [userId], references: [id_user])
-  userId      Int
-  status      String
-  isOnline    Boolean
-  sensor      sensor[]
-  selenoid    Selenoid[]
-  tandonBahan TandonBahan[]
-  penjadwalan Penjadwalan[]
+  id                Int              @id @default(autoincrement())
+  nama              String
+  user              user             @relation(fields: [userId], references: [id_user])
+  userId            Int
+  status            String
+  sensor            sensor[]
+  actuator          actuator[]
+  penjadwalan       Penjadwalan[]
+  microcontroller   Microcontroller? @relation(fields: [microcontrollerId], references: [id])
+  microcontrollerId Int?
+  created_at        DateTime         @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at        DateTime?        @updatedAt @db.Timestamptz()
+}
+
+model Microcontroller {
+  id         Int        @id @default(autoincrement())
+  nama       String
+  brand      String
+  status     Boolean
+  tandon     Tandon[]
+  sensor     sensor[]
+  actuator   actuator[]
+  tandonId   Int?
+  created_at DateTime   @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at DateTime?  @updatedAt @db.Timestamptz()
 }
 
 model Resep {
   id          Int           @id @default(autoincrement())
-  ppm         Int
-  ph          Float
+  ppm_min     Int
+  ppm_max     Int
+  ph_min      Float
+  ph_max      Float
+  volume      Float
   nama        String
-  interval    Int
   penjadwalan Penjadwalan[]
+  created_at  DateTime      @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at  DateTime?     @updatedAt @db.Timestamptz()
 }
 
 model Penjadwalan {
-  id       Int     @id @default(autoincrement())
-  waktu    String  @unique
-  isActive Boolean
-  resep    Resep   @relation(fields: [resepId], references: [id])
-  resepId  Int
-  tandon   Tandon  @relation(fields: [tandonId], references: [id])
-  tandonId Int
+  id         Int       @id @default(autoincrement())
+  waktu      String    @unique
+  isActive   Boolean
+  resep      Resep     @relation(fields: [resepId], references: [id])
+  resepId    Int
+  tandon     Tandon    @relation(fields: [tandonId], references: [id])
+  tandonId   Int
+  user       user      @relation(fields: [createdBy], references: [id_user])
+  createdBy  Int
+  created_at DateTime  @default(dbgenerated("NOW()")) @db.Timestamptz()
+  updated_at DateTime? @updatedAt @db.Timestamptz()
 }

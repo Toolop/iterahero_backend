@@ -5,6 +5,8 @@ const {
   getGreenHouseDetail,
 } = require("./handler/detail-greenhouse-handler.js");
 const { getGreenHouses } = require("./handler/get-greenhouse-handler.js");
+const { getActuatorById } = require("./handler/getActuatorById.js");
+const { getSensorById } = require("./handler/getSensorById.js");
 const { updateGreenhouse } = require("./handler/update-greenhouse-handler.js");
 
 module.exports = [
@@ -19,6 +21,16 @@ module.exports = [
     path: `${prefix}/greenhouse/{id}`,
     config: { auth: "jwt" },
     handler: getGreenHouseDetail,
+  },
+  {
+    method: "GET",
+    path: `${prefix}/greenhouse/{id}/sensor`,
+    handler: getSensorById
+  },
+  {
+    method: "GET",
+    path: `${prefix}/greenhouse/{id}/actuator`,
+    handler: getActuatorById
   },
   {
     method: "POST",

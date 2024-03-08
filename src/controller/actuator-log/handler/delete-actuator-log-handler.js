@@ -1,4 +1,4 @@
-const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 
 const deleteActuatorLog = async (request, h) => {
   const { id_actuator, id_actuator_log } = request.query;
@@ -6,43 +6,47 @@ const deleteActuatorLog = async (request, h) => {
   let response = "";
 
   try {
-    if (id_actuator && !id_actuator_log) {
-      result = await pool.query(
-        `DELETE FROM public."actuator_log" WHERE id_actuator = $1`,
-        [id_actuator]
-      );
-    } else if (id_actuator_log && !id_actuator) {
-      result = await pool.query(
-        `DELETE FROM public."actuator_log" WHERE id = $1`,
-        [id_actuator_log]
-      );
-    }
+    if (id_actuator || id_actuator_log) {
+      if (id_actuator) {
+        result = await prisma.actuator_log.deleteMany({
+          where: {
+            id_actuator: parseInt(id_actuator)
+          }
+        })
+      } else if (id_actuator_log) {
+        result = await prisma.actuator_log.delete({
+          where: {
+            id_actuator_log: parseInt(id_actuator_log)
+          }
+        })
+      }
 
-    if (result) {
+      if (result) {
+        response = h.response({
+          code: 200,
+          status: "OK",
+          message: "Actuator Log successfully deleted",
+        });
+
+        response.code(200);
+      } else {
+        response = h.response({
+          code: 500,
+          status: "Internal Server Error",
+          message: "Actuator Log failed to delete",
+        });
+      }
       response = h.response({
-        code: 200,
-        status: "OK",
-        message: "Actuator Log successfully deleted",
-      });
-
-      response.code(200);
-    } else {
-      response = h.response({
-        code: 500,
-        status: "Internal Server Error",
-        message: "Actuator Log failed to delete",
-      });
-
-      response.code(500);
+        status: "Bad Request",
+        message: "Invalid id provided"
+      }).code(400)
     }
   } catch (err) {
     response = h.response({
       code: 400,
       status: "Bad Request",
       message: "error",
-    });
-
-    response.code(400);
+    }).code(400);
 
     console.log(err);
   }

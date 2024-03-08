@@ -1,4 +1,4 @@
-const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const { isAutomationExist } = require("../../../utils/automation-utils");
 
 const deleteAutomation = async (request, h) => {
@@ -8,27 +8,28 @@ const deleteAutomation = async (request, h) => {
 
   try {
     if (await isAutomationExist(id)) {
-      result = await pool.query(
-        'DELETE FROM public."automation" WHERE id_automation=$1',
-        [id]
-      );
+      result = await prisma.automation.delete({
+        where: {
+          id_automation: parseInt(id)
+        }
+      })
+      // result = await pool.query(
+      //   'DELETE FROM public."automation" WHERE id_automation=$1',
+      //   [id]
+      // );
 
       if (result) {
         response = h.response({
-          code: 200,
+          code: 201,
           status: "OK",
           message: "Automation has been deleted",
-        });
-
-        response.code(200);
+        }).code(201);
       } else {
         response = h.response({
           code: 500,
           status: "Internal Server Error",
           message: "Automation cannot be deleted",
-        });
-
-        response.code(500);
+        }).code(500);
       }
     } else {
       response = h.response({

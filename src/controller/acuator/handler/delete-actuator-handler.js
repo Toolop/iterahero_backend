@@ -1,5 +1,6 @@
 const pool = require("../../../config/db");
 const { isActuatorExist } = require("../../../utils/actuator-util");
+const { prisma } = require('../../../config/prisma');
 
 const deleteActuator = async (request, h) => {
   const { id } = request.params;
@@ -8,27 +9,24 @@ const deleteActuator = async (request, h) => {
 
   try {
     if (await isActuatorExist(id)) {
-      result = await pool.query(
-        'DELETE FROM public."actuator" WHERE id_actuator=$1',
-        [id]
-      );
+      result = await prisma.actuator.delete({
+        where: {
+          id_actuator: parseInt(id)
+        }
+      })
 
       if (result) {
         response = h.response({
-          code: 200,
+          code: 201,
           status: "OK",
           message: "Actuator has been deleted",
-        });
-
-        response.code(200);
+        }).code(201);
       } else {
         response = h.response({
           code: 500,
           status: "Internal Server Error",
           message: "Actuator cannot be deleted",
-        });
-
-        response.code(500);
+        }).code(500);
       }
     } else {
       response = h.response({

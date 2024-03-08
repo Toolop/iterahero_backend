@@ -1,36 +1,54 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const { getUser } = require("../../../utils/user-util");
 
 const getCountDashboard = async (request, h) => {
-  let response = "";
-  let { getGreenhouseCount, getSensorCount, getActuatorCount } = "";
-  const { id_user, email } = request.auth.credentials;
+  let response;
+  let { getGreenhouseCount, getSensorCount, getActuatorCount, getTandonCount } = 0;
+  const { id_user } = request.auth.credentials;
 
   try {
-    getGreenhouseCount = await pool.query(
-      `SELECT COUNT(*) from public."greenhouse" WHERE id_user = $1`,
-      [id_user]
-    );
+    const result = await prisma.user.findUnique({
+      where: {
+        id_user,
+      },
+      select: {
+        _count: true,
+        Greenhouse: {
+          select: {
+            _count: true
+          }
+        },
+        tandon: {
+          select: {
+            _count: true
+          }
+        },
+        name: true
+      },
+    })
 
-    getSensorCount = await pool.query(
-      `SELECT COUNT(*) from public."sensor" as ss JOIN public."greenhouse" as gh ON ss.id_greenhouse = gh.id_greenhouse WHERE id_user = $1`,
-      [id_user]
-    );
+    getGreenhouseCount = result._count.Greenhouse;
+    getTandonCount = result._count.tandon;
+    
+    const sensorGh = result.Greenhouse.reduce((temp, a) => temp + a._count.Sensor, 0);
+    const sensorTandon = result.tandon.reduce((temp, a) => temp + a._count.sensor, 0);
+    getSensorCount = sensorGh + sensorTandon
 
-    getActuatorCount = await pool.query(
-      `SELECT COUNT(*) from public."actuator" as ac JOIN public."greenhouse" as gh ON ac.id_greenhouse = gh.id_greenhouse WHERE id_user = $1`,
-      [id_user]
-    );
+    const actuatorGh = result.Greenhouse.reduce((temp, a) => temp + a._count.Actuator, 0);
+    const actuatorTandon = result.tandon.reduce((temp, a) => temp + a._count.actuator, 0);
+    getActuatorCount = actuatorGh + actuatorTandon;
 
     response = h.response({
       code: 200,
       status: "OK",
       data: {
-        greenhouse: getGreenhouseCount.rows[0].count,
-        sensor: getSensorCount.rows[0].count,
-        actuator: getActuatorCount.rows[0].count,
-        name: (await getUser(id_user)).name,
-      },
+        greenhouse: getGreenhouseCount,
+        tandon: getTandonCount,
+        sensor: getSensorCount,
+        actuator: getActuatorCount,
+        name: result.name
+      }
     });
 
     response.code(200);

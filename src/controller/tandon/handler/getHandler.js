@@ -1,23 +1,15 @@
-const prisma = require("../../../config/prisma")
+const { prisma } = require("../../../config/prisma")
 const Boom = require("@hapi/boom");
 
 const getHandler = async (request, h) => {
     try {
-        const { id } = request.query;
-        const data = await prisma.tandon.findFirst({
+        const { id } = parseInt(request.query.id);
+        const { id_user } = request.auth.credentials;
+        const data = await prisma.tandon.findMany({
             where: {
-                id
-            },
-            include: {
-                sensor: true,
-                penjadwalan: true,
-                tandonBahan: {
-                    include: {
-                        sensor: true,
-                    }
-                },
+                userId: id_user
             }
-        });
+        })
 
         if (!data) {
             return Boom.notFound("Tidak ada tandon terpilih");
@@ -34,7 +26,6 @@ const getHandler = async (request, h) => {
             return Boom.internal(e.message)
         }
     }
-    prisma.$disconnect();
 }
 
 module.exports = { getHandler }

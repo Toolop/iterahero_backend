@@ -1,4 +1,3 @@
-const { Query } = require("mongoose");
 const actuator = require("../../../models/model-actuator");
 
 const getActuatorBroker = async (request, h) => {

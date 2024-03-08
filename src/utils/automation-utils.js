@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { prisma } = require("../config/prisma");
 
 const getAutomation = async (id) => {
   let automation = {};
@@ -55,12 +56,17 @@ const isAutomationExist = async (id) => {
   let isExist = false;
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM public."automation" WHERE id_automation = $1',
-      [id]
-    );
+    const res = await prisma.automation.count({
+      where: {
+        id_automation: parseInt(id)
+      }
+    })
+    // const result = await pool.query(
+    //   'SELECT * FROM public."automation" WHERE id_automation = $1',
+    //   [id]
+    // );
 
-    if (result.rows[0]) {
+    if (res > 0) {
       isExist = true;
     } else {
       isExist = false;

@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { prisma } = require("../config/prisma");
 const { getSensorCategory } = require("./category-utils");
 const { getGreenHouseName } = require("./greenhouse-util");
 
@@ -61,12 +62,13 @@ const isSensorExist = async (id) => {
   let isExist = [];
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM public."sensor" WHERE id_sensor = $1',
-      [id]
-    );
+    const result = await prisma.sensor.count({
+      where: {
+        id_sensor: parseInt(id)
+      }
+    });
 
-    if (result.rows[0]) {
+    if (result > 0) {
       isExist = true;
     } else {
       isExist = false;

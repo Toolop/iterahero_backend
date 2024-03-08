@@ -1,10 +1,11 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const { getGreenHouseName } = require("../../../utils/greenhouse-util");
 
 const getActuators = async (request, h) => {
   let { page, size } = request.query;
   const { by_greenhouse_id } = request.query;
-  let result = "";
+  let result;
   let response = "";
   let totalPage = 0;
 
@@ -14,43 +15,65 @@ const getActuators = async (request, h) => {
     const offset = (page - 1) * size;
 
     if (!by_greenhouse_id) {
-      result = await pool.query(
-        `SELECT * FROM public."actuator" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
-        [offset, size]
-      );
-      const totalRows = await pool.query('SELECT * FROM public."actuator"');
-      totalPage = Math.ceil(totalRows.rowCount / size);
+      result = await prisma.actuator.findMany({
+        skip: offset,
+        take: size,
+        include: {
+          Greenhouse: true
+        }
+      })
+      totalPage = Math.ceil(result.length / size);
+      // result = await pool.query(
+      //   `SELECT * FROM public."actuator" ORDER BY created_at ASC OFFSET $1 LIMIT $2`,
+      //   [offset, size]
+      // );
+      // const totalRows = await pool.query('SELECT * FROM public."actuator"');
+      // totalPage = Math.ceil(totalRows.rowCount / size);
     }
 
     if (by_greenhouse_id) {
-      result = await pool.query(
-        `SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
-        [by_greenhouse_id, offset, size]
-      );
-      const totalRows = await pool.query(
-        'SELECT * FROM public."actuator" WHERE id_greenhouse=$1',
-        [by_greenhouse_id]
-      );
-      totalPage = Math.ceil(totalRows.rowCount / size);
+      result = await prisma.greenhouse.findUnique({
+        where: {
+          id_greenhouse: parseInt(by_greenhouse_id)
+        },
+        select: {
+          Actuator: {
+            include: {
+              Greenhouse: true
+            }
+          }
+        }
+      })
+      totalPage = Math.ceil(result.Actuator.length / size)
+      // result = await pool.query(
+      //   `SELECT * FROM public."actuator" WHERE id_greenhouse = $1 ORDER BY created_at ASC OFFSET $2 LIMIT $3`,
+      //   [by_greenhouse_id, offset, size]
+      // );
+      // const totalRows = await pool.query(
+      //   'SELECT * FROM public."actuator" WHERE id_greenhouse=$1',
+      //   [by_greenhouse_id]
+      // );
+      // totalPage = Math.ceil(totalRows.rowCount / size);
     }
 
     response = h.response({
       code: 200,
       status: "OK",
-      data: await Promise.all(
-        result.rows.map(async (actuator) => ({
-          id: actuator.id_actuator,
-          name: actuator.name,
-          status_lifecycle: actuator.status_lifecycle,
-          color: actuator.color,
-          icon: actuator.icon,
-          created_at: actuator.created_at,
-          updated_at: actuator.updated_at,
-          id_greenhouse: actuator.id_greenhouse,
-          greenhouse: await getGreenHouseName(actuator.id_greenhouse),
-          automation: actuator.automation,
-        }))
-      ),
+      data: result,
+      // data: await Promise.all(
+      //   result.rows.map(async (actuator) => ({
+      //     id: actuator.id_actuator,
+      //     name: actuator.name,
+      //     status_lifecycle: actuator.status_lifecycle,
+      //     color: actuator.color,
+      //     icon: actuator.icon,
+      //     created_at: actuator.created_at,
+      //     updated_at: actuator.updated_at,
+      //     id_greenhouse: actuator.id_greenhouse,
+      //     greenhouse: await getGreenHouseName(actuator.id_greenhouse),
+      //     automation: actuator.automation,
+      //   }))
+      // ),
       totalPage: totalPage,
     });
   } catch (err) {

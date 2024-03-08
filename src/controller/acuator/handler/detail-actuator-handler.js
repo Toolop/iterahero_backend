@@ -1,33 +1,42 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const { getGreenHouseName } = require("../../../utils/greenhouse-util");
 
 const getActuatorDetail = async (request, h) => {
   const { id } = request.params;
-  let result = "";
-  let response = "";
+  let result;
+  let response;
 
   try {
-    result = await pool.query(
-      `SELECT * FROM public."actuator" WHERE id_actuator = $1`,
-      [id]
-    );
-
-    if (result.rowCount > 0) {
+    result = await prisma.actuator.findUnique({
+      where: {
+        id_actuator: parseInt(id),
+      },
+      include: {
+        Greenhouse: {
+          select: {
+            name: true
+          }
+        }
+      }
+    })
+    if (result) {
       response = h.response({
         code: 200,
         status: "OK",
-        data: {
-          id: result.rows[0].id_actuator,
-          name: result.rows[0].name,
-          status_lifecycle: result.rows[0].status_lifecycle,
-          color: result.rows[0].color,
-          icon: result.rows[0].icon,
-          created_at: result.rows[0].created_at,
-          updated_at: result.rows[0].updated_at,
-          id_greenhouse: result.rows[0].id_greenhouse,
-          greenhouse: await getGreenHouseName(result.rows[0].id_greenhouse),
-          automation: result.rows[0].automation,
-        },
+        data: result
+        // data: {
+        //   id: result.rows[0].id_actuator,
+        //   name: result.rows[0].name,
+        //   status_lifecycle: result.rows[0].status_lifecycle,
+        //   color: result.rows[0].color,
+        //   icon: result.rows[0].icon,
+        //   created_at: result.rows[0].created_at,
+        //   updated_at: result.rows[0].updated_at,
+        //   id_greenhouse: result.rows[0].id_greenhouse,
+        //   greenhouse: await getGreenHouseName(result.rows[0].id_greenhouse),
+        //   automation: result.rows[0].automation,
+        // },
       });
 
       response.code(200);

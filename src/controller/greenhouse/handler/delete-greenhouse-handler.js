@@ -1,4 +1,5 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const {
   isGreenhouseExist,
   deletimageGreenhouse,
@@ -13,19 +14,22 @@ const deleteGreenhouse = async (request, h) => {
     if (await isGreenhouseExist(id)) {
       await deletimageGreenhouse(id);
 
-      result = await pool.query(
-        'DELETE FROM public."greenhouse" WHERE id_greenhouse=$1',
-        [id]
-      );
+      result = await prisma.greenhouse.delete({
+        where: {
+          id_greenhouse: parseInt(id)
+        }
+      })
+      // result = await pool.query(
+      //   'DELETE FROM public."greenhouse" WHERE id_greenhouse=$1',
+      //   [id]
+      // );
 
       if (result) {
         response = h.response({
-          code: 200,
+          code: 201,
           status: "OK",
           message: "Greenhouse has been deleted",
-        });
-
-        response.code(200);
+        }).code(201);
       } else {
         response = h.response({
           code: 500,

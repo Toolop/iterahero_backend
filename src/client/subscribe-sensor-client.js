@@ -27,7 +27,7 @@ const subscribeSensor = async () => {
     client.on("message", async (topic, payload) => {
       try {
         let save = "";
-        let getData = await JSON.parse(payload.toString());
+        let getData = JSON.parse(payload.toString())
         if (getData[0]) {
           for (const i in getData) {
             const sensorDB = await getSensor(getData[i].id_sensor);
@@ -175,7 +175,7 @@ const subscribeSensor = async () => {
       }
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 };
 

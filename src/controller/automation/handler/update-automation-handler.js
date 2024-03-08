@@ -1,4 +1,5 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const { isAutomationExist } = require("../../../utils/automation-utils");
 
 const updateAutomation = async (request, h) => {
@@ -12,19 +13,29 @@ const updateAutomation = async (request, h) => {
 
   try {
     if (await isAutomationExist(id)) {
-      result = await pool.query(
-        'UPDATE public."automation" SET id_actuator=$1,id_sensor=$2,condition=$3,status_lifecycle=$4,constanta=$5 WHERE id_automation = $6',
-        [id_actuator, id_sensor, condition, status_lifecycle, constanta, id]
-      );
+      result = await prisma.automation.update({
+        where: {
+          id_automation: parseInt(id)
+        },
+        data: {
+          id_actuator,
+          id_sensor,
+          condition,
+          status_lifecycle,
+          constanta
+        }
+      })
+      // result = await pool.query(
+      //   'UPDATE public."automation" SET id_actuator=$1,id_sensor=$2,condition=$3,status_lifecycle=$4,constanta=$5 WHERE id_automation = $6',
+      //   [id_actuator, id_sensor, condition, status_lifecycle, constanta, id]
+      // );
 
       if (result) {
         response = h.response({
-          code: 200,
+          code: 201,
           status: "OK",
           message: "Automation has been edited successfully",
-        });
-
-        response.code(200);
+        }).code(201);
       } else {
         response = h.response({
           code: 500,

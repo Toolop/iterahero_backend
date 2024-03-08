@@ -1,4 +1,5 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 
 const getActuatorLogs = async (request, h) => {
   let { page, size } = request.query;
@@ -14,39 +15,55 @@ const getActuatorLogs = async (request, h) => {
     const offset = (page - 1) * size;
 
     if (!by_actuator_id) {
-      result = await pool.query(
-        `SELECT * FROM public."actuator_log" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
-        [offset, size]
-      );
-      const totalRows = await pool.query('SELECT * FROM public."actuator_log"');
-      totalPage = Math.ceil(totalRows.rowCount / size);
-      totalData = totalRows.rowCount;
+      result = await prisma.actuator_log.findMany({
+        take: size,
+        skip: offset
+      })
+      totalPage = result.length / size
+      totalData = result.length
+      // result = await pool.query(
+      //   `SELECT * FROM public."actuator_log" ORDER BY created_at DESC OFFSET $1 LIMIT $2`,
+      //   [offset, size]
+      // );
+      // const totalRows = await pool.query('SELECT * FROM public."actuator_log"');
+      // totalPage = Math.ceil(totalRows.rowCount / size);
+      // totalData = totalRows.rowCount;
     }
 
     if (by_actuator_id) {
-      result = await pool.query(
-        `SELECT * FROM public."actuator_log" WHERE id_actuator = $1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
-        [by_actuator_id, offset, size]
-      );
-      const totalRows = await pool.query(
-        'SELECT * FROM public."actuator_log" WHERE id_actuator = $1',
-        [by_actuator_id]
-      );
-      totalPage = Math.ceil(totalRows.rowCount / size);
-      totalData = totalRows.rowCount;
+      result = await prisma.actuator_log.findMany({
+        where: {
+          id_actuator: parseInt(by_actuator_id)
+        },
+        skip: offset,
+        take: size
+      })
+      totalPage = Math.ceil(result.length / size);
+      totalData = result.length
+      // result = await pool.query(
+      //   `SELECT * FROM public."actuator_log" WHERE id_actuator = $1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`,
+      //   [by_actuator_id, offset, size]
+      // );
+      // const totalRows = await pool.query(
+      //   'SELECT * FROM public."actuator_log" WHERE id_actuator = $1',
+      //   [by_actuator_id]
+      // );
+      // totalPage = Math.ceil(totalRows.rowCount / size);
+      // totalData = totalRows.rowCount;
     }
 
     response = h.response({
       code: 200,
       status: "OK",
-      data: await Promise.all(
-        result.rows.map(async (actuator_log) => ({
-          id: actuator_log.id_actuator_log,
-          id_actuator: actuator_log.id_actuator,
-          on_off_status: actuator_log.on_off_status,
-          created_at: actuator_log.created_at,
-        }))
-      ),
+      data: result,
+      // data: await Promise.all(
+      //   result.rows.map(async (actuator_log) => ({
+      //     id: actuator_log.id_actuator_log,
+      //     id_actuator: actuator_log.id_actuator,
+      //     on_off_status: actuator_log.on_off_status,
+      //     created_at: actuator_log.created_at,
+      //   }))
+      // ),
       totalPage: totalPage,
       totalData: totalData,
     });

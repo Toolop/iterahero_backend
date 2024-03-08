@@ -1,4 +1,5 @@
 const pool = require("../../../config/db");
+const { prisma } = require("../../../config/prisma");
 const { getNameActuatorByID } = require("../../../utils/actuator-util");
 const { isAutomationExist } = require("../../../utils/automation-utils");
 const { getNameSensorByID } = require("../../../utils/sensor-utils");
@@ -9,27 +10,35 @@ const getDetailAutomation = async (request, h) => {
   let response = "";
 
   try {
-    result = await pool.query(
-      `SELECT * FROM public."automation" WHERE id_automation = $1`,
-      [id]
-    );
+    result = await prisma.automation.findUnique({
+      where: {
+        id_automation: parseInt(id),
+      },
+      include: {
+        Sensor: true,
+        Actuator: true
+      }
+    })
+    // result = await pool.query(
+    //   `SELECT * FROM public."automation" WHERE id_automation = $1`,
+    //   [id]
+    // );
 
-    if (result.rowCount > 0) {
+    if (result) {
       response = h.response({
         code: 200,
         status: "OK",
-        data: {
-          sensor: await getNameSensorByID(result.rows[0].id_sensor),
-          actuator: await getNameActuatorByID(result.rows[0].id_actuator),
-          condition: result.rows[0].condition,
-          status_lifecycle: result.rows[0].status_lifecycle,
-          created_at: result.rows[0].created_at,
-          constanta: result.rows[0].constanta,
-          id_automation: result.rows[0].id_automation,
-        },
-      });
-
-      response.code(200);
+        data: result
+        // data: {
+        //   sensor: await getNameSensorByID(result.rows[0].id_sensor),
+        //   actuator: await getNameActuatorByID(result.rows[0].id_actuator),
+        //   condition: result.rows[0].condition,
+        //   status_lifecycle: result.rows[0].status_lifecycle,
+        //   created_at: result.rows[0].created_at,
+        //   constanta: result.rows[0].constanta,
+        //   id_automation: result.rows[0].id_automation,
+        // },
+      }).code(200);
     } else {
       response = h.response({
         code: 404,

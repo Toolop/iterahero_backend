@@ -85,4 +85,4 @@ const dataAutomation = [
   },
 ];
 
-module.exports = dataAutomation;
+module.exports = { dataAutomation }

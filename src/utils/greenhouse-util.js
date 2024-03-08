@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { prisma } = require("../config/prisma");
 const { deleteImage, pathImage } = require("./cloudinary");
 
 const getGreenHouse = async (id) => {
@@ -50,12 +51,13 @@ const isGreenhouseExist = async (id) => {
   let isExist = false;
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM public."greenhouse" WHERE id_greenhouse=$1',
-      [id]
-    );
+    const result = await prisma.greenhouse.count({
+      where: {
+        id_greenhouse: parseInt(id)
+      }
+    });
 
-    if (result.rows[0]) {
+    if (result) {
       isExist = true;
     } else {
       isExist = false;
@@ -71,12 +73,13 @@ const deletimageGreenhouse = async (id) => {
   let old_image = "";
 
   try {
-    old_image = await pool.query(
-      'SELECT image from public."greenhouse" WHERE id_greenhouse=$1',
-      [id]
-    );
+    old_image = await prisma.greenhouse.findUnique({
+      where: {
+        id_greenhouse: parseInt(id)
+      }
+    })
 
-    let publicId = await pathImage(old_image.rows[0].image);
+    let publicId = await pathImage(old_image.image);
     await deleteImage(publicId);
   } catch (err) {
     console.log(err);

@@ -1,23 +1,29 @@
 const pool = require("../../../config/db");
+const { prisma } = require('../../../config/prisma');
 
 const uploadCategorySensor = async (request, h) => {
-  const { name } = request.payload;
+  const { name, icon, color, type } = request.payload;
 
   let response = "";
 
   try {
-    const result = await pool.query(
-      `INSERT INTO public.category_sensor (name) VALUES($1) RETURNING *;`,
-      [name]
-    );
+    const result = await prisma.category.create({
+      data: {
+        nama: name,
+        icon,
+        color,
+        type,
+      }
+    });
+
     if (result) {
       response = h.response({
         code: 201,
         status: "Created",
         message: "Sensor successfully created",
         data: {
-          id: result.rows[0].id_category_sensor,
-          name: result.rows[0].name,
+          id: result.id,
+          name: result.nama,
         },
       });
 
@@ -45,34 +51,26 @@ const uploadCategorySensor = async (request, h) => {
 };
 
 const getCategorySensor = async (request, h) => {
-  let result = "";
-  let response = "";
+  let result;
+  let response;
 
   try {
-    result = await pool.query(
-      `SELECT * FROM public."category_sensor" ORDER BY id_category_sensor ASC`
-    );
+    result = await prisma.category.findMany({});
 
     response = h.response({
       code: 200,
       status: "OK",
-      data: await Promise.all(
-        result.rows.map(async (sensor) => ({
-          id: sensor.id_category_sensor,
-          name: sensor.name,
-        }))
-      ),
-    });
-
-    response.code(200);
+      data: result.map(item => {
+        const { created_at, updated_at, ...filteredItem } = item;
+        return filteredItem
+      }),
+    }).code(200);
   } catch (err) {
     response = h.response({
       code: 400,
       status: "Bad Request",
       message: "error",
-    });
-
-    response.code(400);
+    }).code(400);
 
     console.log(err);
   }

@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { prisma } = require("../config/prisma");
 const { getGreenHouse } = require("./greenhouse-util");
 
 const getActuator = async (id) => {
@@ -33,12 +34,13 @@ const isActuatorExist = async (id) => {
   let isExist = [];
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM public."actuator" WHERE id_actuator = $1',
-      [id]
-    );
+    const result = await prisma.actuator.count({
+      where: {
+        id_actuator: parseInt(id)
+      }
+    })
 
-    if (result.rows[0]) {
+    if (result > 0) {
       isExist = true;
     } else {
       isExist = false;

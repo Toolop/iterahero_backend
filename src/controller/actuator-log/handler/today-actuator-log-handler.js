@@ -1,29 +1,31 @@
-const pool = require("../../../config/db");
-const { getLocalISOString } = require("../../../utils/timestamp-utils");
+const { prisma } = require("../../../config/prisma");
 
 const getActuatorLogsToday = async (request, h) => {
   const { id } = request.params;
-  let result_on = "";
-  let result_off = "";
-  let response = "";
+  let result;
+  let response;
+  
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
   try {
-    const now = getLocalISOString();
-    result_on = await pool.query(
-      `SELECT on_off_status FROM public."actuator_log" WHERE id_actuator=$1 AND on_off_status = '1' AND date(created_at) = date($2) `,
-      [id, now]
-    );
-    result_off = await pool.query(
-      `SELECT on_off_status FROM public."actuator_log" WHERE id_actuator=$1 AND on_off_status = '0' AND date(created_at) = date($2) `,
-      [id, now]
-    );
-    if (result_on && result_off) {
+    result = await prisma.actuator_log.findMany({
+      where: {
+        id_actuator: parseInt(id),
+        created_at: {
+          gte: startOfToday,
+          lte: endOfToday
+        }
+      }
+    })
+    if (result) {
       response = h.response({
         code: 200,
         status: "OK",
         data: {
-          count_on: result_on.rowCount,
-          count_off: result_off.rowCount,
+          count_on: result.filter(item => item.on_off_status === 1),
+          count_off: result.filter(item => item.on_off_status === 0),
         },
       });
     }
